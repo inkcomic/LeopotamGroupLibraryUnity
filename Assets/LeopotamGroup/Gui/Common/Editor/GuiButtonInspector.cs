@@ -9,15 +9,37 @@ using UnityEditor;
 namespace LeopotamGroup.Gui.Common.UnityEditors {
     [CustomEditor (typeof (GuiButton))]
     sealed class GuiButtonInspector : GuiEventReceiverInspector {
+        SerializedProperty _visualsProperty;
+
+        SerializedProperty _enableColorProperty;
+
+        SerializedProperty _activeColorProperty;
+
+        SerializedProperty _disableColorProperty;
+
+        SerializedProperty _scaleOnPressProperty;
+
+        SerializedProperty _tweenTimeProperty;
+
+        protected override void OnEnable () {
+            base.OnEnable ();
+            _visualsProperty = serializedObject.FindProperty ("Visuals");
+            _enableColorProperty = serializedObject.FindProperty ("EnableColor");
+            _activeColorProperty = serializedObject.FindProperty ("ActiveColor");
+            _disableColorProperty = serializedObject.FindProperty ("DisableColor");
+            _scaleOnPressProperty = serializedObject.FindProperty ("ScaleOnPress");
+            _tweenTimeProperty = serializedObject.FindProperty ("TweenTime");
+        }
+
         public override void OnInspectorGUI () {
             serializedObject.Update ();
 
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("Visuals"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("EnableColor"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("ActiveColor"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("DisableColor"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("ScaleOnPress"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("TweenTime"));
+            EditorGUILayout.PropertyField (_visualsProperty);
+            EditorGUILayout.PropertyField (_enableColorProperty);
+            EditorGUILayout.PropertyField (_activeColorProperty);
+            EditorGUILayout.PropertyField (_disableColorProperty);
+            EditorGUILayout.PropertyField (_scaleOnPressProperty);
+            EditorGUILayout.PropertyField (_tweenTimeProperty);
 
             base.OnInspectorGUI ();
         }

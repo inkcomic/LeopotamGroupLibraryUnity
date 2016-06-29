@@ -34,27 +34,26 @@ namespace LeopotamGroup.Gui.Layout {
         }
 
         /// <summary>
-        /// Data for clipping children. not realized yet.
+        /// Width of widget.
         /// </summary>
-        public Vector4 ClipData {
-            get { return _clipData; }
+        public int ClipWidth {
+            get { return _clipWidth; }
             set {
-                if (value.x > 0 && value.y > 0 && value.z > 0 && value.w > 0 && value != _clipData) {
-                    _clipData = value;
-                    _clipDataRaw = new Vector4 (1f / _clipData.x * _clipData.z * 2f, 1f / _clipData.y * _clipData.w * 2f, _clipData.z, _clipData.w);
+                if (value >= 0 && value != _clipWidth) {
+                    _clipWidth = value;
                     _isChanged = true;
                 }
             }
         }
 
         /// <summary>
-        /// Position for clipping children. not realized yet.
+        /// height of widget.
         /// </summary>
-        public Vector2 ClipPos {
-            get { return _clipPos; }
+        public int ClipHeight {
+            get { return _clipHeight; }
             set {
-                if (value != _clipPos) {
-                    _clipPos = value;
+                if (value >= 0 && value != _clipHeight) {
+                    _clipHeight = value;
                     _isChanged = true;
                 }
             }
@@ -74,6 +73,8 @@ namespace LeopotamGroup.Gui.Layout {
             }
         }
 
+        const float PanelDepthSlice = 50f;
+
         [HideInInspector]
         [SerializeField]
         int _depth;
@@ -84,11 +85,11 @@ namespace LeopotamGroup.Gui.Layout {
 
         [HideInInspector]
         [SerializeField]
-        Vector4 _clipData = new Vector4 (100f, 100f, 10f, 10f);
+        int _clipWidth = 100;
 
         [HideInInspector]
         [SerializeField]
-        Vector2 _clipPos;
+        int _clipHeight = 100;
 
         readonly Dictionary<GuiAtlas, Material> _mtrlCache = new Dictionary<GuiAtlas, Material> ();
 
@@ -99,7 +100,7 @@ namespace LeopotamGroup.Gui.Layout {
         Vector4 _clipDataRaw;
 
         void OnEnable () {
-            _clipDataRaw = new Vector4 (1f / _clipData.x * _clipData.z * 2f, 1f / _clipData.y * _clipData.w * 2f, _clipData.z, _clipData.w);
+            InvalidateClipData (transform.position);
             _isChanged = true;
         }
 
@@ -107,7 +108,18 @@ namespace LeopotamGroup.Gui.Layout {
             OnChanged (null);
         }
 
+        void InvalidateClipData (Vector3 worldPos) {
+            var halfSize = new Vector3 (_clipWidth * 0.5f, _clipHeight * 0.5f, 0f);
+            var min = worldPos - halfSize;
+            var max = worldPos + halfSize;
+            _clipDataRaw = new Vector4 (min.x, min.y, max.x, max.y);
+        }
+
         void LateUpdate () {
+            if (_clipType == GuiPanelClipType.Range && _cachedTransform.hasChanged) {
+                _isChanged = true;
+                _cachedTransform.hasChanged = false;
+            }
             if (_isChanged) {
                 _isChanged = false;
                 UpdateVisuals ();
@@ -119,7 +131,6 @@ namespace LeopotamGroup.Gui.Layout {
                 case GuiPanelClipType.Range:
                     mtrl.EnableKeyword (GuiConsts.ShaderKeyWordClipRange);
                     mtrl.SetVector (GuiConsts.ShaderParamClipData, _clipDataRaw);
-                    mtrl.SetVector (GuiConsts.ShaderParamClipTrans, _clipPos);
                     break;
                 default:
                     mtrl.DisableKeyword (GuiConsts.ShaderKeyWordClipRange);
@@ -128,13 +139,40 @@ namespace LeopotamGroup.Gui.Layout {
         }
 
         /// <summary>
+        /// Is (X,Y) point inside panel clipping range. Will return true if no clipping.
+        /// </summary>
+        /// <param name="x">Point X coordinate.</param>
+        /// <param name="y">Point y coordinate.</param>
+        public bool IsPointInside (float x, float y) {
+            if (_clipType == GuiPanelClipType.None) {
+                return true;
+            }
+            return x <= _clipDataRaw.z && x >= _clipDataRaw.x && y <= _clipDataRaw.w && y >= _clipDataRaw.y;
+        }
+
+        /// <summary>
+        /// Is (min,max) rect inside panel clipping range. Will return true if no clipping.
+        /// </summary>
+        /// <param name="min">Left bottom corner of rect.</param>
+        /// <param name="max">Right top corner of rect.</param>
+        public bool IsRectInside (Vector2 min, Vector2 max) {
+            if (_clipType == GuiPanelClipType.None) {
+                return true;
+            }
+            return min.x <= _clipDataRaw.z && max.x >= _clipDataRaw.x && min.y <= _clipDataRaw.w && max.y >= _clipDataRaw.y;
+        }
+
+        /// <summary>
         /// Force revalidate internal atlases, fonts and children.
         /// </summary>
         public void UpdateVisuals () {
             var guiCamTrans = GuiSystem.Instance.Camera.transform;
             var pos = guiCamTrans.InverseTransformPoint (_cachedTransform.position);
-            pos.z = -_depth * 50f;
-            _cachedTransform.position = guiCamTrans.TransformPoint (pos);
+            pos.z = -_depth * PanelDepthSlice;
+            var worldPos = guiCamTrans.TransformPoint (pos);
+            _cachedTransform.position = worldPos;
+
+            InvalidateClipData (worldPos);
 
             foreach (var texPair in _mtrlCache) {
                 UpdateMaterial (texPair.Value);
@@ -196,6 +234,22 @@ namespace LeopotamGroup.Gui.Layout {
             }
             UpdateMaterial (mtrl);
             return mtrl;
+        }
+
+        /// <summary>
+        /// Get closest parent panel for transform. if not found - new panel will be created at root GameObject.
+        /// </summary>
+        /// <returns>The panel.</returns>
+        /// <param name="obj">Widget.</param>
+        public static GuiPanel GetPanel (Transform obj) {
+            if (obj == null) {
+                return null;
+            }
+            var panel = obj.GetComponentInParent<GuiPanel> ();
+            if (panel == null) {
+                panel = obj.transform.root.gameObject.AddComponent<GuiPanel> ();
+            }
+            return panel;
         }
     }
 }

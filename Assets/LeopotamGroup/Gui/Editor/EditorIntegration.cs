@@ -45,6 +45,11 @@ namespace LeopotamGroup.Gui.UnityEditors {
                             foreach (var item in obj.GetComponentsInChildren <GuiWidget> ()) {
                                 item.ResetPanel ();
                             }
+                            if (Application.isPlaying) {
+                                foreach (var item in obj.GetComponentsInChildren <GuiEventReceiver> ()) {
+                                    item.ResetPanel ();
+                                }
+                            }
                         }
                     }
                     return;

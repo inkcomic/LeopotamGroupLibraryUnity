@@ -13,6 +13,18 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
     [CanEditMultipleObjects]
     [CustomEditor (typeof (Transform))]
     sealed class GuiTransformInspector : Editor {
+        SerializedProperty _positionProperty;
+
+        SerializedProperty _rotationProperty;
+
+        SerializedProperty _scaleProperty;
+
+        void OnEnable () {
+            _positionProperty = serializedObject.FindProperty ("m_LocalPosition");
+            _rotationProperty = serializedObject.FindProperty ("m_LocalRotation");
+            _scaleProperty = serializedObject.FindProperty ("m_LocalScale");
+        }
+
         public override void OnInspectorGUI () {
             bool isFound = false;
             Transform tr;
@@ -34,81 +46,68 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
         }
 
         void DrawPosition (bool isFound) {
-            var prop = serializedObject.FindProperty ("m_LocalPosition");
             GUILayout.BeginHorizontal ();
             var isReset = GUILayout.Button ("P", GUILayout.Width (20f));
-            EditorGUILayout.PropertyField (prop.FindPropertyRelative ("x"));
-            EditorGUILayout.PropertyField (prop.FindPropertyRelative ("y"));
+            EditorGUILayout.PropertyField (_positionProperty.FindPropertyRelative ("x"));
+            EditorGUILayout.PropertyField (_positionProperty.FindPropertyRelative ("y"));
             GUI.enabled = !isFound;
-            EditorGUILayout.PropertyField (prop.FindPropertyRelative ("z"));
+            EditorGUILayout.PropertyField (_positionProperty.FindPropertyRelative ("z"));
             GUI.enabled = true;
             GUILayout.EndHorizontal ();
             if (isReset) {
-                prop.FindPropertyRelative ("x").floatValue = 0f;
-                prop.FindPropertyRelative ("y").floatValue = 0f;
-                prop.FindPropertyRelative ("z").floatValue = 0f;
+                _positionProperty.FindPropertyRelative ("x").floatValue = 0f;
+                _positionProperty.FindPropertyRelative ("y").floatValue = 0f;
+                _positionProperty.FindPropertyRelative ("z").floatValue = 0f;
             }
         }
 
         void DrawRotation (bool isFound) {
-            var prop = serializedObject.FindProperty ("m_LocalRotation");
             GUILayout.BeginHorizontal ();
             var isReset = GUILayout.Button ("R", GUILayout.Width (20f));
-            var angles = (serializedObject.targetObject as Transform).localEulerAngles;
-            GUI.enabled = !isFound;
-            var newX = WrapAngle (EditorGUILayout.FloatField ("X", angles.x));
-            var newY = WrapAngle (EditorGUILayout.FloatField ("Y", angles.y));
-            GUI.enabled = true;
-            var newZ = WrapAngle (EditorGUILayout.FloatField ("Z", angles.z));
+            var rot = (serializedObject.targetObject as Transform).localRotation;
+            var angles = rot.eulerAngles;
 
-            var dirtyX = Mathf.Abs (newX - angles.x) > 0f;
-            var dirtyY = Mathf.Abs (newY - angles.y) > 0f;
-            var dirtyZ = Mathf.Abs (newZ - angles.z) > 0f;
-
-            if (dirtyX || dirtyY || dirtyZ) {
-                Undo.RecordObjects (serializedObject.targetObjects, "leopotamgroup.gui.transform-rotate");
-                Transform tr;
-                Vector3 v;
-                foreach (var item in targets) {
-                    tr = item as Transform;
-                    v = tr.localRotation.eulerAngles;
-                    if (dirtyX) {
-                        v.x = newX;
-                    }
-                    if (dirtyY) {
-                        v.y = newY;
-                    }
-                    if (dirtyZ) {
-                        v.z = newZ;
-                    }
-                    tr.localEulerAngles = v;
+            foreach (var item in targets) {
+                if (!SameRotation (rot, ((Transform) item).localRotation)) {
+                    EditorGUI.showMixedValue = true;
+                    break;
                 }
+            }
+
+            EditorGUI.BeginChangeCheck ();
+            GUI.enabled = !isFound;
+            var newX = EditorGUILayout.FloatField ("X", angles.x);
+            var newY = EditorGUILayout.FloatField ("Y", angles.y);
+            GUI.enabled = true;
+            var newZ = EditorGUILayout.FloatField ("Z", angles.z);
+
+            if (EditorGUI.EndChangeCheck ()) {
+                Undo.RecordObjects (serializedObject.targetObjects, "leopotamgroup.gui.transform-rotate");
+                angles = new Vector3 (newX, newY, newZ);
+                foreach (var item in targets) {
+                    (item as Transform).localEulerAngles = angles;
+                }
+                _rotationProperty.serializedObject.SetIsDifferentCacheDirty ();
             }
 
             GUILayout.EndHorizontal ();
             if (isReset) {
-                prop.FindPropertyRelative ("x").floatValue = 0f;
-                prop.FindPropertyRelative ("y").floatValue = 0f;
-                prop.FindPropertyRelative ("z").floatValue = 0f;
+                var rotIdent = Quaternion.identity;
+                _rotationProperty.FindPropertyRelative ("x").floatValue = rotIdent.x;
+                _rotationProperty.FindPropertyRelative ("y").floatValue = rotIdent.y;
+                _rotationProperty.FindPropertyRelative ("z").floatValue = rotIdent.z;
+                _rotationProperty.FindPropertyRelative ("w").floatValue = rotIdent.w;
             }
         }
 
-        static float WrapAngle (float angle) {
-            while (angle > 180f) {
-                angle -= 360f;
-            }
-            while (angle < -180f) {
-                angle += 360f;
-            }
-            return angle;
+        bool SameRotation (Quaternion a, Quaternion b) {
+            return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
         }
 
         void DrawScale (bool isFound) {
-            var prop = serializedObject.FindProperty ("m_LocalScale");
-
-            var fieldX = prop.FindPropertyRelative ("x");
-            var fieldY = prop.FindPropertyRelative ("y");
-            var fieldZ = prop.FindPropertyRelative ("z");
+            var fieldX = _scaleProperty.FindPropertyRelative ("x");
+            var fieldY = _scaleProperty.FindPropertyRelative ("y");
+            var fieldZ = _scaleProperty.FindPropertyRelative ("z");
 
             // fix invalid z scale.
             if (isFound && fieldZ.floatValue != 1f) {
@@ -119,10 +118,6 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             var isReset = GUILayout.Button ("S", GUILayout.Width (20f));
             EditorGUILayout.PropertyField (fieldX);
             EditorGUILayout.PropertyField (fieldY);
-
-//            Debug.Log (string.Format ("x: {0} / {1}, y: {2} / {3}", oldX, serializedObject.FindPropertyRelative ("x").floatValue, oldY, fieldY.floatValue));
-
-
 
             GUI.enabled = !isFound;
             EditorGUILayout.PropertyField (fieldZ);

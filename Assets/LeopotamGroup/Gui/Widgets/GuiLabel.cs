@@ -153,14 +153,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         MeshFilter _meshFilter;
 
-        protected override void Awake () {
-            base.Awake ();
-            _meshFilter = GetComponent<MeshFilter> ();
-            _meshFilter.sharedMesh = null;
-        }
-
-        protected override void OnEnable () {
-            base.OnEnable ();
+        void OnEnable () {
             if (_meshFilter == null) {
                 _meshFilter = GetComponent<MeshFilter> ();
             }
@@ -173,16 +166,14 @@ namespace LeopotamGroup.Gui.Widgets {
             _meshRenderer = GetComponent<MeshRenderer> ();
             _meshRenderer.hideFlags = HideFlags.HideInInspector;
 
-            SetDirty (GuiDirtyType.All);
-
             Font.textureRebuilt += OnFontTextureRebuilt;
+
+            // Force generate geometry.
+            SetDirty (GuiDirtyType.All);
         }
 
         protected override void OnDisable () {
             Font.textureRebuilt -= OnFontTextureRebuilt;
-            _meshRenderer.enabled = false;
-            _meshFilter = null;
-            _meshRenderer = null;
             base.OnDisable ();
         }
 
@@ -204,7 +195,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
             if ((changes & (GuiDirtyType.Geometry | GuiDirtyType.Panel)) != GuiDirtyType.None) {
                 if (Font != null) {
-                    _meshRenderer.sharedMaterial = _visualPanel.GetFontMaterial (Font);
+                    _meshRenderer.sharedMaterial = Panel.GetFontMaterial (Font);
 
                     if ((changes & GuiDirtyType.Geometry) != GuiDirtyType.None) {
                         GuiTextTools.FillText (_meshFilter.sharedMesh, Width, Height, Text, Color, Alignment, Font, FontSize, LineHeight, _effect, _effectValue, _effectColor);

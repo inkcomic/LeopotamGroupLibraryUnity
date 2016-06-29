@@ -21,17 +21,11 @@ namespace LeopotamGroup.Gui.Widgets {
         public event Action<GuiWidget> OnGeometryUpdated = delegate {};
 
         /// <summary>
-        /// Cached dirty state.
-        /// </summary>
-        /// <value>The state of the dirty.</value>
-        public GuiDirtyType DirtyState { get; private set; }
-
-        /// <summary>
         /// Enable dirty state for specified types.
         /// </summary>
         /// <param name="changes">Specified dirty types.</param>
         public virtual void SetDirty (GuiDirtyType changes) {
-            DirtyState |= changes;
+            _dirtyState |= changes;
         }
 
         /// <summary>
@@ -91,7 +85,25 @@ namespace LeopotamGroup.Gui.Widgets {
         /// </summary>
         public bool IsVisible { get { return _meshRenderer != null && _meshRenderer.enabled; } }
 
+        /// <summary>
+        /// Gets parent GuiPanel. If not exists - will be created at root GameObject.
+        /// </summary>
+        /// <value>The panel.</value>
+        public GuiPanel Panel {
+            get {
+                if (_visualPanel == null) {
+                    _visualPanel = GuiPanel.GetPanel (transform);
+                    _visualPanel.OnChanged += OnPanelChanged;
+                }
+                return _visualPanel;
+            }
+        }
+
         const float DepthSlice = 0.5f;
+
+        protected MeshRenderer _meshRenderer;
+
+        GuiPanel _visualPanel;
 
         [HideInInspector]
         [SerializeField]
@@ -109,31 +121,38 @@ namespace LeopotamGroup.Gui.Widgets {
         [SerializeField]
         int _depth;
 
-        Bounds _bounds;
-
-        protected GuiPanel _visualPanel;
-
-        protected MeshRenderer _meshRenderer;
-
-        protected virtual void OnEnable () {
-            SetDirty (GuiDirtyType.All);
-        }
+        GuiDirtyType _dirtyState;
 
         protected virtual void OnDisable () {
+            if (_meshRenderer != null) {
+                _meshRenderer.enabled = false;
+            }
             ResetPanel ();
         }
 
         void OnPanelChanged (GuiPanel panel) {
             if (_visualPanel != panel) {
                 ResetPanel ();
+            } else {
+                UpdateVisuals (GuiDirtyType.None);
             }
         }
 
         void LateUpdate () {
-            if (DirtyState != GuiDirtyType.None) {
-                var changes = DirtyState;
-                DirtyState = GuiDirtyType.None;
+            var transformChanged = _cachedTransform.hasChanged;
+            if (transformChanged || _dirtyState != GuiDirtyType.None) {
+                if (transformChanged) {
+                    _cachedTransform.hasChanged = false;
+                }
+
+                var changes = _dirtyState;
+                _dirtyState = GuiDirtyType.None;
                 UpdateVisuals (changes);
+
+                // Panel clipping additional check.
+                if (changes != GuiDirtyType.None) {
+                    UpdateVisuals (GuiDirtyType.None);
+                }
             }
         }
 
@@ -142,10 +161,10 @@ namespace LeopotamGroup.Gui.Widgets {
         /// </summary>
         public void ResetPanel () {
             SetDirty (GuiDirtyType.Panel);
-            if (_visualPanel != null) {
+            if (_visualPanel) {
                 _visualPanel.OnChanged -= OnPanelChanged;
-                _visualPanel = null;
             }
+            _visualPanel = null;
         }
 
         /// <summary>
@@ -154,38 +173,16 @@ namespace LeopotamGroup.Gui.Widgets {
         /// <returns>true, if visuals were updated.</returns>
         /// <param name="changes">What should be revalidate.</param>
         public virtual bool UpdateVisuals (GuiDirtyType changes) {
-            if (_visualPanel == null) {
-                _visualPanel = FindPanel (this);
-                _visualPanel.OnChanged += OnPanelChanged;
-            }
-
             if (_meshRenderer == null) {
                 return false;
             }
 
-            var pos = transform.position;
-
-            if (_visualPanel.ClipType != GuiPanelClipType.None) {
-                // Clipping by height.
-                var halfHeight = _height * 0.5f;
-                var halfClipHeight = _visualPanel.ClipData.y * 0.5f;
-                if ((pos.y + halfHeight) <= (_visualPanel.ClipPos.x - halfClipHeight)) {
-                    _meshRenderer.enabled = false;
-                    return false;
-                }
-                if ((pos.y - halfHeight) >= (_visualPanel.ClipPos.y + halfClipHeight)) {
-                    _meshRenderer.enabled = false;
-                    return false;
-                }
-
-                // Clipping by width.
-                var halfWidth = _width * 0.5f;
-                var halfClipWidth = _visualPanel.ClipData.x * 0.5f;
-                if ((pos.x + halfWidth) <= (_visualPanel.ClipPos.x - halfClipWidth)) {
-                    _meshRenderer.enabled = false;
-                    return false;
-                }
-                if ((pos.x - halfWidth) >= (_visualPanel.ClipPos.x + halfClipWidth)) {
+            // Special case for checking panel clipping.
+            if (changes == GuiDirtyType.None && Panel.ClipType == GuiPanelClipType.Range) {
+                var halfSize = new Vector3 (_width * 0.5f, _height * 0.5f, 0f);
+                var min = _cachedTransform.TransformPoint (-halfSize);
+                var max = _cachedTransform.TransformPoint (halfSize);
+                if (!Panel.IsRectInside (min, max)) {
                     _meshRenderer.enabled = false;
                     return false;
                 }
@@ -215,22 +212,6 @@ namespace LeopotamGroup.Gui.Widgets {
             Width = (int) (Width * scale.x);
             Height = (int) (Height * scale.y);
             transform.localScale = Vector3.one;
-        }
-
-        /// <summary>
-        /// Find closest parent panel for widget.
-        /// </summary>
-        /// <returns>The panel.</returns>
-        /// <param name="widget">Widget.</param>
-        public static GuiPanel FindPanel (GuiWidget widget) {
-            if (widget == null) {
-                return null;
-            }
-            var panel = widget.GetComponentInParent<GuiPanel> ();
-            if (panel == null) {
-                panel = widget.transform.root.gameObject.AddComponent<GuiPanel> ();
-            }
-            return panel;
         }
     }
 }

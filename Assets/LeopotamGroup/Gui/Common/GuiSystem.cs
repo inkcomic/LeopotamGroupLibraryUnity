@@ -120,13 +120,7 @@ namespace LeopotamGroup.Gui.Common {
             }
         }
 
-        /// <summary>
-        /// Save checking for singleton instance availability.
-        /// </summary>
-        /// <returns>Instance exists.</returns>
-        public static bool IsInstanceCreated () {
-            return _instance != null;
-        }
+        static GuiSystem _instance;
 
         [HideInInspector]
         [SerializeField]
@@ -154,7 +148,9 @@ namespace LeopotamGroup.Gui.Common {
 
         readonly GuiTouchInfo[] _touches = new GuiTouchInfo[5];
 
-        static GuiSystem _instance;
+        readonly List<GuiEventReceiver> _eventReceivers = new List<GuiEventReceiver> (64);
+
+        readonly GuiTouchEventArg _touchEventArg = new GuiTouchEventArg ();
 
         void Awake () {
             var count = FindObjectsOfType <GuiSystem> ().Length;
@@ -218,7 +214,6 @@ namespace LeopotamGroup.Gui.Common {
                 isMouse = false;
             }
 
-            GuiTouchEventArg te;
             GuiEventReceiver newReceiver;
             Vector3 worldPos;
 
@@ -241,20 +236,20 @@ namespace LeopotamGroup.Gui.Common {
                         }
                     }
 
-                    te = new GuiTouchEventArg (_touches[i].State, _touches[i].RawPosition, _touches[i].Delta);
+                    _touchEventArg.SetData (_touches[i].State, _touches[i].RawPosition, _touches[i].Delta);
 
                     if (_touches[i].IsDeltaChanged) {
                         if (_touches[i].Receiver != null) {
-                            _touches[i].Receiver.RaiseDragEvent (te);
+                            _touches[i].Receiver.RaiseDragEvent (_touchEventArg);
                         }
                     }
 
                     if (_touches[i].IsStateChanged) {
                         if (!_touches[i].State) {
                             if (_touches[i].Receiver != null) {
-                                _touches[i].Receiver.RaisePressEvent (te);
+                                _touches[i].Receiver.RaisePressEvent (_touchEventArg);
                                 if (!_touches[i].IsDeltaChanged && _touches[i].Receiver == newReceiver) {
-                                    _touches[i].Receiver.RaiseClickEvent (te);
+                                    _touches[i].Receiver.RaiseClickEvent (_touchEventArg);
                                 }
                             }
                             newReceiver = null;
@@ -262,7 +257,7 @@ namespace LeopotamGroup.Gui.Common {
                             _touches[i].Receiver = newReceiver;
                         }
                         if (_touches[i].Receiver != null) {
-                            _touches[i].Receiver.RaisePressEvent (te);
+                            _touches[i].Receiver.RaisePressEvent (_touchEventArg);
                         }
                     }
                 }
@@ -307,7 +302,13 @@ namespace LeopotamGroup.Gui.Common {
             }
         }
 
-        readonly List<GuiEventReceiver> _eventReceivers = new List<GuiEventReceiver> (64);
+        /// <summary>
+        /// Save checking for singleton instance availability.
+        /// </summary>
+        /// <returns>Instance exists.</returns>
+        public static bool IsInstanceCreated () {
+            return _instance != null;
+        }
 
         struct GuiTouchInfo {
             public int ID;

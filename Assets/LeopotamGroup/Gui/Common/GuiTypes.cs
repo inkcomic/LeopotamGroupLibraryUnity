@@ -75,9 +75,8 @@ namespace LeopotamGroup.Gui.Common {
     /// Panel clipping type.
     /// </summary>
     public enum GuiPanelClipType {
-        None,
-        Range,
-        Texture
+        None = 0,
+        Range
     }
 
     /// <summary>
@@ -95,14 +94,14 @@ namespace LeopotamGroup.Gui.Common {
     /// <summary>
     /// Data of touch event.
     /// </summary>
-    public struct GuiTouchEventArg {
+    public sealed class GuiTouchEventArg {
         public bool State;
 
         public Vector2 Position;
 
         public Vector2 Delta;
 
-        public GuiTouchEventArg (bool state, Vector2 position, Vector2 delta) {
+        public void SetData (bool state, Vector2 position, Vector2 delta) {
             State = state;
             Position = position;
             Delta = delta;
@@ -116,8 +115,6 @@ namespace LeopotamGroup.Gui.Common {
         public const string ShaderKeyWordClipRange = "GUI_CLIP_RANGE";
 
         public const string ShaderParamClipData = "_ClipData";
-
-        public const string ShaderParamClipTrans = "_ClipTrans";
 
         public static readonly int DefaultGuiLayer = LayerMask.NameToLayer ("UI");
 

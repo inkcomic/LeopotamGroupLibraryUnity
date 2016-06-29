@@ -4,6 +4,7 @@
 //-------------------------------------------------------
 
 using LeopotamGroup.Common;
+using LeopotamGroup.Gui.Layout;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Common {
@@ -27,6 +28,11 @@ namespace LeopotamGroup.Gui.Common {
         public OnGuiTouchEventHandler OnDrag = new OnGuiTouchEventHandler ();
 
         /// <summary>
+        /// Get cached global order in camera space.
+        /// </summary>
+        public float GlobalDepthOrder { get; private set; }
+
+        /// <summary>
         /// Width of touch zone.
         /// </summary>
         [HideInInspector]
@@ -44,23 +50,29 @@ namespace LeopotamGroup.Gui.Common {
         [HideInInspector]
         public int Depth = 0;
 
-        /// <summary>
-        /// Get cached global order in camera space.
-        /// </summary>
-        public float GlobalDepthOrder { get; private set; }
+        GuiPanel _visualPanel;
 
         protected virtual void OnEnable () {
             GuiSystem.Instance.AddEventReceiver (this);
+            ResetPanel ();
         }
 
         protected virtual void OnDisable () {
             if (GuiSystem.IsInstanceCreated ()) {
                 GuiSystem.Instance.RemoveEventReceiver (this);
             }
+            _visualPanel = null;
         }
 
         void LateUpdate () {
             GlobalDepthOrder = GuiSystem.Instance.Camera.transform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, Depth * 0.5f)).z;
+        }
+
+        /// <summary>
+        /// Force reset cached parent panel reference.
+        /// </summary>
+        public void ResetPanel () {
+            _visualPanel = GuiPanel.GetPanel (transform);
         }
 
         /// <summary>
@@ -99,6 +111,21 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="x">X coordinate of point.</param>
         /// <param name="y">Y coordinate of point.</param>
         public bool IsPointInside (float x, float y) {
+            if (!_visualPanel.enabled) {
+                return false;
+            }
+            if (_visualPanel.ClipType == GuiPanelClipType.Range) {
+                if (!_visualPanel.IsPointInside (x, y)) {
+                    return false;
+                }
+                var halfSize = new Vector3 (Width * 0.5f, Height * 0.5f, 0f);
+                var min = _cachedTransform.TransformPoint (-halfSize);
+                var max = _cachedTransform.TransformPoint (halfSize);
+                if (!_visualPanel.IsRectInside (min, max)) {
+                    return false;
+                }
+            }
+
             var pos = _cachedTransform.InverseTransformPoint (x, y, 0f);
             var halfWidth = Width * 0.5f;
             var halfHeight = Height * 0.5f;

@@ -6,6 +6,7 @@
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Math;
 using UnityEngine;
+using LeopotamGroup.Common;
 
 namespace LeopotamGroup.Gui.Widgets {
     /// <summary>
@@ -24,7 +25,7 @@ namespace LeopotamGroup.Gui.Widgets {
             set {
                 if (value != _spriteAtlas) {
                     _spriteAtlas = value;
-                    SetDirty (GuiDirtyType.Geometry);
+                    SetDirty (GuiDirtyType.Geometry | GuiDirtyType.Panel);
                 }
             }
         }
@@ -89,14 +90,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         MeshFilter _meshFilter;
 
-        protected override void Awake () {
-            base.Awake ();
-            _meshFilter = GetComponent<MeshFilter> ();
-            _meshFilter.sharedMesh = null;
-        }
-
-        protected override void OnEnable () {
-            base.OnEnable ();
+        void OnEnable () {
             if (_meshFilter == null) {
                 _meshFilter = GetComponent<MeshFilter> ();
             }
@@ -106,15 +100,11 @@ namespace LeopotamGroup.Gui.Widgets {
                 _meshFilter.sharedMesh = GuiMeshTools.GetNewMesh ();
             }
 
-            _meshRenderer = GetComponent <MeshRenderer> ();
+            _meshRenderer = GetComponent<MeshRenderer> ();
             _meshRenderer.hideFlags = HideFlags.HideInInspector;
-        }
 
-        protected override void OnDisable () {
-            _meshRenderer.enabled = false;
-            _meshFilter = null;
-            _meshRenderer = null;
-            base.OnDisable ();
+            // Force generate geometry.
+            SetDirty (GuiDirtyType.All);
         }
 
         /// <summary>
@@ -193,7 +183,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
             if ((changes & (GuiDirtyType.Geometry | GuiDirtyType.Panel)) != GuiDirtyType.None) {
                 if (SpriteAtlas != null && SpriteAtlas.ColorTexture != null) {
-                    _meshRenderer.sharedMaterial = _visualPanel.GetMaterial (SpriteAtlas);
+                    _meshRenderer.sharedMaterial = Panel.GetMaterial (SpriteAtlas);
                     if ((changes & GuiDirtyType.Geometry) != GuiDirtyType.None) {
                         var sprData = SpriteAtlas.GetSpriteData (SpriteName);
                         if (SpriteType == GuiSpriteType.Simple) {

@@ -43,7 +43,7 @@ namespace LeopotamGroup.Gui.Layout {
         /// </summary>
         public GuiAlignment ItemsAlignment = GuiAlignment.TopLeft;
 
-        void LateUpdate () {
+        void Update () {
             Validate ();
             if (Application.isPlaying) {
                 enabled = false;
