@@ -8,7 +8,7 @@ Shader "Hidden/LeopotamGroup/FX/ScreenFade" {
 	}
 
 	SubShader {
-		Tags { "RenderType" = "Transparent" "Queue"="Overlay" "LightMode"="ForwardBase" "IgnoreProjector" = "True" }
+		Tags { "RenderType" = "Overlay" "Queue" = "Overlay" }
 		LOD 100
 		Lighting Off
 		ZWrite Off
@@ -23,8 +23,7 @@ Shader "Hidden/LeopotamGroup/FX/ScreenFade" {
 			float4 pos : SV_POSITION;
 			fixed4 color : TEXCOORD0;
 		};
-
-
+              
 		v2f vert (appdata_full v) {
 			v2f o;
 			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);

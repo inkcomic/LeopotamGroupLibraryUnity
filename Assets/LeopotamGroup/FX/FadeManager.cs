@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace LeopotamGroup.FX {
     /// <summary>
-    /// Fade manager.
+    /// Fade manager for Camera with tag "MainCamera".
     /// </summary>
     sealed class FadeManager : UnitySingleton<FadeManager> {
         /// <summary>
@@ -24,9 +24,7 @@ namespace LeopotamGroup.FX {
 
         Texture2D _dummyTex;
 
-        Rect _screenRect;
-
-        Rect _dummyTexRect;
+        readonly Rect _rectOne = new Rect (0, 0, 1, 1);
 
         Material _mtrl;
 
@@ -35,13 +33,10 @@ namespace LeopotamGroup.FX {
         protected override void OnConstruct () {
             DontDestroyOnLoad (gameObject);
 
-            gameObject.layer = LayerMask.NameToLayer ("UI");
-
             _mtrl = new Material (Shader.Find ("Hidden/LeopotamGroup/FX/ScreenFade"));
 
             // Graphics.DrawTexture requires any texture.
             _dummyTex = new Texture2D (1, 1, TextureFormat.RGB24, false);
-            _dummyTexRect = new Rect (0f, 0f, 1f, 1f);
 
             SetFade (0f);
         }
@@ -111,14 +106,15 @@ namespace LeopotamGroup.FX {
             if (_opaque <= 0f) {
                 return;
             }
-            if ((int) _screenRect.width != Screen.width || (int) _screenRect.height != Screen.height) {
-                _screenRect = new Rect (-Screen.width * 0.5f, -Screen.height * 0.5f, Screen.width, Screen.height);
+            if (Camera.current == Camera.main) {
+                GL.PushMatrix ();
+                GL.LoadOrtho ();
+                var color = Color.Lerp (Color.clear, Color.black, _opaque);
+                Graphics.DrawTexture (_rectOne, _dummyTex, _rectOne, 0, 0, 0, 0, color, _mtrl);
+                GL.PopMatrix ();
+
+                OnRender ();
             }
-
-            var color = Color.Lerp (Color.clear, Color.black, _opaque);
-            Graphics.DrawTexture (_screenRect, _dummyTex, _dummyTexRect, 0, 0, 0, 0, color, _mtrl);
-
-            OnRender ();
         }
     }
 }
