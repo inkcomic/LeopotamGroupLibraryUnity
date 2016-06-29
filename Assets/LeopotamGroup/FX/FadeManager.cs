@@ -67,7 +67,6 @@ namespace LeopotamGroup.FX {
         public void StartFadeTo (float toOpaque, float time, Action callback = null, bool fadeAudio = false) {
             StopFade ();
 
-            Globals.IsUILocked = true;
             _fadeAudio = fadeAudio;
 
             _cb = StartCoroutine (OnFadeStarted (toOpaque, time, callback));
@@ -82,7 +81,6 @@ namespace LeopotamGroup.FX {
                 StopCoroutine (_cb);
                 _cb = null;
             }
-            Globals.IsUILocked = false;
         }
 
         IEnumerator OnFadeStarted (float toOpaque, float time, Action callback) {
@@ -103,7 +101,6 @@ namespace LeopotamGroup.FX {
             }
 
             _cb = null;
-            Globals.IsUILocked = false;
 
             if (callback != null) {
                 callback ();
