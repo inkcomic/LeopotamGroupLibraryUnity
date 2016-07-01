@@ -63,7 +63,7 @@ namespace LeopotamGroup.Gui.Layout {
 
             var spr = _widget as GuiSprite;
             if (spr != null && spr.SpriteType.IsTiled ()) {
-                spr.AlignSizeToOriginal ();
+                spr.AlignTiledSizeToOriginal ();
             }
         }
     }

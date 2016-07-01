@@ -153,6 +153,13 @@ namespace LeopotamGroup.Gui.Widgets {
 
         MeshFilter _meshFilter;
 
+        protected override void Awake () {
+            base.Awake ();
+            // Fix copy&paste mesh sharing.
+            _meshFilter = GetComponent<MeshFilter> ();
+            _meshFilter.sharedMesh = null;
+        }
+
         void OnEnable () {
             if (_meshFilter == null) {
                 _meshFilter = GetComponent<MeshFilter> ();
@@ -163,7 +170,9 @@ namespace LeopotamGroup.Gui.Widgets {
                 _meshFilter.sharedMesh = GuiMeshTools.GetNewMesh ();
             }
 
-            _meshRenderer = GetComponent<MeshRenderer> ();
+            if (_meshRenderer == null) {
+                _meshRenderer = GetComponent<MeshRenderer> ();
+            }
             _meshRenderer.hideFlags = HideFlags.HideInInspector;
 
             Font.textureRebuilt += OnFontTextureRebuilt;

@@ -13,13 +13,53 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
     [CanEditMultipleObjects]
     [CustomEditor (typeof (GuiSprite))]
     sealed class GuiSpriteInspector : Editor {
+        const int DepthLimit = 49;
+
+        SerializedProperty _atlasProperty;
+
+        SerializedProperty _nameProperty;
+
+        SerializedProperty _typeProperty;
+
+        SerializedProperty _fillCenterProperty;
+
+        SerializedProperty _flipHorProperty;
+
+        SerializedProperty _flipVerProperty;
+
+        SerializedProperty _widthProperty;
+
+        SerializedProperty _heightProperty;
+
+        SerializedProperty _depthProperty;
+
+        SerializedProperty _colorProperty;
+
+        static readonly GUIContent _typeGuiContent = new GUIContent ("Type");
+
+        static readonly GUIContent _fillCenterGuiContent = new GUIContent ("Fill center");
+
+        static readonly GUIContent _flipHorGuiContent = new GUIContent ("Flip horizontal");
+
+        static readonly GUIContent _flipVerGuiContent = new GUIContent ("Flip vertical");
+
+        void OnEnable () {
+            _atlasProperty = serializedObject.FindProperty ("_spriteAtlas");
+            _nameProperty = serializedObject.FindProperty ("_spriteName");
+            _typeProperty = serializedObject.FindProperty ("_spriteType");
+            _fillCenterProperty = serializedObject.FindProperty ("_isSpriteCenterFilled");
+            _flipHorProperty = serializedObject.FindProperty ("_isSpriteFlippedHorizontal");
+            _flipVerProperty = serializedObject.FindProperty ("_isSpriteFlippedVertical");
+            _widthProperty = serializedObject.FindProperty ("_width");
+            _heightProperty = serializedObject.FindProperty ("_height");
+            _depthProperty = serializedObject.FindProperty ("_depth");
+            _colorProperty = serializedObject.FindProperty ("_color");
+        }
+
         public override void OnInspectorGUI () {
             serializedObject.Update ();
             var sprite = target as GuiSprite;
 
-            var propSpriteAtlas = serializedObject.FindProperty ("_spriteAtlas");
-            var propSpriteName = serializedObject.FindProperty ("_spriteName");
-            var propType = serializedObject.FindProperty ("_spriteType");
             var atlasName = string.Format ("Atlas: <{0}>", sprite.SpriteAtlas != null ? sprite.SpriteAtlas.name : "Empty");
             if (GUILayout.Button (atlasName)) {
                 SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", sprite.SpriteAtlas, assetPath => {
@@ -28,11 +68,11 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
                         // None.
                         if (assetPath == string.Empty) {
                             sprite.SpriteAtlas = null;
-                            propSpriteName.stringValue = null;
+                            _nameProperty.stringValue = null;
                         } else {
                             sprite.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
                         }
-                        propSpriteAtlas.objectReferenceValue = sprite.SpriteAtlas;
+                        _atlasProperty.objectReferenceValue = sprite.SpriteAtlas;
                     }
                 });
             }
@@ -42,30 +82,33 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
                 var id = Array.IndexOf (spriteList, sprite.SpriteName);
                 id = EditorGUILayout.Popup ("Sprite", id, spriteList);
                 if (id >= 0 && id < spriteList.Length) {
-                    propSpriteName.stringValue = spriteList[id];
+                    _nameProperty.stringValue = spriteList[id];
                 }
             }
 
 
-            EditorGUILayout.PropertyField (propType, new GUIContent ("Type"));
+            EditorGUILayout.PropertyField (_typeProperty, _typeGuiContent);
 
-            var type = (GuiSpriteType) propType.enumValueIndex;
+            var type = (GuiSpriteType) _typeProperty.enumValueIndex;
             if (type != GuiSpriteType.Simple) {
-                EditorGUILayout.PropertyField (serializedObject.FindProperty ("_isSpriteCenterFilled"), new GUIContent ("Fill center"));
+                EditorGUILayout.PropertyField (_fillCenterProperty, _fillCenterGuiContent);
             }
 
             EditorGUILayout.Separator ();
 
-            var widthProp = serializedObject.FindProperty ("_width");
-            var heightProp = serializedObject.FindProperty ("_height");
-            EditorGUILayout.PropertyField (widthProp);
-            if (widthProp.intValue < 0) {
-                widthProp.intValue = 0;
+            EditorGUILayout.PropertyField (_flipHorProperty, _flipHorGuiContent);
+            EditorGUILayout.PropertyField (_flipVerProperty, _flipVerGuiContent);
+
+            EditorGUILayout.Separator ();
+
+            EditorGUILayout.PropertyField (_widthProperty);
+            if (_widthProperty.intValue < 0) {
+                _widthProperty.intValue = 0;
             }
 
-            EditorGUILayout.PropertyField (heightProp);
-            if (heightProp.intValue < 0) {
-                heightProp.intValue = 0;
+            EditorGUILayout.PropertyField (_heightProperty);
+            if (_heightProperty.intValue < 0) {
+                _heightProperty.intValue = 0;
             }
 
             bool needUpdate = false;
@@ -74,31 +117,31 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
                 sprite.ResetSize ();
                 needUpdate = true;
             }
-            if (GUILayout.Button ("Align size to original")) {
+            if (GUILayout.Button ("Align tiled size to original")) {
                 Undo.RecordObject (sprite, "leopotamgroup.gui.sprite.align-original-size");
-                sprite.AlignSizeToOriginal ();
+                sprite.AlignTiledSizeToOriginal ();
                 needUpdate = true;
             }
 
-            GuiWidget s;
-
             if (GUILayout.Button ("Bake scale to widget size")) {
                 Undo.RecordObject (sprite, "leopotamgroup.gui.sprite.bake-scale-size");
+                GuiWidget s;
                 foreach (var item in targets) {
                     s = item as GuiSprite;
                     if (s != null) {
                         s.BakeScale ();
                     }
                 }
+                needUpdate = true;
                 SceneView.RepaintAll ();
             }
 
             EditorGUILayout.Separator ();
 
-            EditorGUILayout.IntSlider (serializedObject.FindProperty ("_depth"), -49, 49);
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_color"));
+            EditorGUILayout.IntSlider (_depthProperty, -DepthLimit, DepthLimit);
+            EditorGUILayout.PropertyField (_colorProperty);
 
-            if (needUpdate || serializedObject.ApplyModifiedProperties () || EditorIntegration.IsUndo ()) {
+            if (serializedObject.ApplyModifiedProperties () || needUpdate || EditorIntegration.IsUndo ()) {
                 EditorIntegration.UpdateVisuals (target);
             }
         }
@@ -111,10 +154,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
         {
             alignment = TextAnchor.LowerCenter,
             fontSize = 16,
-            normal = new GUIStyleState ()
-            {
-                textColor = Color.white
-            }
+            normal = new GUIStyleState { textColor = Color.white }
         };
 
         public override void OnPreviewGUI (Rect r, GUIStyle background) {

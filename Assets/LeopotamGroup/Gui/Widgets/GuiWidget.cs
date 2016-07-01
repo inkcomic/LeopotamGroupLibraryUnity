@@ -207,8 +207,14 @@ namespace LeopotamGroup.Gui.Widgets {
         /// <summary>
         /// Bake transform scale to widget size.
         /// </summary>
-        public void BakeScale () {
+        public virtual void BakeScale () {
             var scale = transform.localScale;
+            if (scale.x < 0f) {
+                scale.x = -scale.x;
+            }
+            if (scale.y < 0f) {
+                scale.y = -scale.y;
+            }
             Width = (int) (Width * scale.x);
             Height = (int) (Height * scale.y);
             transform.localScale = Vector3.one;

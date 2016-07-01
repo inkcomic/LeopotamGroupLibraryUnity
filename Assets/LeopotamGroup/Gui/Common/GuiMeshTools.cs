@@ -272,7 +272,7 @@ namespace LeopotamGroup.Gui.Common {
                 return;
             }
             PrepareBuffer ();
-            if (sd != null && width > 0 && height > 0) {
+            if (sd != null && width != 0 && height != 0) {
                 var leftBorderV = (int) (sd.BorderL * texSize.x);
                 var rightBorderV = (int) (sd.BorderR * texSize.x);
                 var topBorderV = (int) (sd.BorderT * texSize.y);
@@ -282,8 +282,18 @@ namespace LeopotamGroup.Gui.Common {
                 var bR = sd.CornerX + sd.CornerW - sd.BorderR;
                 var bT = sd.CornerY + sd.CornerH - sd.BorderT;
 
-                var halfW = width >> 1;
-                var halfH = height >> 1;
+                var halfW = 0.5f * width;
+                var halfH = 0.5f * height;
+
+                if (width < 0) {
+                    leftBorderV = -leftBorderV;
+                    rightBorderV = -rightBorderV;
+                }
+
+                if (height < 0) {
+                    topBorderV = -topBorderV;
+                    bottomBorderV = -bottomBorderV;
+                }
 
                 int centerWidthV;
                 int horTileCount;
@@ -293,6 +303,9 @@ namespace LeopotamGroup.Gui.Common {
 
                 if (isHorTiled) {
                     centerWidthV = (int) (cW * texSize.x);
+                    if (width < 0) {
+                        centerWidthV = -centerWidthV;
+                    }
                     horTileCount = Mathf.Max (0, Mathf.FloorToInt ((width - leftBorderV - rightBorderV) / (float) centerWidthV));
                 } else {
                     centerWidthV = width - rightBorderV - leftBorderV;
@@ -301,6 +314,9 @@ namespace LeopotamGroup.Gui.Common {
 
                 if (isVerTiled) {
                     centerHeightV = (int) (cH * texSize.y);
+                    if (height < 0) {
+                        centerHeightV = -centerHeightV;
+                    }
                     verTileCount = Mathf.Max (0, Mathf.FloorToInt ((height - bottomBorderV - topBorderV) / (float) centerHeightV));
                 } else {
                     centerHeightV = height - topBorderV - bottomBorderV;

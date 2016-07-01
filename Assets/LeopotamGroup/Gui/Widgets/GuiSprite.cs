@@ -72,6 +72,26 @@ namespace LeopotamGroup.Gui.Widgets {
             }
         }
 
+        public bool IsSpriteFlippedHorizontal {
+            get { return _isSpriteFlippedHorizontal; }
+            set {
+                if (value != _isSpriteFlippedHorizontal) {
+                    _isSpriteFlippedHorizontal = value;
+                    SetDirty (GuiDirtyType.Geometry);
+                }
+            }
+        }
+
+        public bool IsSpriteFlippedVertical {
+            get { return _isSpriteFlippedVertical; }
+            set {
+                if (value != _isSpriteFlippedVertical) {
+                    _isSpriteFlippedVertical = value;
+                    SetDirty (GuiDirtyType.Geometry);
+                }
+            }
+        }
+
         [HideInInspector]
         [SerializeField]
         GuiAtlas _spriteAtlas;
@@ -88,7 +108,23 @@ namespace LeopotamGroup.Gui.Widgets {
         [SerializeField]
         bool _isSpriteCenterFilled = true;
 
+        [HideInInspector]
+        [SerializeField]
+        bool _isSpriteFlippedHorizontal;
+
+        [HideInInspector]
+        [SerializeField]
+        bool _isSpriteFlippedVertical;
+
         MeshFilter _meshFilter;
+
+        protected override void Awake () {
+            base.Awake ();
+            // Fix copy&paste mesh sharing.
+            _meshFilter = GetComponent<MeshFilter> ();
+            _meshFilter.sharedMesh = null;
+        }
+
 
         void OnEnable () {
             if (_meshFilter == null) {
@@ -100,7 +136,9 @@ namespace LeopotamGroup.Gui.Widgets {
                 _meshFilter.sharedMesh = GuiMeshTools.GetNewMesh ();
             }
 
-            _meshRenderer = GetComponent<MeshRenderer> ();
+            if (_meshRenderer == null) {
+                _meshRenderer = GetComponent<MeshRenderer> ();
+            }
             _meshRenderer.hideFlags = HideFlags.HideInInspector;
 
             // Force generate geometry.
@@ -135,7 +173,7 @@ namespace LeopotamGroup.Gui.Widgets {
         /// <summary>
         /// Align tiled sprites for 100% filling internal part.
         /// </summary>
-        public void AlignSizeToOriginal () {
+        public void AlignTiledSizeToOriginal () {
             if (SpriteAtlas != null && !string.IsNullOrEmpty (SpriteName)) {
                 var sprData = SpriteAtlas.GetSpriteData (SpriteName);
                 int srcWidthBorder;
@@ -185,15 +223,17 @@ namespace LeopotamGroup.Gui.Widgets {
                 if (SpriteAtlas != null && SpriteAtlas.ColorTexture != null) {
                     _meshRenderer.sharedMaterial = Panel.GetMaterial (SpriteAtlas);
                     if ((changes & GuiDirtyType.Geometry) != GuiDirtyType.None) {
+                        var w = _isSpriteFlippedHorizontal ? -Width : Width;
+                        var h = _isSpriteFlippedVertical ? -Height : Height;
                         var sprData = SpriteAtlas.GetSpriteData (SpriteName);
                         if (SpriteType == GuiSpriteType.Simple) {
-                            GuiMeshTools.FillSimpleSprite (_meshFilter.sharedMesh, Width, Height, Color, sprData);
+                            GuiMeshTools.FillSimpleSprite (_meshFilter.sharedMesh, w, h, Color, sprData);
                         } else {
                             var texSize = new Vector2 (SpriteAtlas.ColorTexture.width, SpriteAtlas.ColorTexture.height);
                             var isHorTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledHorizontal;
                             var isVerTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledVertical;
                             GuiMeshTools.FillSlicedTiledSprite (
-                                _meshFilter.sharedMesh, Width, Height, Color, sprData,
+                                _meshFilter.sharedMesh, w, h, Color, sprData,
                                 texSize, isHorTiled, isVerTiled, IsSpriteCenterFilled);
                         }
                     }
@@ -202,6 +242,19 @@ namespace LeopotamGroup.Gui.Widgets {
                 }
             }
             return true;
+        }
+
+        public override void BakeScale () {
+            var scale = transform.localScale;
+            if (scale.x < 0f) {
+                IsSpriteFlippedHorizontal = !IsSpriteFlippedHorizontal;
+            }
+
+            if (scale.y < 0f) {
+                IsSpriteFlippedVertical = !IsSpriteFlippedVertical;
+            }
+
+            base.BakeScale ();
         }
     }
 }
