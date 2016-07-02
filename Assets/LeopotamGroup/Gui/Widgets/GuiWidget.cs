@@ -99,6 +99,11 @@ namespace LeopotamGroup.Gui.Widgets {
             }
         }
 
+        /// <summary>
+        /// Widget depth limit, in negative and positive directions.
+        /// </summary>
+        public const int DepthLimit = 49;
+
         const float DepthSlice = 0.5f;
 
         protected MeshRenderer _meshRenderer;

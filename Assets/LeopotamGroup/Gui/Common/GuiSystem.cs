@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using LeopotamGroup.Gui.Widgets;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Common {
@@ -98,6 +99,12 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         /// <summary>
+        /// Scale factor, equals RealResolution / VirtualResolution. Useful for text crisping.
+        /// </summary>
+        /// <value>The virtual to real scale factor.</value>
+        public float VirtualToRealScaleFactor { get; private set; }
+
+        /// <summary>
         /// Is user input locked.
         /// </summary>
         public bool IsInputLocked = false;
@@ -146,6 +153,10 @@ namespace LeopotamGroup.Gui.Common {
 
         Camera _camera;
 
+        int _lastScreenWidth;
+
+        int _lastScreenHeight;
+
         readonly GuiTouchInfo[] _touches = new GuiTouchInfo[5];
 
         readonly List<GuiEventReceiver> _eventReceivers = new List<GuiEventReceiver> (64);
@@ -159,6 +170,10 @@ namespace LeopotamGroup.Gui.Common {
                 return;
             }
             _instance = this;
+
+            VirtualToRealScaleFactor = 1f;
+
+            FixScaleFactors ();
         }
 
         void OnDestroy () {
@@ -193,11 +208,25 @@ namespace LeopotamGroup.Gui.Common {
             Camera.depth = _depth;
         }
 
+        void FixScaleFactors () {
+            if (Screen.width != _lastScreenWidth || Screen.height != _lastScreenHeight) {
+                _lastScreenWidth = Screen.width;
+                _lastScreenHeight = Screen.height;
+                VirtualToRealScaleFactor = _lastScreenHeight / (float) ScreenHeight;
+
+                foreach (var lbl in FindObjectsOfType<GuiLabel> ()) {
+                    lbl.UpdateVisuals (GuiDirtyType.Geometry);
+                }
+            }
+        }
+
         void LateUpdate () {
             if (_isChanged) {
                 _isChanged = false;
                 FixCamera ();
             }
+
+            FixScaleFactors ();
 
             if (!IsInputLocked && Application.isPlaying) {
                 ProcessInput ();

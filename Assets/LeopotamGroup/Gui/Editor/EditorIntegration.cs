@@ -16,14 +16,6 @@ using UnityEngine;
 namespace LeopotamGroup.Gui.UnityEditors {
     [InitializeOnLoad]
     public static class EditorIntegration {
-        static EditorIntegration () {
-            EditorApplication.hierarchyWindowItemOnGUI += OnDrawHierarchyItemIcon;
-        }
-
-        public static bool IsUndo () {
-            return Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "UndoRedoPerformed";
-        }
-
         static Texture2D _whiteTexture;
 
         static readonly Color _panelColor = new Color (1f, 0.5f, 0.5f);
@@ -33,6 +25,14 @@ namespace LeopotamGroup.Gui.UnityEditors {
         static readonly Color _spriteColor = new Color (0.5f, 1f, 1f);
 
         static readonly Color _labelColor = new Color (1f, 1f, 0.5f);
+
+        static EditorIntegration () {
+            EditorApplication.hierarchyWindowItemOnGUI += OnDrawHierarchyItemIcon;
+        }
+
+        public static bool IsUndo () {
+            return Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "UndoRedoPerformed";
+        }
 
         static void OnDrawHierarchyItemIcon (int instanceID, Rect selectionRect) {
             try {

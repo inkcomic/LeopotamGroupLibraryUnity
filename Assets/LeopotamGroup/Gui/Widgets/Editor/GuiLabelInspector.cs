@@ -3,6 +3,7 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.UnityEditors;
 using UnityEditor;
 using UnityEngine;
@@ -10,37 +11,73 @@ using UnityEngine;
 namespace LeopotamGroup.Gui.Widgets.UnityEditors {
     [CustomEditor (typeof (GuiLabel))]
     sealed class GuiLabelInspector : Editor {
+        SerializedProperty _fontProperty;
+
+        SerializedProperty _fontSizeProperty;
+
+        SerializedProperty _alignmentProperty;
+
+        SerializedProperty _textProperty;
+
+        SerializedProperty _widthProperty;
+
+        SerializedProperty _heightProperty;
+
+        SerializedProperty _depthProperty;
+
+        SerializedProperty _colorProperty;
+
+        SerializedProperty _lineHeightProperty;
+
+        SerializedProperty _effectProperty;
+
+        SerializedProperty _effectValueProperty;
+
+        SerializedProperty _effectColorProperty;
+
+        void OnEnable () {
+            _fontProperty = serializedObject.FindProperty ("_font");
+            _fontSizeProperty = serializedObject.FindProperty ("_fontSize");
+            _alignmentProperty = serializedObject.FindProperty ("_alignment");
+            _textProperty = serializedObject.FindProperty ("_text");
+            _widthProperty = serializedObject.FindProperty ("_width");
+            _heightProperty = serializedObject.FindProperty ("_height");
+            _depthProperty = serializedObject.FindProperty ("_depth");
+            _colorProperty = serializedObject.FindProperty ("_color");
+            _lineHeightProperty = serializedObject.FindProperty ("_lineHeight");
+            _effectProperty = serializedObject.FindProperty ("_effect");
+            _effectValueProperty = serializedObject.FindProperty ("_effectValue");
+            _effectColorProperty = serializedObject.FindProperty ("_effectColor");
+        }
+
         public override void OnInspectorGUI () {
             serializedObject.Update ();
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_font"));
-            var prop = serializedObject.FindProperty ("_fontSize");
-            EditorGUILayout.PropertyField (prop);
-            if (prop.intValue < 4) {
-                prop.intValue = 4;
+            EditorGUILayout.PropertyField (_fontProperty);
+            EditorGUILayout.PropertyField (_fontSizeProperty);
+            if (_fontSizeProperty.intValue < 4) {
+                _fontSizeProperty.intValue = 4;
             }
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_alignment"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_text"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_width"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_height"));
-            EditorGUILayout.IntSlider (serializedObject.FindProperty ("_depth"), -49, 49);
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("_color"));
+            EditorGUILayout.PropertyField (_alignmentProperty);
+            EditorGUILayout.PropertyField (_textProperty);
+            EditorGUILayout.PropertyField (_widthProperty);
+            EditorGUILayout.PropertyField (_heightProperty);
+            EditorGUILayout.IntSlider (_depthProperty, -GuiWidget.DepthLimit, GuiWidget.DepthLimit);
+            EditorGUILayout.PropertyField (_colorProperty);
 
-            prop = serializedObject.FindProperty ("_lineHeight");
-            EditorGUILayout.PropertyField (prop);
-            if (prop.floatValue <= 0.1f) {
-                prop.floatValue = 0.1f;
+            EditorGUILayout.PropertyField (_lineHeightProperty);
+            if (_lineHeightProperty.floatValue <= 0.1f) {
+                _lineHeightProperty.floatValue = 0.1f;
             }
 
-            prop = serializedObject.FindProperty ("_effect");
-            EditorGUILayout.PropertyField (prop);
+            EditorGUILayout.PropertyField (_effectProperty);
 
-            if (prop.enumValueIndex != 0) {
-                prop = serializedObject.FindProperty ("_effectValue");
-                prop.vector2Value = EditorGUILayout.Vector2Field ("Effect Value", prop.vector2Value);
-                EditorGUILayout.PropertyField (serializedObject.FindProperty ("_effectColor"));
+            if ((GuiFontEffect) _effectProperty.enumValueIndex != GuiFontEffect.None) {
+                _effectValueProperty.vector2Value = EditorGUILayout.Vector2Field ("Effect Value", _effectValueProperty.vector2Value);
+                EditorGUILayout.PropertyField (_effectColorProperty);
             }
                 
             if (GUILayout.Button ("Bake scale to widget size")) {
+                Undo.RecordObject (target, "leopotamgroup.gui.label.bake-scale-size");
                 GuiLabel l;
                 foreach (var item in targets) {
                     l = item as GuiLabel;
@@ -64,8 +101,14 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
         [DrawGizmo (GizmoType.NonSelected | GizmoType.InSelectionHierarchy)]
         static void OnDrawRootGizmo (GuiLabel lbl, GizmoType gizmoType) {
             if (lbl.IsVisible) {
+                var tr = lbl.transform;
+                var oldColor = Gizmos.color;
+                var oldMat = Gizmos.matrix;
+                Gizmos.matrix = Matrix4x4.TRS (tr.position, tr.rotation, tr.lossyScale);
                 Gizmos.color = (gizmoType & GizmoType.InSelectionHierarchy) != 0 ? Color.yellow : new Color (0.5f, 0.5f, 0f);
-                Gizmos.DrawWireCube (lbl.transform.position, new Vector3 (lbl.Width, lbl.Height, 0f));
+                Gizmos.DrawWireCube (Vector3.zero, new Vector3 (lbl.Width, lbl.Height, 0f));
+                Gizmos.matrix = oldMat;
+                Gizmos.color = oldColor;
             }
         }
     }

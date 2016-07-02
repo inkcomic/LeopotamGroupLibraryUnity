@@ -70,7 +70,8 @@ Shader "LeopotamGroup/Gui/Font" {
 
             fixed4 frag (v2f i) : COLOR
             {
-                fixed4 c = tex2D (_MainTex, i.uv).aaaa * i.color;
+                fixed4 c = i.color;
+                c.a *= tex2D (_MainTex, i.uv).a;
 
                 #ifdef GUI_CLIP_RANGE
                 fixed2 t = step(_ClipData.xy, i.clipPos.xy) * step(i.clipPos.xy, _ClipData.zw);

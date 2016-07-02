@@ -44,6 +44,7 @@ namespace LeopotamGroup.Gui.Common {
             generateOutOfBounds = false,
             updateBounds = false,
             resizeTextMinSize = 0,
+            resizeTextMaxSize = 256,
             resizeTextForBestFit = false,
             alignByGeometry = false
         };
@@ -74,11 +75,13 @@ namespace LeopotamGroup.Gui.Common {
                 return;
             }
 
-            _settings.textAnchor = align;
+            _settings.fontSize = (int) (fontSize * GuiSystem.Instance.VirtualToRealScaleFactor);
+
+            var scale = fontSize / (float) _settings.fontSize;
+
             _settings.font = font;
-            _settings.fontSize = fontSize;
-            _settings.resizeTextMaxSize = fontSize;
-            _settings.generationExtents = new Vector2 (width, height);
+            _settings.textAnchor = align;
+            _settings.generationExtents = new Vector2 (width, height) / scale;
             _settings.lineSpacing = lineHgt;
             _settings.color = color;
             _generator.Invalidate ();
@@ -97,19 +100,19 @@ namespace LeopotamGroup.Gui.Common {
                 }
                 _uiV = _verts[i++];
                 _c = _uiV.color;
-                _v0 = _uiV.position;
+                _v0 = _uiV.position * scale;
                 _uv0 = _uiV.uv0;
 
                 _uiV = _verts[i++];
-                _v1 = _uiV.position;
+                _v1 = _uiV.position * scale;
                 _uv1 = _uiV.uv0;
 
                 _uiV = _verts[i++];
-                _v2 = _uiV.position;
+                _v2 = _uiV.position * scale;
                 _uv2 = _uiV.uv0;
 
                 _uiV = _verts[i++];
-                _v3 = _uiV.position;
+                _v3 = _uiV.position * scale;
                 _uv3 = _uiV.uv0;
                 GuiMeshTools.FillBuffer (ref _v0, ref _v1, ref _v2, ref _v3, ref _uv0, ref _uv1, ref _uv2, ref _uv3, ref _c);
             }

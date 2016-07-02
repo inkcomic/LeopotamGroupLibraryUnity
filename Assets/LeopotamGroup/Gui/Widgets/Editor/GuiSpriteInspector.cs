@@ -13,8 +13,6 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
     [CanEditMultipleObjects]
     [CustomEditor (typeof (GuiSprite))]
     sealed class GuiSpriteInspector : Editor {
-        const int DepthLimit = 49;
-
         SerializedProperty _atlasProperty;
 
         SerializedProperty _nameProperty;
@@ -138,7 +136,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
 
             EditorGUILayout.Separator ();
 
-            EditorGUILayout.IntSlider (_depthProperty, -DepthLimit, DepthLimit);
+            EditorGUILayout.IntSlider (_depthProperty, -GuiWidget.DepthLimit, GuiWidget.DepthLimit);
             EditorGUILayout.PropertyField (_colorProperty);
 
             if (serializedObject.ApplyModifiedProperties () || needUpdate || EditorIntegration.IsUndo ()) {
