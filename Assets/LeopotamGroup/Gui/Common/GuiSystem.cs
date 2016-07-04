@@ -171,6 +171,9 @@ namespace LeopotamGroup.Gui.Common {
             }
             _instance = this;
 
+            _lastScreenWidth = -1;
+            _lastScreenHeight = -1;
+
             VirtualToRealScaleFactor = 1f;
 
             FixScaleFactors ();

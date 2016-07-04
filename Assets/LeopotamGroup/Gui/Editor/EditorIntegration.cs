@@ -183,8 +183,68 @@ namespace LeopotamGroup.Gui.UnityEditors {
             });
         }
 
+        [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/ProgressBar", false, 1)]
+        static void CreateWidgetProgressBar () {
+            SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, assetPath => {
+                var slider = WidgetFactory.CreateWidgetSlider ();
+                slider.name = "ProgressBar";
+                Undo.RegisterCreatedObjectUndo (slider.gameObject, "leopotamgroup.gui.create-progressbar");
+                FixWidgetParent (slider);
+                if (!string.IsNullOrEmpty (assetPath)) {
+                    var atlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                    var sprNames = atlas.GetSpriteNames ();
+                    var name = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                    slider.Background.name = "Background";
+                    slider.Foreground.name = "Foreground";
+                    slider.Background.SpriteAtlas = atlas;
+                    slider.Foreground.SpriteAtlas = atlas;
+                    slider.Background.SpriteName = name;
+                    slider.Foreground.SpriteName = name;
+                    slider.Background.ResetSize ();
+                    slider.Foreground.ResetSize ();
+                }
+                slider.Value = 0.5f;
+                slider.UpdateVisuals ();
+                UpdateVisuals (slider);
+            });
+        }
+
+        [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/Slider", false, 1)]
+        static void CreateWidgetSlider () {
+            SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, assetPath => {
+                var slider = WidgetFactory.CreateWidgetSlider (true, true);
+                Undo.RegisterCreatedObjectUndo (slider.gameObject, "leopotamgroup.gui.create-slider");
+                FixWidgetParent (slider);
+                if (!string.IsNullOrEmpty (assetPath)) {
+                    var atlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                    var sprNames = atlas.GetSpriteNames ();
+                    var name = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                    var thumb = slider.GetComponentInChildren<GuiBindPosition> ().GetComponent<GuiSprite> ();
+                    slider.Background.name = "Background";
+                    slider.Foreground.name = "Foreground";
+                    thumb.name = "Thumb";
+                    slider.Background.SpriteAtlas = atlas;
+                    slider.Foreground.SpriteAtlas = atlas;
+                    thumb.SpriteAtlas = atlas;
+                    slider.Background.SpriteName = name;
+                    slider.Foreground.SpriteName = name;
+                    thumb.SpriteName = name;
+                    slider.Background.ResetSize ();
+                    slider.Foreground.ResetSize ();
+                    thumb.ResetSize ();
+
+                    var receiver = slider.Background.GetComponent <GuiEventReceiver> ();
+                    receiver.Width = slider.Background.Width;
+                    receiver.Height = slider.Background.Height;
+                }
+                slider.Value = 0.5f;
+                slider.UpdateVisuals ();
+                UpdateVisuals (slider);
+            });
+        }
+
         [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/Panel", false, 1)]
-        static void CreateWidgetPanel () {
+        static void CreateLayoutPanel () {
             FixWidgetParent (WidgetFactory.CreateWidgetPanel ());
         }
 

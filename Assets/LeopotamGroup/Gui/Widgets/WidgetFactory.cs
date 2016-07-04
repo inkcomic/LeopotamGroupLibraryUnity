@@ -71,6 +71,27 @@ namespace LeopotamGroup.Gui.Widgets {
             return button;
         }
 
+        public static GuiSlider CreateWidgetSlider (bool withInteraction = false, bool withThumb = false) {
+            var slider = CreateWidget<GuiSlider> ();
+            var background = CreateWidget<GuiSprite> (slider.transform);
+            var foreground = CreateWidget<GuiSprite> (slider.transform);
+            foreground.Depth = 1;
+            slider.Background = background;
+            slider.Foreground = foreground;
+            if (withInteraction) {
+                background.gameObject.AddComponent<GuiEventReceiver> ();
+            }
+            if (withThumb) {
+                var thumb = CreateWidget<GuiSprite> (slider.transform);
+                thumb.Depth = 2;
+                var bind = thumb.gameObject.EnsureGetComponent<GuiBindPosition> ();
+                bind.Target = foreground;
+                bind.Horizontal = 1f;
+                bind.Once = false;
+            }
+            return slider;
+        }
+
         /// <summary>
         /// Create GuiBindPosition.
         /// </summary>

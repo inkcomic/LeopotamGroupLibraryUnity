@@ -6,7 +6,6 @@
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Math;
 using UnityEngine;
-using LeopotamGroup.Common;
 
 namespace LeopotamGroup.Gui.Widgets {
     /// <summary>
