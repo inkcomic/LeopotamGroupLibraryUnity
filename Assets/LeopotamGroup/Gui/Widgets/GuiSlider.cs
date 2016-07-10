@@ -101,8 +101,7 @@ namespace LeopotamGroup.Gui.Widgets {
         }
 
         void OnDrag (GuiEventReceiver rcv, GuiTouchEventArg args) {
-            var pos = GuiSystem.Instance.Camera.ScreenToWorldPoint (args.Position);
-            var offset = _background.transform.InverseTransformPoint (pos).x / (float) _background.Width;
+            var offset = _background.transform.InverseTransformPoint (args.WorldPosition).x / (float) _background.Width;
             Value = Mathf.Clamp (offset, -0.5f, 0.5f) + 0.5f;
         }
 

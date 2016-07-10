@@ -166,10 +166,9 @@ namespace LeopotamGroup.Gui.Layout {
         /// Force revalidate internal atlases, fonts and children.
         /// </summary>
         public void UpdateVisuals () {
-            var guiCamTrans = GuiSystem.Instance.Camera.transform;
-            var pos = guiCamTrans.InverseTransformPoint (_cachedTransform.position);
+            var pos = GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.position);
             pos.z = -_depth * PanelDepthSlice;
-            var worldPos = guiCamTrans.TransformPoint (pos);
+            var worldPos = GuiSystem.Instance.CameraTransform.TransformPoint (pos);
             _cachedTransform.position = worldPos;
 
             InvalidateClipData (worldPos);

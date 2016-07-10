@@ -99,6 +99,18 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         /// <summary>
+        /// Cached camera transform.
+        /// </summary>
+        public Transform CameraTransform {
+            get {
+                if (_cameraTransform == null) {
+                    _cameraTransform = Camera.transform;
+                }
+                return _cameraTransform;
+            }
+        }
+
+        /// <summary>
         /// Scale factor, equals RealResolution / VirtualResolution. Useful for text crisping.
         /// </summary>
         /// <value>The virtual to real scale factor.</value>
@@ -151,6 +163,8 @@ namespace LeopotamGroup.Gui.Common {
 
         bool _isChanged;
 
+        Transform _cameraTransform;
+
         Camera _camera;
 
         int _lastScreenWidth;
@@ -199,16 +213,16 @@ namespace LeopotamGroup.Gui.Common {
             if (_camera == null) {
                 _camera = GetComponent <Camera> ();
             }
-            Camera.hideFlags = HideFlags.HideInInspector;
-            Camera.orthographic = true;
-            Camera.orthographicSize = ScreenHeight * 0.5f;
-            Camera.nearClipPlane = -501f;
-            Camera.farClipPlane = 501f;
-            Camera.useOcclusionCulling = false;
-            Camera.clearFlags = _clearFlags;
-            Camera.backgroundColor = _backgroundColor;
-            Camera.cullingMask = _cullingMask;
-            Camera.depth = _depth;
+            _camera.hideFlags = HideFlags.HideInInspector;
+            _camera.orthographic = true;
+            _camera.orthographicSize = ScreenHeight * 0.5f;
+            _camera.nearClipPlane = -501f;
+            _camera.farClipPlane = 501f;
+            _camera.useOcclusionCulling = false;
+            _camera.clearFlags = _clearFlags;
+            _camera.backgroundColor = _backgroundColor;
+            _camera.cullingMask = _cullingMask;
+            _camera.depth = _depth;
         }
 
         void FixScaleFactors () {
@@ -253,13 +267,13 @@ namespace LeopotamGroup.Gui.Common {
 
             for (var i = 0; i < touchCount; i++) {
                 if (!isMouse) {
-                    _touches[i].UpdateChanges (Input.GetTouch (i), Camera, ScreenHeight);
+                    _touches[i].UpdateChanges (Input.GetTouch (i), _camera, ScreenHeight);
                 } else {
                     isMouse = false;
                 }
 
                 if (_touches[i].IsStateChanged || _touches[i].IsDeltaChanged) {
-                    worldPos = Camera.ScreenToWorldPoint (_touches[i].RawPosition);
+                    worldPos = _camera.ScreenToWorldPoint (_touches[i].RawPosition);
                     newReceiver = null;
                     for (int j = _eventReceivers.Count - 1; j >= 0; j--) {
                         if (_eventReceivers[j].IsPointInside (worldPos.x, worldPos.y)) {
@@ -268,7 +282,7 @@ namespace LeopotamGroup.Gui.Common {
                         }
                     }
 
-                    _touchEventArg.SetData (_touches[i].State, _touches[i].RawPosition, _touches[i].Delta);
+                    _touchEventArg.SetData (_touches[i].State, _touches[i].Position, worldPos, _touches[i].Delta);
 
                     if (_touches[i].IsDeltaChanged) {
                         if (_touches[i].Receiver != null) {
