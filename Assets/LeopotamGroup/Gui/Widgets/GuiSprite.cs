@@ -36,7 +36,7 @@ namespace LeopotamGroup.Gui.Widgets {
         public string SpriteName {
             get { return _spriteName; }
             set {
-                if (value != _spriteName) {
+                if (string.CompareOrdinal (value, _spriteName) != 0) {
                     _spriteName = value;
                     SetDirty (GuiDirtyType.Geometry);
                 }

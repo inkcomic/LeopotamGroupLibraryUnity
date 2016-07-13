@@ -31,10 +31,9 @@ namespace LeopotamGroup.Gui.Tweeners {
         protected override void OnInit () {
             if (Target == null) {
                 Target = GetComponent <GuiWidget> ();
-                enabled = false;
             }
             if (Target == null) {
-                Destroy (this);
+                enabled = false;
             }
         }
 

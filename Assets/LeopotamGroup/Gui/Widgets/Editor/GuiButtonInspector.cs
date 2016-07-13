@@ -3,10 +3,11 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using LeopotamGroup.Gui.Common.UnityEditors;
 using LeopotamGroup.Gui.Widgets;
 using UnityEditor;
 
-namespace LeopotamGroup.Gui.Common.UnityEditors {
+namespace LeopotamGroup.Gui.Widgets.UnityEditors {
     [CustomEditor (typeof (GuiButton))]
     sealed class GuiButtonInspector : GuiEventReceiverInspector {
         SerializedProperty _visualsProperty;
@@ -40,6 +41,8 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             EditorGUILayout.PropertyField (_disableColorProperty);
             EditorGUILayout.PropertyField (_scaleOnPressProperty);
             EditorGUILayout.PropertyField (_tweenTimeProperty);
+
+            serializedObject.ApplyModifiedProperties ();
 
             base.OnInspectorGUI ();
         }

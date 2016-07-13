@@ -37,6 +37,11 @@ namespace LeopotamGroup.Tweening {
         public float CurrentTime { get; private set; }
 
         /// <summary>
+        /// Get current non-normalized time of tweening.
+        /// </summary>
+        public float CurrentTimeRaw { get; private set; }
+
+        /// <summary>
         /// Gets tweened value at current time.
         /// </summary>
         /// <value>The value.</value>
@@ -86,6 +91,7 @@ namespace LeopotamGroup.Tweening {
         public void Reset () {
             _tweenCount = TweenCount;
             CurrentTime = 0f;
+            CurrentTimeRaw = 0f;
             OnReset ();
         }
 
@@ -96,23 +102,29 @@ namespace LeopotamGroup.Tweening {
             }
             if (TweenTime <= 0f) {
                 CurrentTime = 0f;
+                CurrentTimeRaw = 0f;
                 OnUpdateValue ();
                 enabled = false;
                 return;
             }
-            CurrentTime = Mathf.Clamp01 (CurrentTime + deltaTime / TweenTime);
-            OnUpdateValue ();
-            if (CurrentTime >= 1f) {
+            deltaTime /= TweenTime;
+
+            CurrentTimeRaw += deltaTime;
+            CurrentTime += deltaTime;
+
+            if (CurrentTime > 1f) {
                 _tweenCount--;
                 if (_tweenCount == 0) {
                     enabled = false;
                     return;
                 }
-                CurrentTime = 0f;
+                CurrentTime %= 1f;
                 if (_tweenCount < 0) {                    
                     _tweenCount = 0;
                 }
             }
+
+            OnUpdateValue ();
         }
     }
 }
