@@ -87,6 +87,8 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             } catch {
             }
 
+            AssetDatabase.Refresh ();
+
             var sprites = new List<Texture2D> ();
 
             foreach (var spriteFileName in Directory.GetFiles (fileName, "*.png", SearchOption.TopDirectoryOnly)) {
@@ -98,6 +100,7 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             }
 
             var atlasTex = new Texture2D (2, 2, TextureFormat.ARGB32, false);
+            atlasTex.hideFlags = HideFlags.HideAndDontSave;
 
             Rect[] rects;
 
@@ -110,8 +113,8 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
                 rects = atlasTex.PackTextures (sprites.ToArray (), 2, 2048);
             }
 
-            var atlasColor = new Texture2D (atlasTex.width, atlasTex.height, TextureFormat.RGB24, false);
-            var atlasAlpha = new Texture2D (atlasTex.width, atlasTex.height, TextureFormat.RGB24, false);
+            var tex = new Texture2D (atlasTex.width, atlasTex.height, TextureFormat.RGB24, false);
+            tex.hideFlags = HideFlags.HideAndDontSave;
             var srcColors = atlasTex.GetPixels32 ();
             DestroyImmediate (atlasTex);
             atlasTex = null;
@@ -122,23 +125,24 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
                 c = srcColors[i];
                 dstAlphas[i] = new Color32 (c.a, c.a, c.a, 255);
             }
-            atlasColor.SetPixels32 (srcColors);
-            atlasAlpha.SetPixels32 (dstAlphas);
+            tex.SetPixels32 (srcColors);
+            var colorData = tex.EncodeToPNG ();
+            tex.SetPixels32 (dstAlphas);
+            var alphaData = tex.EncodeToPNG ();
+            DestroyImmediate (tex);
+            tex = null;
 
             try {
                 var srcAtlasPath = AssetDatabase.GetAssetPath (atlas);
-                var isRepeated = Path.GetFileNameWithoutExtension (srcAtlasPath).Contains (".repeated");
                 EditorUtility.DisplayProgressBar ("Save and import atlas data", "Color data processing...", 1f);
                 var atlasPath = Path.ChangeExtension (srcAtlasPath, "color.png");
-                File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), atlasPath), atlasColor.EncodeToPNG ());
-                DestroyImmediate (atlasColor);
-                atlasTex = FixAtlasImport (atlasPath, isRepeated);
+                File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), atlasPath), colorData);
+                atlasTex = FixAtlasImport (atlasPath);
 
                 EditorUtility.DisplayProgressBar ("Save and import atlas data", "Alpha data processing...", 1f);
                 atlasPath = Path.ChangeExtension (srcAtlasPath, "alpha.png");
-                File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), atlasPath), atlasAlpha.EncodeToPNG ());
-                DestroyImmediate (atlasAlpha);
-                var alphaT = FixAtlasImport (atlasPath, isRepeated);
+                File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), atlasPath), alphaData);
+                var alphaT = FixAtlasImport (atlasPath);
 
                 atlas.ColorTexture = atlasTex;
                 atlas.AlphaTexture = alphaT;
@@ -200,11 +204,11 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             return null;
         }
 
-        static Texture2D FixAtlasImport (string atlasPath, bool isRepeated) {
+        static Texture2D FixAtlasImport (string atlasPath) {
             AssetDatabase.ImportAsset (atlasPath, ImportAssetOptions.ForceUpdate);
             var atlasTex = AssetDatabase.LoadAssetAtPath<Texture2D> (atlasPath);
             var splatSettings = AssetImporter.GetAtPath (atlasPath) as TextureImporter;
-            splatSettings.wrapMode = isRepeated ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
+            splatSettings.wrapMode = TextureWrapMode.Clamp;
             splatSettings.anisoLevel = 2;
             splatSettings.filterMode = FilterMode.Bilinear;
             splatSettings.alphaIsTransparency = true;
@@ -212,7 +216,6 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             splatSettings.compressionQuality = 100;
             splatSettings.mipmapEnabled = false;
             splatSettings.textureType = TextureImporterType.Advanced;
-            AssetDatabase.ImportAsset (atlasPath, ImportAssetOptions.ForceUpdate);
             return atlasTex;
         }
     }
