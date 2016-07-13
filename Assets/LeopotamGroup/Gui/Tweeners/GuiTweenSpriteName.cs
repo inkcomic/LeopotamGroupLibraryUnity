@@ -3,13 +3,16 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using LeopotamGroup.Gui.Widgets;
 using LeopotamGroup.Tweening;
 using UnityEngine;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace LeopotamGroup.Gui.Tweeners {
+    /// <summary>
+    /// Tweening GuiSprite content.
+    /// </summary>
     [RequireComponent (typeof (GuiSprite))]
     public class GuiTweenSpriteName : TweeningBase {
         /// <summary>
@@ -20,7 +23,7 @@ namespace LeopotamGroup.Gui.Tweeners {
         /// <summary>
         /// Name mask. Regular expression.
         /// </summary>
-        public string NameMask = ".*";
+        public string NameMask = "^.*";
 
         /// <summary>
         /// Reset sprite size on each frame.
@@ -59,6 +62,9 @@ namespace LeopotamGroup.Gui.Tweeners {
             }
         }
 
+        /// <summary>
+        /// Reset cached names from atlas.
+        /// </summary>
         public void ResetNames () {
             _filteredNames.Clear ();
             if (Target.SpriteAtlas != null) {
