@@ -30,6 +30,12 @@ Special helpers: show fps, debug-log output with automatic removing on build, et
 
 ----------------------------------------------------------------------------
 
+* Events
+
+EventBus realization.
+
+----------------------------------------------------------------------------
+
 * FX
 
 Visual / audial effect helpers: sound / music manipulations, screen fading.
