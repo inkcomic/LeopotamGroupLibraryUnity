@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 using LeopotamGroup.Math;
-using System.Collections;
+using UnityEngine;
 
 namespace LeopotamGroup.Examples.MathTest {
     public class MathTest : MonoBehaviour {

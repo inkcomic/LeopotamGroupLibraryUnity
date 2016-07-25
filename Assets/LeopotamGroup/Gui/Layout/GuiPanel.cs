@@ -3,11 +3,11 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Common;
 using UnityEngine;
-using System;
 
 namespace LeopotamGroup.Gui.Layout {
     /// <summary>

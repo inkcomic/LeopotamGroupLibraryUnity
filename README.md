@@ -32,7 +32,7 @@ Special helpers: show fps, debug-log output with automatic removing on build, et
 
 * Events
 
-EventBus realization.
+EventBus realization with cancelable events.
 
 ----------------------------------------------------------------------------
 

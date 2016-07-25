@@ -23,18 +23,18 @@ namespace LeopotamGroup.Events {
         /// <summary>
         /// Subscribe callback to be raised on specific event.
         /// </summary>
-        /// <param name="eventAction">Callback.</param>
+        /// <param name="eventAction">Callback. Should returns state - is event interrupted / should not be processed by next callbacks or not.</param>
         /// <param name="insertAsFirst">Is callback should be raised first in sequence.</param>
-        public void Subscribe<T> (Action<T> eventAction, bool insertAsFirst = false) {
+        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) {
             if (eventAction == null) {
                 return;
             }
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (!_events.ContainsKey (eventType)) {
-                    _events[eventType] = new List<Action<T>> ();
+                    _events[eventType] = new List<Func<T, bool>> ();
                 }
-                var list = _events[eventType] as List<Action<T>>;
+                var list = _events[eventType] as List<Func<T, bool>>;
                 if (list == null) {
                     Debug.LogError ("Cant subscribe to event: " + eventType.Name);
                     return;
@@ -54,14 +54,14 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Event action.</param>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
-        public void Unsubscribe<T> (Action<T> eventAction, bool keepEvent = false) where T : class {
+        public void Unsubscribe<T> (Func<T, bool> eventAction, bool keepEvent = false) where T : class {
             if (eventAction == null) {
                 return;
             }
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
-                    var list = _events[eventType] as List<Action<T>>;
+                    var list = _events[eventType] as List<Func<T, bool>>;
                     if (list != null) {
                         var id = list.IndexOf (eventAction);
                         if (id != -1) {
@@ -85,11 +85,20 @@ namespace LeopotamGroup.Events {
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
                     if (keepEvent) {
-                        (_events[eventType] as List<Action<T>>).Clear ();
+                        (_events[eventType] as List<Func<T, bool>>).Clear ();
                     } else {
                         _events.Remove (eventType);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Unsubscribes all events.
+        /// </summary>
+        public void UnsubscribeAllEvents () {
+            lock (_syncObj) {
+                _events.Clear ();
             }
         }
 
@@ -102,14 +111,14 @@ namespace LeopotamGroup.Events {
                 return;
             }
             var eventType = typeof (T);
-            List<Action<T>> list = null;
+            List<Func<T, bool>> list = null;
             lock (_syncObj) {
                 if (_eventsInCall.Contains (eventType)) {
                     Debug.LogError ("Already in calling of " + eventType.Name);
                     return;
                 }
                 if (_events.ContainsKey (eventType)) {
-                    list = _events[eventType] as List<Action<T>>;
+                    list = _events[eventType] as List<Func<T, bool>>;
                 }
                 if (list != null) {
                     _eventsInCall.Add (eventType);
@@ -123,7 +132,10 @@ namespace LeopotamGroup.Events {
                 }
                 try {
                     for (i = 0; i < iMax; i++) {
-                        (_currentEventCallList[i] as Action<T>) (eventMessage);
+                        if ((_currentEventCallList[i] as Func<T, bool>) (eventMessage)) {
+                            // Event was interrupted / processed, we can exit.
+                            return;
+                        }
                     }
                 } finally {
                     _currentEventCallList.Clear ();
