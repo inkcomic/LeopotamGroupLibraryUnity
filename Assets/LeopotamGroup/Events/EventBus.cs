@@ -25,7 +25,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Callback. Should returns state - is event interrupted / should not be processed by next callbacks or not.</param>
         /// <param name="insertAsFirst">Is callback should be raised first in sequence.</param>
-        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) {
+        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) where T : class {
             if (eventAction == null) {
                 return;
             }
@@ -80,7 +80,7 @@ namespace LeopotamGroup.Events {
         /// Unsubscribes all callbacks from event.
         /// </summary>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
-        public void UnsubscribeAll<T> (bool keepEvent = false) {
+        public void UnsubscribeAll<T> (bool keepEvent = false) where T : class {
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
