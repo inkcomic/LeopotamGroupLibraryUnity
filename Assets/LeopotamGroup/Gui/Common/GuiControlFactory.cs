@@ -4,15 +4,16 @@
 //-------------------------------------------------------
 
 using LeopotamGroup.Common;
-using LeopotamGroup.Gui.Common;
+using LeopotamGroup.Gui.Interaction;
 using LeopotamGroup.Gui.Layout;
+using LeopotamGroup.Gui.Widgets;
 using UnityEngine;
 
-namespace LeopotamGroup.Gui.Widgets {
+namespace LeopotamGroup.Gui.Common {
     /// <summary>
     /// Contains helpers for widget creation at runtime.
     /// </summary>
-    public static class WidgetFactory {
+    public static class GuiControlFactory {
         static T CreateWidget<T> (Transform parent = null) where T: MonoBehaviour {
             GuiSystem.Instance.Validate ();
             var go = new GameObject (typeof (T).Name);
@@ -71,6 +72,12 @@ namespace LeopotamGroup.Gui.Widgets {
             return button;
         }
 
+        /// <summary>
+        /// Create slider.
+        /// </summary>
+        /// <returns>The widget slider.</returns>
+        /// <param name="withInteraction">If set to <c>true</c> with interaction.</param>
+        /// <param name="withThumb">If true - thumb subcomponent willbe created.</param>
         public static GuiSlider CreateWidgetSlider (bool withInteraction = false, bool withThumb = false) {
             var slider = CreateWidget<GuiSlider> ();
             var background = CreateWidget<GuiSprite> (slider.transform);
@@ -96,7 +103,7 @@ namespace LeopotamGroup.Gui.Widgets {
         /// Create GuiBindPosition.
         /// </summary>
         /// <returns>The layout bind position.</returns>
-        /// <param name="go">Go.</param>
+        /// <param name="go">GameObject.</param>
         public static GuiBindPosition CreateLayoutBindPosition (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiBindPosition> () : null;
         }
@@ -105,9 +112,27 @@ namespace LeopotamGroup.Gui.Widgets {
         /// Create GuiBindSize.
         /// </summary>
         /// <returns>The layout bind size.</returns>
-        /// <param name="go">Go.</param>
+        /// <param name="go">GameObject.</param>
         public static GuiBindSize CreateLayoutBindSize (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiBindSize> () : null;
+        }
+
+        /// <summary>
+        /// Create scroll view.
+        /// </summary>
+        /// <returns>Created scroll view.</returns>
+        /// <param name="go">GameObject.</param>
+        public static GuiScrollView CreateLayoutScrollView (GameObject go) {
+            return go != null ? go.EnsureGetComponent<GuiScrollView> () : null;
+        }
+
+        /// <summary>
+        /// Create component for dragging GuiScrollView content.
+        /// </summary>
+        /// <returns>Created GuiDragScrollView.</returns>
+        /// <param name="go">GameObject.</param>
+        public static GuiDragScrollView CreateInteractionDragScrollView (GameObject go) {
+            return go != null ? go.EnsureGetComponent<GuiDragScrollView> () : null;
         }
     }
 }

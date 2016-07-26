@@ -73,6 +73,11 @@ namespace LeopotamGroup.Gui.Layout {
             }
         }
 
+        /// <summary>
+        /// Clip bounds in world space (xMin, yMin, xMax, yMax).
+        /// </summary>
+        public Vector4 WorldClipRect { get; private set; }
+
         const float PanelDepthSlice = 50f;
 
         [HideInInspector]
@@ -97,8 +102,6 @@ namespace LeopotamGroup.Gui.Layout {
 
         bool _isChanged;
 
-        Vector4 _clipDataRaw;
-
         void OnEnable () {
             InvalidateClipData (transform.position);
             _isChanged = true;
@@ -112,7 +115,7 @@ namespace LeopotamGroup.Gui.Layout {
             var halfSize = new Vector3 (_clipWidth * 0.5f, _clipHeight * 0.5f, 0f);
             var min = worldPos - halfSize;
             var max = worldPos + halfSize;
-            _clipDataRaw = new Vector4 (min.x, min.y, max.x, max.y);
+            WorldClipRect = new Vector4 (min.x, min.y, max.x, max.y);
         }
 
         void LateUpdate () {
@@ -130,7 +133,7 @@ namespace LeopotamGroup.Gui.Layout {
             switch (_clipType) {
                 case GuiPanelClipType.Range:
                     mtrl.EnableKeyword (GuiConsts.ShaderKeyWordClipRange);
-                    mtrl.SetVector (GuiConsts.ShaderParamClipData, _clipDataRaw);
+                    mtrl.SetVector (GuiConsts.ShaderParamClipData, WorldClipRect);
                     break;
                 default:
                     mtrl.DisableKeyword (GuiConsts.ShaderKeyWordClipRange);
@@ -147,7 +150,7 @@ namespace LeopotamGroup.Gui.Layout {
             if (_clipType == GuiPanelClipType.None) {
                 return true;
             }
-            return x <= _clipDataRaw.z && x >= _clipDataRaw.x && y <= _clipDataRaw.w && y >= _clipDataRaw.y;
+            return x <= WorldClipRect.z && x >= WorldClipRect.x && y <= WorldClipRect.w && y >= WorldClipRect.y;
         }
 
         /// <summary>
@@ -159,7 +162,7 @@ namespace LeopotamGroup.Gui.Layout {
             if (_clipType == GuiPanelClipType.None) {
                 return true;
             }
-            return min.x <= _clipDataRaw.z && max.x >= _clipDataRaw.x && min.y <= _clipDataRaw.w && max.y >= _clipDataRaw.y;
+            return min.x <= WorldClipRect.z && max.x >= WorldClipRect.x && min.y <= WorldClipRect.w && max.y >= WorldClipRect.y;
         }
 
         /// <summary>
