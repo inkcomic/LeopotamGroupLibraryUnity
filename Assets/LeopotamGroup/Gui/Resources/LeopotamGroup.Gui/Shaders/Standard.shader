@@ -62,7 +62,7 @@ Shader "LeopotamGroup/Gui/Standard" {
                 o.color = v.color;
 
                 #ifdef GUI_CLIP_RANGE
-                o.clipPos = mul(_Object2World, v.vertex).xy;
+                o.clipPos = mul(unity_ObjectToWorld, v.vertex).xy;
                 #endif
 
                 return o;

@@ -30,7 +30,7 @@ namespace LeopotamGroup.Gui.Common {
         /// <summary>
         /// Get cached global order in camera space.
         /// </summary>
-        public float GlobalDepthOrder { get; private set; }
+        public int GlobalDepthOrder { get; private set; }
 
         /// <summary>
         /// Width of touch zone.
@@ -65,7 +65,7 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         void LateUpdate () {
-            GlobalDepthOrder = GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, Depth * 0.5f)).z;
+            GlobalDepthOrder = (int)(GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, Depth)).z * 100f);
         }
 
         /// <summary>

@@ -101,14 +101,7 @@ namespace LeopotamGroup.Gui.Common {
         /// <summary>
         /// Cached camera transform.
         /// </summary>
-        public Transform CameraTransform {
-            get {
-                if (_cameraTransform == null) {
-                    _cameraTransform = Camera.transform;
-                }
-                return _cameraTransform;
-            }
-        }
+        public Transform CameraTransform { get; private set; }
 
         /// <summary>
         /// Scale factor, equals RealResolution / VirtualResolution. Useful for text crisping.
@@ -127,17 +120,20 @@ namespace LeopotamGroup.Gui.Common {
         /// <value>The instance.</value>
         public static GuiSystem Instance {
             get {
-                if (_instance == null) {
+                if (!_isInstanceCreated) {
                     _instance = FindObjectOfType <GuiSystem> ();
                     if (_instance == null) {
                         var go = new GameObject ("GuiSystem");
                         go.layer = GuiConsts.DefaultGuiLayer;
                         go.AddComponent <GuiSystem> ().CullingMask = GuiConsts.DefaultGuiLayerMask;
                     }
+                    _isInstanceCreated = _instance != null;
                 }
                 return _instance;
             }
         }
+
+        static bool _isInstanceCreated;
 
         static GuiSystem _instance;
 
@@ -163,8 +159,6 @@ namespace LeopotamGroup.Gui.Common {
 
         bool _isChanged;
 
-        Transform _cameraTransform;
-
         Camera _camera;
 
         int _lastScreenWidth;
@@ -184,6 +178,7 @@ namespace LeopotamGroup.Gui.Common {
                 return;
             }
             _instance = this;
+            _isInstanceCreated = true;
 
             _lastScreenWidth = -1;
             _lastScreenHeight = -1;
@@ -196,6 +191,7 @@ namespace LeopotamGroup.Gui.Common {
         void OnDestroy () {
             if (_instance == this) {
                 _instance = null;
+                _isInstanceCreated = false;
             }
             _eventReceivers.Clear ();
         }
@@ -223,6 +219,7 @@ namespace LeopotamGroup.Gui.Common {
             _camera.backgroundColor = _backgroundColor;
             _camera.cullingMask = _cullingMask;
             _camera.depth = _depth;
+            CameraTransform = _camera.transform;
         }
 
         void FixScaleFactors () {
@@ -253,7 +250,7 @@ namespace LeopotamGroup.Gui.Common {
         void ProcessInput () {
             var touchCount = Mathf.Min (_touches.Length, Input.touchCount);
             bool isMouse;
-            if (touchCount == 0 && _touches[0].ProcessMouse (Camera, ScreenHeight)) {
+            if (touchCount == 0 && _touches[0].ProcessMouse (_camera, ScreenHeight)) {
                 touchCount = 1;
                 isMouse = true;
             } else {
@@ -263,7 +260,7 @@ namespace LeopotamGroup.Gui.Common {
             GuiEventReceiver newReceiver;
             Vector3 worldPos;
 
-            _eventReceivers.Sort ((a, b) => a.GlobalDepthOrder.CompareTo (b.GlobalDepthOrder));
+            _eventReceivers.Sort ((a, b) => a.GlobalDepthOrder - b.GlobalDepthOrder);
 
             for (var i = 0; i < touchCount; i++) {
                 if (!isMouse) {
