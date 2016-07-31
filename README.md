@@ -26,7 +26,8 @@ Common helpers, uses by other subsystems.
 
 * EditorHelpers
 
-Special helpers: show fps, debug-log output with automatic removing on build, etc.
+Special helpers: show fps, debug-log output with automatic removing on build,
+screen capturing of current platform for multiple aspects, etc.
 
 ----------------------------------------------------------------------------
 
