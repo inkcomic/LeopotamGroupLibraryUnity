@@ -21,7 +21,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         string _newUrl;
 
-        [MenuItem ("Window/LeopotamGroupLibrary/Localization updater")]
+        [MenuItem ("Window/LeopotamGroupLibrary/Update localization...")]
         static void OpenEditorWindow () {
             GetWindow<LocalizationUpdater> ();
         }

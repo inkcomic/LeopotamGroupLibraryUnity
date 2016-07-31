@@ -15,7 +15,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
     [InitializeOnLoad]
     [AttributeUsage (AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class PreBuildAttribute : Attribute {
-        static string _lastBuiltVersion;
+        static readonly string _lastBuiltVersion;
 
         static PreBuildAttribute () {
             if (PlayerSettings.bundleVersion != _lastBuiltVersion) {
