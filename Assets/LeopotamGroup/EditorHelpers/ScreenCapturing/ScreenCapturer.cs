@@ -15,6 +15,9 @@ using UnityEditor;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
+    /// <summary>
+    /// Screen capturer, can be started in play mode from "Window / LeopotamGroupLibrary / Capture screenshots..." menu.
+    /// </summary>
     [ExecuteInEditMode]
     sealed class ScreenCapturer : MonoBehaviour {
         readonly static List<Vector2i> _resList = new List<Vector2i>
@@ -30,6 +33,9 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
 
         const string FileNameMask = "Screenshot_{0}_{1}x{2}.png";
 
+        /// <summary>
+        /// Start capturing from code.
+        /// </summary>
         [MenuItem ("Window/LeopotamGroupLibrary/Capture screenshots...")]
         public static void Capture () {
             if (!Application.isPlaying) {
