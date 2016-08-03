@@ -61,9 +61,6 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
             }
 
             var platform = EditorUserBuildSettings.activeBuildTarget.ToString ();
-
-            var oldRes = Screen.currentResolution;
-            var oldResFS = Screen.fullScreen;
             var waiter = new WaitForEndOfFrame ();
             var savedPreset = GameViewResolution.GetPreset ();
             string err = null;
