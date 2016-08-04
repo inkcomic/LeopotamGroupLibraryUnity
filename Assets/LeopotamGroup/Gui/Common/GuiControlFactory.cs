@@ -118,6 +118,15 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         /// <summary>
+        /// Create GuiBindEventReceiverSize.
+        /// </summary>
+        /// <returns>The layout bind size.</returns>
+        /// <param name="go">GameObject.</param>
+        public static GuiBindEventReceiverSize CreateLayoutBindEventReceiverSize (GameObject go) {
+            return go != null ? go.EnsureGetComponent<GuiBindEventReceiverSize> () : null;
+        }
+
+        /// <summary>
         /// Create scroll view.
         /// </summary>
         /// <returns>Created scroll view.</returns>

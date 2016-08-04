@@ -265,6 +265,15 @@ namespace LeopotamGroup.Gui.UnityEditors {
             }
         }
 
+        [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/BindEventReceiverSize", false, 1)]
+        static void CreateLayoutBindEventReceiverSize () {
+            var bind = GuiControlFactory.CreateLayoutBindEventReceiverSize (Selection.activeGameObject);
+            if (bind != null) {
+                Undo.RegisterCreatedObjectUndo (bind.gameObject, "leopotamgroup.gui.create-bind-receiver-size");
+                FixWidgetParent (bind);
+            }
+        }
+
         [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/ScrollView", false, 1)]
         static void CreateLayoutScrollView () {
             if (Selection.activeGameObject.GetComponent<GuiPanel> () != null) {
