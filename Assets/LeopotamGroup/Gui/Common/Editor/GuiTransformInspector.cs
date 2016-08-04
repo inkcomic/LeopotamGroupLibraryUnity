@@ -126,6 +126,7 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             if (isReset) {
                 fieldX.floatValue = 1f;
                 fieldY.floatValue = 1f;
+                fieldZ.floatValue = 1f;
             }
         }
     }
