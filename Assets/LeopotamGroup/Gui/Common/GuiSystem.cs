@@ -250,7 +250,8 @@ namespace LeopotamGroup.Gui.Common {
         void ProcessInput () {
             var touchCount = Mathf.Min (_touches.Length, Input.touchCount);
             bool isMouse;
-            if (touchCount == 0 && _touches[0].ProcessMouse (_camera, ScreenHeight)) {
+            var scaleFactor = 1f / _camera.pixelHeight * ScreenHeight;
+            if (touchCount == 0 && _touches[0].ProcessMouse (_camera, scaleFactor)) {
                 touchCount = 1;
                 isMouse = true;
             } else {
@@ -262,15 +263,16 @@ namespace LeopotamGroup.Gui.Common {
 
             _eventReceivers.Sort ((a, b) => a.GlobalDepthOrder - b.GlobalDepthOrder);
 
+
             for (var i = 0; i < touchCount; i++) {
                 if (!isMouse) {
-                    _touches[i].UpdateChanges (Input.GetTouch (i), _camera, ScreenHeight);
+                    _touches[i].UpdateChanges (Input.GetTouch (i), _camera, scaleFactor);
                 } else {
                     isMouse = false;
                 }
 
                 if (_touches[i].IsStateChanged || _touches[i].IsDeltaChanged) {
-                    worldPos = _camera.ScreenToWorldPoint (_touches[i].RawPosition);
+                    worldPos = _touches[i].GuiWorldPosition;
                     newReceiver = null;
                     for (int j = _eventReceivers.Count - 1; j >= 0; j--) {
                         if (_eventReceivers[j].IsPointInside (worldPos.x, worldPos.y)) {
@@ -279,9 +281,9 @@ namespace LeopotamGroup.Gui.Common {
                         }
                     }
 
-                    _touchEventArg.SetData (_touches[i].State, _touches[i].Position, worldPos, _touches[i].Delta);
+                    _touchEventArg.SetData (_touches[i].State, _touches[i].ScreenPosition, worldPos, _touches[i].Delta);
 
-                    if (_touches[i].IsDeltaChanged) {
+                    if (_touches[i].IsCumulativeDeltaChanged) {
                         if (_touches[i].Receiver != null) {
                             _touches[i].Receiver.RaiseDragEvent (_touchEventArg);
                         }
@@ -291,7 +293,7 @@ namespace LeopotamGroup.Gui.Common {
                         if (!_touches[i].State) {
                             if (_touches[i].Receiver != null) {
                                 _touches[i].Receiver.RaisePressEvent (_touchEventArg);
-                                if (!_touches[i].IsDeltaChanged && _touches[i].Receiver == newReceiver) {
+                                if (!_touches[i].IsCumulativeDeltaChanged && _touches[i].Receiver == newReceiver) {
                                     _touches[i].Receiver.RaiseClickEvent (_touchEventArg);
                                 }
                             }
@@ -358,9 +360,9 @@ namespace LeopotamGroup.Gui.Common {
 
             public bool State;
 
-            public Vector2 Position;
+            public Vector2 GuiWorldPosition;
 
-            public Vector2 RawPosition;
+            public Vector2 ScreenPosition;
 
             public Vector2 Delta;
 
@@ -368,22 +370,26 @@ namespace LeopotamGroup.Gui.Common {
 
             public bool IsDeltaChanged;
 
+            public bool IsCumulativeDeltaChanged;
+
             public GuiEventReceiver Receiver;
 
             public static int DragOffsetSqr = 25 * 25;
 
             static Vector2 _mousePos;
 
-            public void UpdateChanges (Touch info, Camera camera, int screenHeight) {
+            public void UpdateChanges (Touch info, Camera camera, float scaleFactor) {
                 var newState = !(info.phase == TouchPhase.Ended || info.phase == TouchPhase.Canceled);
                 IsStateChanged = newState != State;
                 State = newState;
                 IsDeltaChanged = info.phase == TouchPhase.Moved;
-                Delta = info.deltaPosition / camera.pixelHeight * screenHeight;
-                RawPosition = info.position;
-                Position = camera.ScreenToWorldPoint (RawPosition);
+                IsCumulativeDeltaChanged |= IsDeltaChanged;
+                Delta = info.deltaPosition * scaleFactor;
+                ScreenPosition = info.position;
+                GuiWorldPosition = camera.ScreenToWorldPoint (ScreenPosition);
                 if (info.phase == TouchPhase.Began) {
                     IsDeltaChanged = false;
+                    IsCumulativeDeltaChanged = false;
                 }
             }
 
@@ -392,10 +398,10 @@ namespace LeopotamGroup.Gui.Common {
                 IsDeltaChanged = false;
             }
 
-            public bool ProcessMouse (Camera camera, int screenHeight) {
-                if (IsStateChanged || IsDeltaChanged) {
-                    return true;
-                }
+            public bool ProcessMouse (Camera camera, float scaleFactor) {
+//                if (IsStateChanged || IsDeltaChanged) {
+//                    return true;
+//                }
                 if (!Input.mousePresent) {
                     return false;
                 }
@@ -403,14 +409,18 @@ namespace LeopotamGroup.Gui.Common {
                 IsStateChanged = newState != State;
                 State = newState;
                 if (State || IsStateChanged) {
-                    var oldPos = RawPosition;
-                    RawPosition = Input.mousePosition;
-                    Delta = (RawPosition - oldPos) / camera.pixelHeight * screenHeight;
-                    IsDeltaChanged = Delta.sqrMagnitude > 0.1f;
+                    var oldPos = ScreenPosition;
+                    ScreenPosition = Input.mousePosition;
+                    GuiWorldPosition = camera.ScreenToWorldPoint (ScreenPosition);
 
-                    Position = camera.ScreenToWorldPoint (RawPosition);
                     if (State && IsStateChanged) {
+                        Delta = Vector2.zero;
                         IsDeltaChanged = false;
+                        IsCumulativeDeltaChanged = false;
+                    } else {
+                        Delta = (ScreenPosition - oldPos) * scaleFactor;
+                        IsDeltaChanged = Delta.sqrMagnitude > 0.1f;
+                        IsCumulativeDeltaChanged |= IsDeltaChanged;
                     }
                 }
 

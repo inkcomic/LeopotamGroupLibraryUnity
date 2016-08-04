@@ -97,15 +97,15 @@ namespace LeopotamGroup.Gui.Common {
     public sealed class GuiTouchEventArg {
         public bool State;
 
-        public Vector2 GuiPosition;
+        public Vector2 ScreenPosition;
 
         public Vector2 WorldPosition;
 
         public Vector2 Delta;
 
-        public void SetData (bool state, Vector2 guiPosition, Vector2 worldPosition, Vector2 delta) {
+        public void SetData (bool state, Vector2 screenPosition, Vector2 worldPosition, Vector2 delta) {
             State = state;
-            GuiPosition = guiPosition;
+            ScreenPosition = screenPosition;
             WorldPosition = worldPosition;
             Delta = delta;
         }
