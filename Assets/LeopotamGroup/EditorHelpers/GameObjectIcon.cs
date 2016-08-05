@@ -2,11 +2,10 @@
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
-#if UNITY_EDITOR
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers {
@@ -41,6 +40,7 @@ namespace LeopotamGroup.EditorHelpers {
     }
 
     public static class GameObjectIcon {
+#if UNITY_EDITOR
         static List<Texture2D> _icons;
 
         const int IconTypeCount = 3;
@@ -57,40 +57,29 @@ namespace LeopotamGroup.EditorHelpers {
 
         readonly static MethodInfo _setIcon;
 
-        readonly static object[] _setIconArgs = new object[2];
+        readonly static object[] _setIconArgs;
 
         static GameObjectIcon () {
-            _setIcon = typeof (EditorGUIUtility).GetMethod (SetIconMethodName,
+            _setIconArgs = new object[2];
+            _setIcon = typeof (UnityEditor.EditorGUIUtility).GetMethod (SetIconMethodName,
                 BindingFlags.Static | BindingFlags.NonPublic);
             _icons = new List<Texture2D> ();
-            FillIcons (_icons, LabelIconMask, string.Empty, 0, 8);
-            FillIcons (_icons, ImageIconMask, ImageIconSmallSuffix, 0, 16);
-            FillIcons (_icons, ImageIconMask, ImageIconLargeSuffix, 0, 16);
+            FillIcons (_icons, LabelIconMask, string.Empty, 8);
+            FillIcons (_icons, ImageIconMask, ImageIconSmallSuffix, 16);
+            FillIcons (_icons, ImageIconMask, ImageIconLargeSuffix, 16);
         }
 
-        static void FillIcons (IList<Texture2D> dict, string baseName, string postFix, int start, int count) {
+        static void FillIcons (IList<Texture2D> dict, string baseName, string suffix, int count) {
             GUIContent content;
             for (var i = 0; i < count; i++) {
-                content = EditorGUIUtility.IconContent (baseName + (start + i) + postFix);
+                content = UnityEditor.EditorGUIUtility.IconContent (baseName + i + suffix);
                 _icons.Add (content != null ? content.image as Texture2D : null);
             }
         }
 
-        static Texture2D GetIcon (int iconOffset, int iconId) {
+        static Texture2D GetIconTexture (int iconOffset, int iconId) {
             iconOffset = Mathf.Clamp (iconOffset + iconId, 0, _icons.Count - 1);
             return _icons[iconOffset];
-        }
-
-        public static void SetLabelIcon (this GameObject go, GameObjectLabelIconType iconType) {
-            SetIcon (go, GetIcon (0, (int) iconType));
-        }
-
-        public static void SetSmallImageIcon (this GameObject go, GameObjectImageIconType iconType) {
-            SetIcon (go, GetIcon (0 + 8, (int) iconType));
-        }
-
-        public static void SetLargeImageIcon (this GameObject go, GameObjectImageIconType iconType) {
-            SetIcon (go, GetIcon (0 + 8 + 16, (int) iconType));
         }
 
         static void SetIcon (GameObject go, Texture2D icon) {
@@ -98,7 +87,27 @@ namespace LeopotamGroup.EditorHelpers {
             _setIconArgs[1] = icon;
             _setIcon.Invoke (null, _setIconArgs);
         }
+#endif
+
+        [Conditional ("UNITY_EDITOR")]
+        public static void SetLabelIcon (this GameObject go, GameObjectLabelIconType iconType) {
+#if UNITY_EDITOR
+            SetIcon (go, GetIconTexture (0, (int) iconType));
+#endif
+        }
+
+        [Conditional ("UNITY_EDITOR")]
+        public static void SetSmallImageIcon (this GameObject go, GameObjectImageIconType iconType) {
+#if UNITY_EDITOR
+            SetIcon (go, GetIconTexture (0 + 8, (int) iconType));
+#endif
+        }
+
+        [Conditional ("UNITY_EDITOR")]
+        public static void SetLargeImageIcon (this GameObject go, GameObjectImageIconType iconType) {
+#if UNITY_EDITOR
+            SetIcon (go, GetIconTexture (0 + 8 + 16, (int) iconType));
+#endif
+        }
     }
 }
-
-#endif

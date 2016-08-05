@@ -11,13 +11,29 @@ namespace LeopotamGroup.EditorHelpers {
     /// Replacement for unity Debug class with automatic cleanup on create non-editor build.
     /// </summary>
     public static class UnityDebug {
+#if UNITY_EDITOR
+        static void LogInternal (LogType logType, string format, params object[] args) {
+            UnityEngine.Debug.logger.LogFormat (logType, format, args);
+        }
+
+        static void AssertInternal (bool condition, string format, params object[] args) {
+            UnityEngine.Debug.AssertFormat (condition, format, args);
+            if (!condition) {
+                UnityEditor.EditorApplication.isPaused = true;
+                throw new UnityException ("Editor paused after assert.");
+            }
+        }
+#endif
+
         /// <summary>
         /// Log data as info.
         /// </summary>
         /// <param name="arg">Data.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogInfo (object arg) {
+#if UNITY_EDITOR            
             LogInternal (LogType.Log, "{0}", arg);
+#endif
         }
 
         /// <summary>
@@ -27,11 +43,13 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="args">Arguments.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogInfo (string format, params object[] args) {
+#if UNITY_EDITOR
             if (args != null && args.Length > 0) {
                 LogInternal (LogType.Log, format, args);
             } else {
                 LogInternal (LogType.Log, "{0}", format);
             }
+#endif
         }
 
         /// <summary>
@@ -40,7 +58,9 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="arg">Argument.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogWarning (object arg) {
+#if UNITY_EDITOR            
             LogInternal (LogType.Warning, "{0}", arg);
+#endif
         }
 
         /// <summary>
@@ -50,11 +70,13 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="args">Arguments.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogWarning (string format, params object[] args) {
+#if UNITY_EDITOR
             if (args != null && args.Length > 0) {
                 LogInternal (LogType.Warning, format, args);
             } else {
                 LogInternal (LogType.Warning, "{0}", format);
             }
+#endif
         }
 
         /// <summary>
@@ -63,7 +85,9 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="arg">Argument.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogError (object arg) {
+#if UNITY_EDITOR            
             LogInternal (LogType.Error, "{0}", arg);
+#endif
         }
 
         /// <summary>
@@ -73,17 +97,12 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="args">Arguments.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogError (string format, params object[] args) {
+#if UNITY_EDITOR
             if (args != null && args.Length > 0) {
                 LogInternal (LogType.Error, format, args);
             } else {
                 LogInternal (LogType.Error, "{0}", format);
             }
-        }
-
-        [Conditional ("UNITY_EDITOR")]
-        static void LogInternal (LogType logType, string format, params object[] args) {
-#if UNITY_EDITOR
-            UnityEngine.Debug.logger.LogFormat (logType, format, args);
 #endif
         }
 
@@ -124,7 +143,9 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="arg">Error message.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void Assert (bool condition, string arg) {
+#if UNITY_EDITOR
             AssertInternal (condition, "{0}", arg);
+#endif
         }
 
         /// <summary>
@@ -135,17 +156,8 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="args">Arguments.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void Assert (bool condition, string format, params object[] args) {
-            AssertInternal (condition, format, args);
-        }
-
-        [Conditional ("UNITY_EDITOR")]
-        static void AssertInternal (bool condition, string format, params object[] args) {
 #if UNITY_EDITOR
-            UnityEngine.Debug.AssertFormat (condition, format, args);
-            if (!condition) {
-                UnityEditor.EditorApplication.isPaused = true;
-                throw new UnityException ("Editor paused after assert.");
-            }
+            AssertInternal (condition, format, args);
 #endif
         }
     }
