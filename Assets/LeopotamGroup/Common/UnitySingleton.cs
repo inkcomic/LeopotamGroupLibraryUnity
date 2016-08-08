@@ -12,8 +12,6 @@ namespace LeopotamGroup.Common {
     public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour {
         static T _instance;
 
-        static bool _instanceCreated;
-
         /// <summary>
         /// Get singleton instance.
         /// </summary>
@@ -22,7 +20,7 @@ namespace LeopotamGroup.Common {
             get {
                 // Workaround for slow checking "_instance == null" operation
                 // (unity issue, overrided equality operators for additional internal checking).
-                if (!_instanceCreated) {
+                if ((System.Object) _instance == null) {
 #if UNITY_EDITOR
                     if (!Application.isPlaying) {
                         throw new UnityException (typeof (T).Name + " singleton can be used only at PLAY mode");
@@ -36,7 +34,6 @@ namespace LeopotamGroup.Common {
 #endif
                         ).AddComponent<T> ();
                     }
-                    _instanceCreated = true;
                 }
 
                 return _instance;
@@ -50,7 +47,6 @@ namespace LeopotamGroup.Common {
             }
 
             _instance = this as T;
-            _instanceCreated = true;
 
             OnConstruct ();
         }

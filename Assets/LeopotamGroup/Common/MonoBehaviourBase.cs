@@ -16,15 +16,12 @@ namespace LeopotamGroup.Common {
         /// <value>The transform.</value>
         public new Transform transform {
             get {
-                if (!_isTransformPatched) {
-                    _isTransformPatched = true;
+                if ((System.Object) _cachedTransform == null) {
                     _cachedTransform = base.transform;
                 }
                 return _cachedTransform;
             }
         }
-
-        bool _isTransformPatched;
 
         /// <summary>
         /// Internal cached transform. Dont be fool to overwrite it, no protection for additional 2x performance boost.
