@@ -11,6 +11,7 @@ namespace LeopotamGroup.Common {
     /// </summary>
     public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour {
         static T _instance;
+
         static bool _instanceCreated;
 
         /// <summary>
@@ -49,6 +50,7 @@ namespace LeopotamGroup.Common {
             }
 
             _instance = this as T;
+            _instanceCreated = true;
 
             OnConstruct ();
         }
