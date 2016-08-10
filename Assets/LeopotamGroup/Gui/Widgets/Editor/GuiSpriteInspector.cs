@@ -33,15 +33,30 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
 
         SerializedProperty _colorProperty;
 
-        static readonly GUIContent _typeGuiContent = new GUIContent ("Type");
+        static GUIContent _typeGuiContent;
 
-        static readonly GUIContent _fillCenterGuiContent = new GUIContent ("Fill center");
+        static GUIContent _fillCenterGuiContent;
 
-        static readonly GUIContent _flipHorGuiContent = new GUIContent ("Flip horizontal");
+        static GUIContent _flipHorGuiContent;
 
-        static readonly GUIContent _flipVerGuiContent = new GUIContent ("Flip vertical");
+        static GUIContent _flipVerGuiContent;
+
+        static GUIStyle _textStyle;
 
         void OnEnable () {
+            if (_typeGuiContent == null) {
+                _typeGuiContent = new GUIContent ("Type");
+                _fillCenterGuiContent = new GUIContent ("Fill center");
+                _flipHorGuiContent = new GUIContent ("Flip horizontal");
+                _flipVerGuiContent = new GUIContent ("Flip vertical");
+                _textStyle = new GUIStyle
+                {
+                    alignment = TextAnchor.LowerCenter,
+                    fontSize = 16,
+                    normal = new GUIStyleState { textColor = Color.white }
+                };
+            }
+
             _atlasProperty = serializedObject.FindProperty ("_spriteAtlas");
             _nameProperty = serializedObject.FindProperty ("_spriteName");
             _typeProperty = serializedObject.FindProperty ("_spriteType");
@@ -61,18 +76,18 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
             var atlasName = string.Format ("Atlas: <{0}>", sprite.SpriteAtlas != null ? sprite.SpriteAtlas.name : "Empty");
             if (GUILayout.Button (atlasName)) {
                 SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", sprite.SpriteAtlas, assetPath => {
-                    // If not canceled.
-                    if (assetPath != null) {
-                        // None.
-                        if (assetPath == string.Empty) {
-                            sprite.SpriteAtlas = null;
-                            _nameProperty.stringValue = null;
-                        } else {
-                            sprite.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                        // If not canceled.
+                        if (assetPath != null) {
+                            // None.
+                            if (assetPath == string.Empty) {
+                                sprite.SpriteAtlas = null;
+                                _nameProperty.stringValue = null;
+                            } else {
+                                sprite.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                            }
+                            _atlasProperty.objectReferenceValue = sprite.SpriteAtlas;
                         }
-                        _atlasProperty.objectReferenceValue = sprite.SpriteAtlas;
-                    }
-                });
+                    });
             }
 
             if (sprite.SpriteAtlas != null) {
@@ -147,13 +162,6 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
         public override bool HasPreviewGUI () {
             return true;
         }
-
-        static readonly GUIStyle _textStyle = new GUIStyle ()
-        {
-            alignment = TextAnchor.LowerCenter,
-            fontSize = 16,
-            normal = new GUIStyleState { textColor = Color.white }
-        };
 
         public override void OnPreviewGUI (Rect r, GUIStyle background) {
             base.OnPreviewGUI (r, background);

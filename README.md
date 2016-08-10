@@ -18,6 +18,12 @@ Google Analytics.
 
 ----------------------------------------------------------------------------
 
+* Animation
+
+Animator helpers, for updating parameters during graph execution flow.
+
+----------------------------------------------------------------------------
+
 * Common
 
 Common helpers, uses by other subsystems.

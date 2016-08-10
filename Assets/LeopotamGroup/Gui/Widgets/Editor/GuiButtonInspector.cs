@@ -35,7 +35,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
         public override void OnInspectorGUI () {
             serializedObject.Update ();
 
-            EditorGUILayout.PropertyField (_visualsProperty);
+            EditorGUILayout.PropertyField (_visualsProperty, true);
             EditorGUILayout.PropertyField (_enableColorProperty);
             EditorGUILayout.PropertyField (_activeColorProperty);
             EditorGUILayout.PropertyField (_disableColorProperty);
