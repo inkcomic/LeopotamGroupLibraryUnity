@@ -40,7 +40,8 @@ namespace LeopotamGroup.Serialization {
         /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as Value.</returns>
         /// <param name="data">Raw text data.</param>
         /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
-        public Dictionary<string, string[]> Deserialize (string data, Dictionary<string, string[]> list = null) {
+        /// <param name="skipHeaderCheck">Skip row lengths checking for header line compatibility.</param>
+        public Dictionary<string, string[]> Deserialize (string data, Dictionary<string, string[]> list = null, bool skipHeaderCheck = false) {
             if (list == null) {
                 list = new Dictionary<string, string[]> ();
             }
@@ -51,24 +52,29 @@ namespace LeopotamGroup.Serialization {
             using (var reader = new StringReader (data)) {
                 while (reader.Peek () != -1) {
                     ParseLine (reader.ReadLine ());
-                    if (headerLen == -1) {
-                        headerLen = _tokens.Count;
-                        if (headerLen < 2) {
-                            #if UNITY_EDITOR
-                            Debug.LogWarning ("Invalid csv header.");
-                            #endif
-                            break;
-                        }
-                    }
-                    if (_tokens.Count != headerLen) {
-                        #if UNITY_EDITOR
-                        Debug.LogWarning ("Invalid csv line, skipping.");
-                        #endif
+                    if (_tokens.Count == 0 || string.IsNullOrEmpty (_tokens[0])) {
                         continue;
+                    }
+                    if (!skipHeaderCheck) {
+                        if (headerLen == -1) {
+                            headerLen = _tokens.Count;
+                            if (headerLen < 2) {
+                                #if UNITY_EDITOR
+                                Debug.LogWarning ("Invalid csv header.");
+                                #endif
+                                break;
+                            }
+                        }
+                        if (_tokens.Count != headerLen) {
+                            #if UNITY_EDITOR
+                            Debug.LogWarning ("Invalid csv line, skipping.");
+                            #endif
+                            continue;
+                        }
                     }
                     key = _tokens[0];
                     _tokens.RemoveAt (0);
-                    list.Add (key, _tokens.ToArray ());
+                    list[key] = _tokens.ToArray ();
                 }
             }
             return list;
