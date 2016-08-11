@@ -265,6 +265,15 @@ namespace LeopotamGroup.Gui.UnityEditors {
             }
         }
 
+        [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/BindPanelRange", false, 1)]
+        static void CreateLayoutGuiBindPanelRange () {
+            var bind = GuiControlFactory.CreateLayoutGuiBindPanelRange (Selection.activeGameObject);
+            if (bind != null) {
+                Undo.RegisterCreatedObjectUndo (bind.gameObject, "leopotamgroup.gui.create-bind-panel-range");
+                FixWidgetParent (bind);
+            }
+        }
+
         [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/BindEventReceiverSize", false, 1)]
         static void CreateLayoutBindEventReceiverSize () {
             var bind = GuiControlFactory.CreateLayoutBindEventReceiverSize (Selection.activeGameObject);

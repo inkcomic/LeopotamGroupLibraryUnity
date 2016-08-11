@@ -127,9 +127,7 @@ namespace LeopotamGroup.Gui.Layout {
         /// </summary>
         public void ScrollRelative (Vector2 delta) {
             ValidatePanel ();
-            if (_panel.ClipType != LeopotamGroup.Gui.Common.GuiPanelClipType.Range) {
-                return;
-            }
+
             var pos = transform.position;
             pos.x += delta.x;
             pos.y += delta.y;

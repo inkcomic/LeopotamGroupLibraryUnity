@@ -102,7 +102,6 @@ namespace LeopotamGroup.Gui.Common {
         /// <summary>
         /// Create GuiBindPosition.
         /// </summary>
-        /// <returns>The layout bind position.</returns>
         /// <param name="go">GameObject.</param>
         public static GuiBindPosition CreateLayoutBindPosition (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiBindPosition> () : null;
@@ -111,7 +110,6 @@ namespace LeopotamGroup.Gui.Common {
         /// <summary>
         /// Create GuiBindSize.
         /// </summary>
-        /// <returns>The layout bind size.</returns>
         /// <param name="go">GameObject.</param>
         public static GuiBindSize CreateLayoutBindSize (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiBindSize> () : null;
@@ -120,16 +118,22 @@ namespace LeopotamGroup.Gui.Common {
         /// <summary>
         /// Create GuiBindEventReceiverSize.
         /// </summary>
-        /// <returns>The layout bind size.</returns>
         /// <param name="go">GameObject.</param>
         public static GuiBindEventReceiverSize CreateLayoutBindEventReceiverSize (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiBindEventReceiverSize> () : null;
         }
 
         /// <summary>
+        /// Create GuiBindPanelRange.
+        /// </summary>
+        /// <param name="go">GameObject.</param>
+        public static GuiBindPanelRange CreateLayoutGuiBindPanelRange (GameObject go) {
+            return go != null ? go.EnsureGetComponent<GuiBindPanelRange> () : null;
+        }
+
+        /// <summary>
         /// Create scroll view.
         /// </summary>
-        /// <returns>Created scroll view.</returns>
         /// <param name="go">GameObject.</param>
         public static GuiScrollView CreateLayoutScrollView (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiScrollView> () : null;
@@ -138,7 +142,6 @@ namespace LeopotamGroup.Gui.Common {
         /// <summary>
         /// Create component for dragging GuiScrollView content.
         /// </summary>
-        /// <returns>Created GuiDragScrollView.</returns>
         /// <param name="go">GameObject.</param>
         public static GuiDragScrollView CreateInteractionDragScrollView (GameObject go) {
             return go != null ? go.EnsureGetComponent<GuiDragScrollView> () : null;
