@@ -4,7 +4,6 @@
 //-------------------------------------------------------
 
 using System;
-using System.Collections;
 using LeopotamGroup.Common;
 using UnityEngine;
 
@@ -16,29 +15,80 @@ namespace LeopotamGroup.FX {
         /// <summary>
         /// Callback for extensions.
         /// </summary>
-        public event Action OnRender = delegate {};
+        public event Action<float> OnRender = delegate {};
+
+        static Material _mtrl;
 
         bool _fadeAudio;
 
         float _opaque;
 
-        Texture2D _dummyTex;
+        float _startValue;
 
-        readonly Rect _rectOne = new Rect (0, 0, 1, 1);
+        float _endValue;
 
-        Material _mtrl;
+        float _fadeTime;
 
-        Coroutine _cb;
+        float _time;
+
+        Action _callback;
+
+        int _cameraIndex;
 
         protected override void OnConstruct () {
-            DontDestroyOnLoad (gameObject);
-
-            _mtrl = new Material (Shader.Find ("Hidden/LeopotamGroup/FX/ScreenFade"));
-
-            // Graphics.DrawTexture requires any texture.
-            _dummyTex = new Texture2D (1, 1, TextureFormat.RGB24, false);
+            if (_mtrl == null) {
+                _mtrl = new Material (Shader.Find ("Hidden/LeopotamGroup/FX/ScreenFade"));
+                _mtrl.hideFlags = HideFlags.DontSave;
+            }
 
             SetFade (0f);
+        }
+
+        void LateUpdate () {
+            _cameraIndex = 0;
+            if (_fadeTime <= 0f) {
+                return;
+            }
+            _time = Mathf.Clamp01 (_time + Time.deltaTime / _fadeTime);
+
+            _opaque = Mathf.Lerp (_startValue, _endValue, _time);
+            if (_fadeAudio) {
+                AudioListener.volume = 1f - _opaque;
+            }
+
+            if (_time >= 1f) {
+                if (_opaque <= 0f) {
+                    enabled = false;
+                }
+                if (_callback != null) {
+                    var cb = _callback;
+                    _callback = null;
+                    cb ();
+                }
+            }
+        }
+
+        void OnRenderObject () {
+            if (_opaque <= 0f) {
+                return;
+            }
+
+            _cameraIndex++;
+            if (_cameraIndex == Camera.allCamerasCount) {
+                GL.PushMatrix ();
+                GL.LoadOrtho ();
+                _mtrl.SetPass (0);
+                GL.Begin (GL.QUADS);
+                GL.Color (Color.Lerp (Color.clear, Color.black, _opaque));
+                GL.Vertex3 (0f, 0f, 0f);
+                GL.Vertex3 (0f, 1f, 0f);
+                GL.Vertex3 (1f, 1f, 0f);
+                GL.Vertex3 (1f, 0f, 0f);
+                GL.End ();
+                GL.PopMatrix ();
+
+                OnRender (_opaque);
+            }
         }
 
         /// <summary>
@@ -47,9 +97,12 @@ namespace LeopotamGroup.FX {
         /// <param name="opaque">Opaque value [0, 1], 0 - full transparent, 1 - full opaque.</param>
         /// <param name="fadeAudio">Fade audio sources too.</param>
         public void SetFade (float opaque, bool fadeAudio = false) {
-            StopFade ();
-            _opaque = opaque;
-            AudioListener.volume = 1f - (fadeAudio ? _opaque : 0f);
+            _opaque = Mathf.Clamp01 (opaque);
+            if (fadeAudio) {
+                AudioListener.volume = 1f - _opaque;
+            }
+            _fadeTime = 0f;
+            enabled = _opaque > 0f;
         }
 
         /// <summary>
@@ -57,64 +110,16 @@ namespace LeopotamGroup.FX {
         /// </summary>
         /// <param name="toOpaque">Target opaque status.</param>
         /// <param name="time">Time of fading.</param>
-        /// <param name="callback">Optional callback on end of fading.</param>
+        /// <param name="onSuccess">Optional callback on success ending of fading.</param>
         /// <param name="fadeAudio">Fade audio too.</param>
-        public void StartFadeTo (float toOpaque, float time, Action callback = null, bool fadeAudio = false) {
-            StopFade ();
-
+        public void StartFadeTo (float toOpaque, float time, Action onSuccess = null, bool fadeAudio = false) {
             _fadeAudio = fadeAudio;
-
-            _cb = StartCoroutine (OnFadeStarted (toOpaque, time, callback));
-        }
-
-        /// <summary>
-        /// Stop fading process.
-        /// </summary>
-        /// <returns>The fade.</returns>
-        public void StopFade () {
-            if (_cb != null) {
-                StopCoroutine (_cb);
-                _cb = null;
-            }
-        }
-
-        IEnumerator OnFadeStarted (float toOpaque, float time, Action callback) {
-            var t = 0f;
-            var start = _opaque;
-            while (t < 1f) {
-                _opaque = Mathf.Lerp (start, toOpaque, t);
-                if (_fadeAudio) {
-                    AudioListener.volume = 1f - _opaque;
-                }
-                yield return null;
-                t += Time.deltaTime / time;
-            }
-            _opaque = toOpaque;
-
-            if (_fadeAudio) {
-                AudioListener.volume = 1f - _opaque;
-            }
-
-            _cb = null;
-
-            if (callback != null) {
-                callback ();
-            }
-        }
-
-        void OnRenderObject () {
-            if (_opaque <= 0f) {
-                return;
-            }
-            if (Camera.current == Camera.main) {
-                GL.PushMatrix ();
-                GL.LoadOrtho ();
-                var color = Color.Lerp (Color.clear, Color.black, _opaque);
-                Graphics.DrawTexture (_rectOne, _dummyTex, _rectOne, 0, 0, 0, 0, color, _mtrl);
-                GL.PopMatrix ();
-
-                OnRender ();
-            }
+            _startValue = _opaque;
+            _endValue = toOpaque;
+            _fadeTime = time;
+            _callback = onSuccess;
+            _time = 0f;
+            enabled = _startValue != _endValue;
         }
     }
 }

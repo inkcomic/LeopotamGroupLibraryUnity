@@ -86,8 +86,9 @@ namespace LeopotamGroup.Serialization {
         /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as Value.</returns>
         /// <param name="data">Raw text data.</param>
         /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
-        public static Dictionary<string, string[]> DeserializeStatic (string data, Dictionary<string, string[]> list = null) {
-            return _instance.Deserialize (data, list);
+        /// <param name="skipHeaderCheck">Skip row lengths checking for header line compatibility.</param>
+        public static Dictionary<string, string[]> DeserializeStatic (string data, Dictionary<string, string[]> list = null, bool skipHeaderCheck = false) {
+            return _instance.Deserialize (data, list, skipHeaderCheck);
         }
     }
 }

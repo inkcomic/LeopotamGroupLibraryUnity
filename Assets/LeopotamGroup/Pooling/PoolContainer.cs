@@ -14,9 +14,14 @@ namespace LeopotamGroup.Pooling {
         [SerializeField]
         string _prefabPath = "UnknownPrefab";
 
+        [SerializeField]
+        Transform _itemsRoot;
+
         readonly Stack<PoolObject> _store = new Stack<PoolObject> (64);
 
         GameObject _cachedAsset;
+
+        Vector3 _cachedScale;
 
         bool LoadPrefab () {
             _cachedAsset = Resources.Load<GameObject> (_prefabPath);
@@ -33,6 +38,8 @@ namespace LeopotamGroup.Pooling {
             }
             #endif
 
+            _cachedScale = _cachedAsset.transform.localScale;
+
             return true;
         }
 
@@ -40,7 +47,7 @@ namespace LeopotamGroup.Pooling {
         /// Get new instance of prefab from pool.
         /// </summary>
         public PoolObject Get () {
-            if (_cachedAsset == null) {
+            if ((System.Object) _cachedAsset == null) {
                 if (!LoadPrefab ()) {
                     return null;
                 }
@@ -53,6 +60,8 @@ namespace LeopotamGroup.Pooling {
                 var go = Instantiate<GameObject> (_cachedAsset);
                 obj = go.AddComponent<PoolObject> ();
                 obj.Pool = this;
+                go.transform.SetParent (_itemsRoot, false);
+                go.transform.localScale = _cachedScale;
             }
             obj.SetActive (false);
             return obj;
@@ -63,7 +72,7 @@ namespace LeopotamGroup.Pooling {
         /// </summary>
         /// <param name="obj">Instance to recycle.</param>
         public void Recycle (PoolObject obj) {
-            if (obj != null) {
+            if ((System.Object) obj != null) {
                 #if UNITY_EDITOR
                 if (obj.Pool != this) {
                     Debug.LogWarning ("Invalid obj to recycle", obj);
@@ -82,7 +91,8 @@ namespace LeopotamGroup.Pooling {
         /// </summary>
         /// <returns>Created pool container.</returns>
         /// <param name="prefabPath">Prefab path at Resources folder.</param>
-        public static PoolContainer CreatePool (string prefabPath) {
+        /// <param name="itemsRoot">Root for new items.</param>
+        public static PoolContainer CreatePool (string prefabPath, Transform itemsRoot = null) {
             if (string.IsNullOrEmpty (prefabPath)) {
                 return null;
             }
@@ -93,6 +103,7 @@ namespace LeopotamGroup.Pooling {
                 #endif
                 ).AddComponent <PoolContainer> ();
             container._prefabPath = prefabPath;
+            container._itemsRoot = itemsRoot;
             return container;
         }
     }

@@ -54,7 +54,6 @@ namespace LeopotamGroup.Gui.Common {
 
         protected virtual void OnEnable () {
             GuiSystem.Instance.AddEventReceiver (this);
-            ResetPanel ();
         }
 
         protected virtual void OnDisable () {
@@ -65,7 +64,7 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         void LateUpdate () {
-            GlobalDepthOrder = (int)(GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, Depth)).z * 100f);
+            GlobalDepthOrder = (int) (GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, Depth)).z * 100f);
         }
 
         /// <summary>
@@ -111,6 +110,9 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="x">X coordinate of point.</param>
         /// <param name="y">Y coordinate of point.</param>
         public bool IsPointInside (float x, float y) {
+            if ((System.Object) _visualPanel == null) {
+                ResetPanel ();
+            }
             if (!_visualPanel.enabled) {
                 return false;
             }

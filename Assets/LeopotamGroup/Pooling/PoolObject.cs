@@ -25,8 +25,6 @@ namespace LeopotamGroup.Pooling {
 
         PoolContainer _pool;
 
-        GameObject _cachedGO;
-
         /// <summary>
         /// Recycle this instance.
         /// </summary>
@@ -41,10 +39,7 @@ namespace LeopotamGroup.Pooling {
         /// </summary>
         /// <param name="state">If set to <c>true</c> state.</param>
         public void SetActive (bool state) {
-            if (_cachedGO == null) {
-                _cachedGO = gameObject;
-            }
-            _cachedGO.SetActive (state);
+            gameObject.SetActive (state);
         }
     }
 }
