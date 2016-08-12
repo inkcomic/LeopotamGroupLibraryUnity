@@ -47,8 +47,18 @@ namespace LeopotamGroup.Pooling {
         /// Get new instance of prefab from pool.
         /// </summary>
         public PoolObject Get () {
+            bool isNew;
+            return Get (out isNew);
+        }
+
+        /// <summary>
+        /// Get new instance of prefab from pool.
+        /// </summary>
+        /// <param name="isNew">Is instance was created during this call.</param>
+        public PoolObject Get (out bool isNew) {
             if ((System.Object) _cachedAsset == null) {
                 if (!LoadPrefab ()) {
+                    isNew = false;
                     return null;
                 }
             }
@@ -56,12 +66,14 @@ namespace LeopotamGroup.Pooling {
             PoolObject obj;
             if (_store.Count > 0) {
                 obj = _store.Pop ();
+                isNew = false;
             } else {
                 var go = Instantiate<GameObject> (_cachedAsset);
                 obj = go.AddComponent<PoolObject> ();
                 obj.Pool = this;
                 go.transform.SetParent (_itemsRoot, false);
                 go.transform.localScale = _cachedScale;
+                isNew = true;
             }
             obj.SetActive (false);
             return obj;

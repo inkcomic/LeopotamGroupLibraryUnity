@@ -93,6 +93,7 @@ namespace LeopotamGroup.Tweening {
             CurrentTime = 0f;
             CurrentTimeRaw = 0f;
             OnReset ();
+            OnUpdateValue ();
         }
 
         void LateUpdate () {
