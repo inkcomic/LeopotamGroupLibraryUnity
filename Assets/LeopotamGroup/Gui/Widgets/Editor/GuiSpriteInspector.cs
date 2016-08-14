@@ -33,6 +33,8 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
 
         SerializedProperty _colorProperty;
 
+        SerializedProperty _fillValueProperty;
+
         static GUIContent _typeGuiContent;
 
         static GUIContent _fillCenterGuiContent;
@@ -67,6 +69,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
             _heightProperty = serializedObject.FindProperty ("_height");
             _depthProperty = serializedObject.FindProperty ("_depth");
             _colorProperty = serializedObject.FindProperty ("_color");
+            _fillValueProperty = serializedObject.FindProperty ("_fillValue");
         }
 
         public override void OnInspectorGUI () {
@@ -103,8 +106,12 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
             EditorGUILayout.PropertyField (_typeProperty, _typeGuiContent);
 
             var type = (GuiSpriteType) _typeProperty.enumValueIndex;
-            if (type != GuiSpriteType.Simple) {
+            if (type != GuiSpriteType.Simple && type != GuiSpriteType.RoundFilled) {
                 EditorGUILayout.PropertyField (_fillCenterProperty, _fillCenterGuiContent);
+            }
+
+            if (type == GuiSpriteType.RoundFilled) {
+                EditorGUILayout.Slider (_fillValueProperty, 0f, 1f);
             }
 
             EditorGUILayout.Separator ();

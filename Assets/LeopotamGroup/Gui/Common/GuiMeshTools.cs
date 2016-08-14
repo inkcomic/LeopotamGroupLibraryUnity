@@ -12,6 +12,22 @@ namespace LeopotamGroup.Gui.Common {
     /// Mesh tools helper.
     /// </summary>
     public static class GuiMeshTools {
+        static readonly Vector2[] RoundFilledV =
+            {
+                new Vector2 (-1f, 0f),
+                new Vector2 (-1f, -1f),
+                new Vector2 (0f, -1f),
+                new Vector2 (0f, 0f)
+            };
+
+        static readonly Vector2[] RoundFilledUV =
+            {
+                new Vector2 (0f, 1f),
+                new Vector2 (0f, 0f),
+                new Vector2 (1f, 0f),
+                new Vector2 (1f, 1f)
+            };
+
         static readonly List<Vector3> _cacheV = new List<Vector3> (4096);
 
         static readonly List<Vector2> _cacheUV = new List<Vector2> (4096);
@@ -33,18 +49,6 @@ namespace LeopotamGroup.Gui.Common {
         static Vector2 _effectValue;
 
         static Color _effectColor;
-
-        static void FillBufferVC1 (ref Rect v, ref Color color) {
-            _cacheC.Add (color);
-            _cacheC.Add (color);
-            _cacheC.Add (color);
-            _cacheC.Add (color);
-
-            _cacheV.Add (new Vector3 (v.xMin, v.yMin, 0f));
-            _cacheV.Add (new Vector3 (v.xMin, v.yMax, 0f));
-            _cacheV.Add (new Vector3 (v.xMax, v.yMax, 0f));
-            _cacheV.Add (new Vector3 (v.xMax, v.yMin, 0f));
-        }
 
         static void FillBufferT () {
             var vOffset = _cacheV.Count;
@@ -394,6 +398,139 @@ namespace LeopotamGroup.Gui.Common {
                         _uvRect.Set (sd.CornerX, sd.CornerY, sd.BorderL, sd.BorderB);
                         FillBuffer (ref _vRect, ref _uvRect, ref color);
                     }
+                }
+            }
+            GetBuffers (mesh);
+        }
+
+        /// <summary>
+        /// Fill round-filled sprite.
+        /// </summary>
+        /// <param name="mesh">Mesh.</param>
+        /// <param name="width">Sprite width.</param>
+        /// <param name="height">Sprite height.</param>
+        /// <param name="fillValue">Normalized progress of round-filling.</param>
+        /// <param name="color">Sprite color.</param>
+        /// <param name="spriteData">Sprite data.</param>
+        /// <param name="effect">Effect.</param>
+        /// <param name="effectValue">Effect value.</param>
+        /// <param name="effectColor">Effect color.</param>
+        public static void FillRoundFilledSprite (Mesh mesh, int width, int height, float fillValue, Color color, GuiSpriteData spriteData,
+            GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
+            if (mesh == null) {
+                return;
+            }
+            PrepareBuffer (effect, effectValue, effectColor);
+            if (spriteData != null && fillValue > 0f) {
+                var halfW = 0.5f * width;
+                var halfH = 0.5f * height;
+                _vRect.Set (-halfW, -halfH, width, height);
+                _uvRect.Set (spriteData.CornerX, spriteData.CornerY, spriteData.CornerW, spriteData.CornerH);
+
+                var uvHalfW = spriteData.CornerW * 0.5f;
+                var uvHalfH = spriteData.CornerH * 0.5f;
+
+                int i;
+                for (i = 0; i < 4; i++) {
+                    _uvRect.Set (
+                        RoundFilledUV[i].x * uvHalfW + spriteData.CornerX,
+                        RoundFilledUV[i].y * uvHalfH + spriteData.CornerY,
+                        uvHalfW, uvHalfH);
+                    _vRect.Set (RoundFilledV[i].x * halfW, RoundFilledV[i].y * halfH, halfW, halfH);
+                    if (fillValue < (i + 1) * 0.25f) {
+                        break;
+                    }
+                    FillBuffer (ref _vRect, ref _uvRect, ref color);
+                }
+
+                if (i < 4) {
+                    fillValue = (fillValue - i * 0.25f) * 8f;
+                    var needFlip = (i & 1) == 0;
+                    var uv0 = new Vector2 (_uvRect.xMin, _uvRect.yMin);
+                    var uv1 = new Vector2 (_uvRect.xMin, _uvRect.yMax);
+                    var uv2 = new Vector2 (_uvRect.xMax, _uvRect.yMax);
+                    var uv3 = new Vector2 (_uvRect.xMax, _uvRect.yMin);
+                    var v0 = new Vector3 (_vRect.xMin, _vRect.yMin, 0f);
+                    var v1 = new Vector3 (_vRect.xMin, _vRect.yMax, 0f);
+                    var v2 = new Vector3 (_vRect.xMax, _vRect.yMax, 0f);
+                    var v3 = new Vector3 (_vRect.xMax, _vRect.yMin, 0f);
+                    if (needFlip) {
+                        var t = uv0.y;
+                        uv0.y = uv1.y;
+                        uv1.y = t;
+                        t = uv2.y;
+                        uv2.y = uv3.y;
+                        uv3.y = t;
+
+                        t = v0.y;
+                        v0.y = v1.y;
+                        v1.y = t;
+                        t = v2.y;
+                        v2.y = v3.y;
+                        v3.y = t;
+                    }
+
+                    var fvW = _vRect.width * fillValue;
+                    var fvH = _vRect.height * fillValue;
+                    var fuvW = _uvRect.width * fillValue;
+                    var fuvH = _uvRect.height * fillValue;
+
+                    if (fillValue >= 1f) {
+                        // more than 45 degrees.
+                        fvW -= _vRect.width;
+                        fvH -= _vRect.height;
+                        fuvW -= _uvRect.width;
+                        fuvH -= _uvRect.height;
+                        switch (i) {
+                            case 0:
+                                v1.y = _vRect.yMax - fvH;
+                                uv1.y = _uvRect.yMax - fuvH;
+                                break;
+                            case 1:
+                                v3.x = _vRect.xMin + fvW;
+                                uv3.x = _uvRect.xMin + fuvW;
+                                break;
+                            case 2:
+                                v3.y = _vRect.yMin + fvH;
+                                uv3.y = _uvRect.yMin + fuvH;
+                                break;
+                            case 3:
+                                v1.x = _vRect.xMax - fvW;
+                                uv1.x = _uvRect.xMax - fuvW;
+                                break;
+                        }
+
+                    } else {
+                        // less than 45 degrees
+                        switch (i) {
+                            case 0:
+                                v0.x = _vRect.xMax - fvW;
+                                uv0.x = _uvRect.xMax - fuvW;
+                                uv1 = uv0;
+                                v1 = v0;
+                                break;
+                            case 1:
+                                v0.y = _vRect.yMax - fvH;
+                                uv0.y = _uvRect.yMax - fuvH;
+                                uv3 = uv0;
+                                v3 = v0;
+                                break;
+                            case 2:
+                                v2.x = _vRect.xMin + fvW;
+                                uv2.x = _uvRect.xMin + fuvW;
+                                uv3 = uv2;
+                                v3 = v2;
+                                break;
+                            case 3:
+                                v2.y = _vRect.yMin + fvH;
+                                uv2.y = _uvRect.yMin + fuvH;
+                                uv1 = uv2;
+                                v1 = v2;
+                                break;
+                        }
+                    }
+
+                    FillBuffer (ref v0, ref v1, ref v2, ref v3, ref uv0, ref uv1, ref uv2, ref uv3, ref color);
                 }
             }
             GetBuffers (mesh);

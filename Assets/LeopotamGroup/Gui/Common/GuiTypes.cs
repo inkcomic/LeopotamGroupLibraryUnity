@@ -16,7 +16,8 @@ namespace LeopotamGroup.Gui.Common {
         Sliced,
         TiledHorizontal,
         TiledVertical,
-        TiledBoth
+        TiledBoth,
+        RoundFilled
     }
 
     /// <summary>

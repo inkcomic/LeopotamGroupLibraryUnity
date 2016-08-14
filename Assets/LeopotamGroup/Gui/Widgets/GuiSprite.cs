@@ -91,6 +91,17 @@ namespace LeopotamGroup.Gui.Widgets {
             }
         }
 
+        public float FillValue {
+            get { return _fillValue; }
+            set {
+                value = Mathf.Clamp01 (value);
+                if (value != _fillValue) {
+                    _fillValue = value;
+                    SetDirty (GuiDirtyType.Geometry);
+                }
+            }
+        }
+
         [HideInInspector]
         [SerializeField]
         GuiAtlas _spriteAtlas;
@@ -114,6 +125,10 @@ namespace LeopotamGroup.Gui.Widgets {
         [HideInInspector]
         [SerializeField]
         bool _isSpriteFlippedVertical;
+
+        [HideInInspector]
+        [SerializeField]
+        float _fillValue;
 
         MeshFilter _meshFilter;
 
@@ -225,15 +240,24 @@ namespace LeopotamGroup.Gui.Widgets {
                         var w = _isSpriteFlippedHorizontal ? -Width : Width;
                         var h = _isSpriteFlippedVertical ? -Height : Height;
                         var sprData = SpriteAtlas.GetSpriteData (SpriteName);
-                        if (SpriteType == GuiSpriteType.Simple) {
-                            GuiMeshTools.FillSimpleSprite (_meshFilter.sharedMesh, w, h, Color, sprData);
-                        } else {
-                            var texSize = new Vector2 (SpriteAtlas.ColorTexture.width, SpriteAtlas.ColorTexture.height);
-                            var isHorTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledHorizontal;
-                            var isVerTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledVertical;
-                            GuiMeshTools.FillSlicedTiledSprite (
-                                _meshFilter.sharedMesh, w, h, Color, sprData,
-                                texSize, isHorTiled, isVerTiled, IsSpriteCenterFilled);
+                        switch (SpriteType) {
+                            case GuiSpriteType.RoundFilled:
+                                GuiMeshTools.FillRoundFilledSprite (_meshFilter.sharedMesh, w, h, FillValue, Color, sprData);
+                                break;
+                            case GuiSpriteType.Sliced:
+                            case GuiSpriteType.TiledHorizontal:
+                            case GuiSpriteType.TiledVertical:
+                            case GuiSpriteType.TiledBoth:
+                                var texSize = new Vector2 (SpriteAtlas.ColorTexture.width, SpriteAtlas.ColorTexture.height);
+                                var isHorTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledHorizontal;
+                                var isVerTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledVertical;
+                                GuiMeshTools.FillSlicedTiledSprite (
+                                    _meshFilter.sharedMesh, w, h, Color, sprData,
+                                    texSize, isHorTiled, isVerTiled, IsSpriteCenterFilled);
+                                break;
+                            default:
+                                GuiMeshTools.FillSimpleSprite (_meshFilter.sharedMesh, w, h, Color, sprData);
+                                break;
                         }
                     }
                 } else {
