@@ -17,28 +17,24 @@ namespace LeopotamGroup.Pooling {
         [SerializeField]
         Transform _itemsRoot;
 
-        readonly Stack<PoolObject> _store = new Stack<PoolObject> (64);
+        readonly Stack<IPoolObject> _store = new Stack<IPoolObject> (64);
 
-        GameObject _cachedAsset;
+        IPoolObject _cachedAsset;
 
         Vector3 _cachedScale;
 
         bool LoadPrefab () {
-            _cachedAsset = Resources.Load<GameObject> (_prefabPath);
-            if (_cachedAsset == null) {
+            var go = Resources.Load<GameObject> (_prefabPath);
+            if (go == null) {
                 Debug.LogWarning ("Cant load asset " + _prefabPath);
                 return false;
             }
-            #if UNITY_EDITOR
-            if (_cachedAsset.GetComponent <PoolObject> () != null) {
-                Debug.LogWarning ("PoolObject cant be used on prefabs");
-                _cachedAsset = null;
-                UnityEditor.EditorApplication.isPaused = true;
-                return false;
+            _cachedAsset = go.GetComponent <IPoolObject> ();
+            if ((System.Object) _cachedAsset == null) {
+                _cachedAsset = go.AddComponent<PoolObject> ();
             }
-            #endif
 
-            _cachedScale = _cachedAsset.transform.localScale;
+            _cachedScale = go.transform.localScale;
 
             return true;
         }
@@ -46,7 +42,7 @@ namespace LeopotamGroup.Pooling {
         /// <summary>
         /// Get new instance of prefab from pool.
         /// </summary>
-        public PoolObject Get () {
+        public IPoolObject Get () {
             bool isNew;
             return Get (out isNew);
         }
@@ -55,7 +51,7 @@ namespace LeopotamGroup.Pooling {
         /// Get new instance of prefab from pool.
         /// </summary>
         /// <param name="isNew">Is instance was created during this call.</param>
-        public PoolObject Get (out bool isNew) {
+        public IPoolObject Get (out bool isNew) {
             if ((System.Object) _cachedAsset == null) {
                 if (!LoadPrefab ()) {
                     isNew = false;
@@ -63,19 +59,22 @@ namespace LeopotamGroup.Pooling {
                 }
             }
 
-            PoolObject obj;
+            IPoolObject obj;
             if (_store.Count > 0) {
                 obj = _store.Pop ();
                 isNew = false;
             } else {
-                var go = Instantiate<GameObject> (_cachedAsset);
-                obj = go.AddComponent<PoolObject> ();
-                obj.Pool = this;
-                go.transform.SetParent (_itemsRoot, false);
-                go.transform.localScale = _cachedScale;
+                obj = Instantiate ((Object) _cachedAsset) as IPoolObject;
+                obj.PoolContainer = this;
+                var tr = obj.PoolTransform;
+                if ((System.Object) tr != null) {
+                    tr.gameObject.SetActive (false);
+                    tr.SetParent (_itemsRoot, false);
+                    tr.localScale = _cachedScale;
+                }
                 isNew = true;
             }
-            obj.SetActive (false);
+
             return obj;
         }
 
@@ -83,15 +82,18 @@ namespace LeopotamGroup.Pooling {
         /// Recycle specified instance to pool.
         /// </summary>
         /// <param name="obj">Instance to recycle.</param>
-        public void Recycle (PoolObject obj) {
+        public void Recycle (IPoolObject obj) {
             if ((System.Object) obj != null) {
                 #if UNITY_EDITOR
-                if (obj.Pool != this) {
-                    Debug.LogWarning ("Invalid obj to recycle", obj);
+                if (obj.PoolContainer != this) {
+                    Debug.LogWarning ("Invalid obj to recycle", (Object)obj);
                     return;
                 }
                 #endif
-                obj.SetActive (false);
+                var tr = obj.PoolTransform;
+                if ((System.Object) tr != null) {
+                    tr.gameObject.SetActive (false);
+                }
                 if (!_store.Contains (obj)) {
                     _store.Push (obj);
                 }

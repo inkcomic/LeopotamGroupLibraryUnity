@@ -15,21 +15,21 @@ namespace LeopotamGroup.Examples.PoolingTest {
                 yield break;
             }
             var waiter = new WaitForSeconds (SpawnDelay);
-            PoolObject obj;
+            IPoolObject obj;
             while (true) {
                 obj = _pool.Get ();
-                obj.transform.localPosition = new Vector3 (
+                obj.PoolTransform.localPosition = new Vector3 (
                     Mathf.Lerp (-1f, 1f, Rng.GetFloatStatic ()), Mathf.Lerp (-1f, 1f, Rng.GetFloatStatic ()), 0f);
-                obj.transform.localRotation =
+                obj.PoolTransform.localRotation =
                     Quaternion.Euler (new Vector3 (0f, Mathf.Lerp (-180f, 1f, Rng.GetFloatStatic ()), 0f));
-                obj.SetActive (true);
+                obj.PoolTransform.gameObject.SetActive (true);
                 yield return waiter;
             }
         }
 
         void OnGUI () {
             GUILayout.Label (string.Format (
-                "New instances will be spawned from code each {0}secs, recycled each 1secs and reused again without create new instances", SpawnDelay));
+                    "New instances will be spawned from code each {0}secs, recycled each 1secs and reused again without create new instances", SpawnDelay));
         }
     }
 }

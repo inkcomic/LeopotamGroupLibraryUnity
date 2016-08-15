@@ -27,9 +27,9 @@ namespace LeopotamGroup.Pooling {
         }
 
         void OnRecycle () {
-            var poolObj = GetComponent <PoolObject> ();
-            if (poolObj != null) {
-                poolObj.Recycle ();
+            var po = GetComponent <IPoolObject> ();
+            if (po != null) {
+                po.PoolRecycle ();
             } else {
                 gameObject.SetActive (false);
             }

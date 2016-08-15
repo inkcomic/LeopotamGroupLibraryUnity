@@ -7,39 +7,40 @@ using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.Pooling {
-    /// <summary>
-    /// Helper for PoolContainer.
-    /// </summary>
-    public sealed class PoolObject : MonoBehaviourBase {
-        public PoolContainer Pool {
-            get { return _pool; }
-            set {
-                #if UNITY_EDITOR
-                if (_pool != null) {
-                    Debug.LogWarning ("Pool container already assigned", gameObject);
-                }
-                #endif
-                _pool = value;    
-            }
-        }
+    public interface IPoolObject {
+        /// <summary>
+        /// Pool container - spawner of this instance, should be set only once.
+        /// </summary>
+        /// <value>The pool container.</value>
+        PoolContainer PoolContainer { get; set; }
 
-        PoolContainer _pool;
+        /// <summary>
+        /// Transform of spawned instance, can be null if you dont need it.
+        /// </summary>
+        Transform PoolTransform { get; }
 
         /// <summary>
         /// Recycle this instance.
         /// </summary>
-        public void Recycle () {
-            if (Pool != null) {
-                Pool.Recycle (this);
+        void PoolRecycle ();
+    }
+
+    /// <summary>
+    /// Helper for PoolContainer.
+    /// </summary>
+    public sealed class PoolObject : MonoBehaviourBase, IPoolObject {
+#region IPoolObject implementation
+
+        public PoolContainer PoolContainer { get; set; }
+
+        public Transform PoolTransform { get { return transform; } }
+
+        public void PoolRecycle () {
+            if ((System.Object) PoolContainer != null) {
+                PoolContainer.Recycle (this);
             }
         }
 
-        /// <summary>
-        /// Set activity of this instance of prefab.
-        /// </summary>
-        /// <param name="state">If set to <c>true</c> state.</param>
-        public void SetActive (bool state) {
-            gameObject.SetActive (state);
-        }
+#endregion
     }
 }
