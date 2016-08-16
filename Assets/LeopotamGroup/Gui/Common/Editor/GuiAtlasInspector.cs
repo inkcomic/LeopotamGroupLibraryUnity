@@ -15,11 +15,20 @@ using UnityEngine;
 namespace LeopotamGroup.Gui.Common.UnityEditors {
     [CustomEditor (typeof (GuiAtlas))]
     sealed class GuiAtlasInspector : Editor {
+        SerializedProperty _colorTexProperty;
+
+        SerializedProperty _alphaTexProperty;
+
+        void OnEnable () {
+            _colorTexProperty = serializedObject.FindProperty ("ColorTexture");
+            _alphaTexProperty = serializedObject.FindProperty ("AlphaTexture");
+        }
+
         public override void OnInspectorGUI () {
             EditorGUILayout.HelpBox ("Use context menu at atlas asset for options.\n\n" +
-            "Add suffix .slice_A_B_C_D to texture asset name for init slice borders for left (A), top (B), right (C) and bottom (D) sides.\n\n" +
-            "All coords - in pixels from each side!\n\n" +
-            "For example: button.sliced_10_5_10_5", MessageType.Info);
+                "Add suffix .slice_A_B_C_D to texture asset name for init slice borders for left (A), top (B), right (C) and bottom (D) sides.\n\n" +
+                "All coords - in pixels from each side!\n\n" +
+                "For example: button.sliced_10_5_10_5", MessageType.Info);
 
             var atlas = target as GuiAtlas;
 
@@ -32,11 +41,21 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             EditorGUILayout.Separator ();
 
             serializedObject.Update ();
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("ColorTexture"));
-            EditorGUILayout.PropertyField (serializedObject.FindProperty ("AlphaTexture"));
+            EditorGUILayout.PropertyField (_colorTexProperty);
+            EditorGUILayout.PropertyField (_alphaTexProperty);
+
+            if (_alphaTexProperty.objectReferenceValue != null) {
+                if (GUILayout.Button ("Remove alpha channel")) {
+                    if (EditorUtility.DisplayDialog ("Warning", "This will turn atlas to opaque rendering, are you sure?", "Yes", "No")) {
+                        var obj = _alphaTexProperty.objectReferenceValue;
+                        _alphaTexProperty.objectReferenceValue = null;
+                        serializedObject.ApplyModifiedPropertiesWithoutUndo ();
+                        AssetDatabase.DeleteAsset (AssetDatabase.GetAssetPath (obj));
+                    }
+                }
+            }
 
             EditorGUILayout.Separator ();
-
 
             EditorGUILayout.LabelField ("Sprites list", EditorStyles.boldLabel);
             foreach (var item in atlas.Sprites) {
@@ -137,15 +156,16 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
                 EditorUtility.DisplayProgressBar ("Save and import atlas data", "Color data processing...", 1f);
                 var atlasPath = Path.ChangeExtension (srcAtlasPath, "color.png");
                 File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), atlasPath), colorData);
-                atlasTex = FixAtlasImport (atlasPath);
 
                 EditorUtility.DisplayProgressBar ("Save and import atlas data", "Alpha data processing...", 1f);
-                atlasPath = Path.ChangeExtension (srcAtlasPath, "alpha.png");
-                File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), atlasPath), alphaData);
-                var alphaT = FixAtlasImport (atlasPath);
+                var alphaAtlasPath = Path.ChangeExtension (srcAtlasPath, "alpha.png");
+                File.WriteAllBytes (Path.Combine (Path.Combine (Application.dataPath, ".."), alphaAtlasPath), alphaData);
 
+                EditorUtility.DisplayProgressBar ("Save and import atlas data", "Import processed data...", 1f);
+                AssetDatabase.Refresh ();
+                atlasTex = FixAtlasImport (atlasPath);
                 atlas.ColorTexture = atlasTex;
-                atlas.AlphaTexture = alphaT;
+                atlas.AlphaTexture = FixAtlasImport (alphaAtlasPath);
 
                 var atlasSprites = new List<GuiSpriteData> (sprites.Count);
                 float atlasWidth = atlasTex.width;
