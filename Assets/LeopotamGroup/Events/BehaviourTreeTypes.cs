@@ -113,11 +113,27 @@ namespace LeopotamGroup.Events {
     }
 
     /// <summary>
+    /// Behaviour tree action base node.
+    /// </summary>
+    public abstract class BehaviourTreeActionBase<T> : BehaviourTreeNodeBase where T:class, new() {
+        protected readonly BehaviourTree<T> _bt;
+
+        /// <summary>
+        /// Initialize new instance of BehaviourTreeAction node.
+        /// </summary>
+        /// <param name="bt">BehaviourTree instance.</param>
+        public BehaviourTreeActionBase (BehaviourTree<T> bt) {
+            if (bt == null) {
+                throw new ArgumentNullException ();
+            }
+            _bt = bt;
+        }
+    }
+
+    /// <summary>
     /// Behaviour tree action.
     /// </summary>
-    public sealed class BehaviourTreeAction<T> : BehaviourTreeNodeBase where T:class, new() {
-        readonly BehaviourTree<T> _bt;
-
+    public sealed class BehaviourTreeAction<T> : BehaviourTreeActionBase<T> where T:class, new() {
         readonly Func<BehaviourTree<T>, BehaviourTreeResult> _cb;
 
         /// <summary>
@@ -125,11 +141,10 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="bt">BehaviourTree instance.</param>
         /// <param name="cb">Callback of custom node logic.</param>
-        public BehaviourTreeAction (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) {
-            if (bt == null || cb == null) {
+        public BehaviourTreeAction (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) : base(bt) {
+            if (cb == null) {
                 throw new ArgumentNullException ();
             }
-            _bt = bt;
             _cb = cb;
         }
 
