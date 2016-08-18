@@ -639,17 +639,19 @@ namespace LeopotamGroup.Serialization {
                         }
                         foreach (var p in type.GetProperties ()) {
                             if (p.CanRead && p.CanWrite && !Attribute.IsDefined (p, ignoreType)) {
-                                if (Attribute.IsDefined (p, nameType)) {
-                                    name = ((JsonNameAttribute) Attribute.GetCustomAttribute (p, nameType)).Name;
-                                    if (string.IsNullOrEmpty (name)) {
+                                if (string.CompareOrdinal (p.Name, "Item") != 0 || p.GetIndexParameters ().Length == 0) {
+                                    if (Attribute.IsDefined (p, nameType)) {
+                                        name = ((JsonNameAttribute) Attribute.GetCustomAttribute (p, nameType)).Name;
+                                        if (string.IsNullOrEmpty (name)) {
+                                            name = p.Name;
+                                        }
+                                    } else {
                                         name = p.Name;
                                     }
-                                } else {
-                                    name = p.Name;
+                                    _sb.Length = 0;
+                                    _sb.Append (name);
+                                    desc.Properties.Add (_sb.ToString (), p);
                                 }
-                                _sb.Length = 0;
-                                _sb.Append (name);
-                                desc.Properties.Add (_sb.ToString (), p);
                             }
                         }
                         _types[type] = desc;
