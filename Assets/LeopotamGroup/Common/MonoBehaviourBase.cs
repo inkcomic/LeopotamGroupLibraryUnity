@@ -29,7 +29,7 @@ namespace LeopotamGroup.Common {
         protected Transform _cachedTransform;
 
         protected virtual void Awake () {
-            if (_cachedTransform == null) {
+            if ((System.Object) _cachedTransform == null) {
                 _cachedTransform = base.transform;
             }
         }

@@ -27,7 +27,7 @@ namespace LeopotamGroup.Common {
                     }
 #endif
                     _instance = Object.FindObjectOfType<T> ();
-                    if (_instance == null) {
+                    if ((System.Object) _instance == null) {
                         _instance = new GameObject (
 #if UNITY_EDITOR
                             "_SINGLETON_" + typeof (T).Name
@@ -41,7 +41,7 @@ namespace LeopotamGroup.Common {
         }
 
         void Awake () {
-            if (_instance != null && _instance != this) {
+            if ((System.Object) _instance != null && _instance != this) {
                 DestroyImmediate (gameObject);
                 return;
             }
@@ -52,7 +52,7 @@ namespace LeopotamGroup.Common {
         }
 
         void OnDestroy () {
-            if (_instance != null && _instance == this) {
+            if (_instance == this) {
                 _instance = null;
                 OnDestruct ();
             }
@@ -77,7 +77,7 @@ namespace LeopotamGroup.Common {
         /// </summary>
         /// <returns>Instance exists.</returns>
         public static bool IsInstanceCreated () {
-            return _instance != null;
+            return (System.Object) _instance != null;
         }
 
         /// <summary>
