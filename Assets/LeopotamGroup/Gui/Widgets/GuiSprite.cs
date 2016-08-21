@@ -128,7 +128,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         [HideInInspector]
         [SerializeField]
-        float _fillValue;
+        float _fillValue = 1f;
 
         MeshFilter _meshFilter;
 
