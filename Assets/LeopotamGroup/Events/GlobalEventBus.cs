@@ -4,24 +4,18 @@
 //-------------------------------------------------------
 
 using System;
-using LeopotamGroup.Common;
 
 namespace LeopotamGroup.Events {
     /// <summary>
     /// Global event bus.
     /// </summary>
-    public sealed class GlobalEventBus : UnitySingleton<GlobalEventBus> {
-        EventBus _eventBus;
+    public sealed class GlobalEventBus {
+        public static readonly GlobalEventBus Instance = new GlobalEventBus ();
 
-        protected override void OnConstruct () {
-            base.OnConstruct ();
-            DontDestroyOnLoad (gameObject);
+        readonly EventBus _eventBus;
+
+        GlobalEventBus () {
             _eventBus = new EventBus ();
-        }
-
-        protected override void OnDestruct () {
-            UnsubscribeAllEvents ();
-            base.OnDestruct ();
         }
 
         /// <summary>

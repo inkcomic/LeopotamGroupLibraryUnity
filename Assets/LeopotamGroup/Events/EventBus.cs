@@ -18,7 +18,7 @@ namespace LeopotamGroup.Events {
 
         readonly HashSet<Type> _eventsInCall = new HashSet<Type> ();
 
-        readonly List<object> _currentEventCallList = new List<object> ();
+        readonly Dictionary<Type, List<object>> _eventSubscribersInCall = new Dictionary<Type, List<object>> ();
 
         /// <summary>
         /// Subscribe callback to be raised on specific event.
@@ -33,6 +33,7 @@ namespace LeopotamGroup.Events {
             lock (_syncObj) {
                 if (!_events.ContainsKey (eventType)) {
                     _events[eventType] = new List<Func<T, bool>> ();
+                    _eventSubscribersInCall[eventType] = new List<object> ();
                 }
                 var list = _events[eventType] as List<Func<T, bool>>;
                 if (list == null) {
@@ -66,9 +67,9 @@ namespace LeopotamGroup.Events {
                         var id = list.IndexOf (eventAction);
                         if (id != -1) {
                             list.RemoveAt (id);
-
-                            if (list.Count == 0) {
+                            if (list.Count == 0 && !keepEvent) {
                                 _events.Remove (eventType);
+                                _eventSubscribersInCall.Remove (eventType);
                             }
                         }
                     }
@@ -88,6 +89,7 @@ namespace LeopotamGroup.Events {
                         (_events[eventType] as List<Func<T, bool>>).Clear ();
                     } else {
                         _events.Remove (eventType);
+                        _eventSubscribersInCall.Remove (eventType);
                     }
                 }
             }
@@ -99,6 +101,7 @@ namespace LeopotamGroup.Events {
         public void UnsubscribeAllEvents () {
             lock (_syncObj) {
                 _events.Clear ();
+                _eventSubscribersInCall.Clear ();
             }
         }
 
@@ -119,26 +122,31 @@ namespace LeopotamGroup.Events {
                 }
                 if (_events.ContainsKey (eventType)) {
                     list = _events[eventType] as List<Func<T, bool>>;
+                    // kept for no new GC alloc, but empty.
+                    if (list.Count == 0) {
+                        list = null;
+                    }
                 }
                 if (list != null) {
                     _eventsInCall.Add (eventType);
                 }
             }
             if (list != null) {
+                var cacheList = _eventSubscribersInCall[eventType];
                 int i;
                 var iMax = list.Count;
                 for (i = 0; i < iMax; i++) {
-                    _currentEventCallList.Add (list[i]);
+                    cacheList.Add (list[i]);
                 }
                 try {
                     for (i = 0; i < iMax; i++) {
-                        if ((_currentEventCallList[i] as Func<T, bool>) (eventMessage)) {
+                        if ((cacheList[i] as Func<T, bool>) (eventMessage)) {
                             // Event was interrupted / processed, we can exit.
                             return;
                         }
                     }
                 } finally {
-                    _currentEventCallList.Clear ();
+                    cacheList.Clear ();
                     lock (_syncObj) {
                         _eventsInCall.Remove (eventType);
                     }
