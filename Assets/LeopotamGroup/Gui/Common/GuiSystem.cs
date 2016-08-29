@@ -355,6 +355,25 @@ namespace LeopotamGroup.Gui.Common {
             return _instance != null;
         }
 
+        /// <summary>
+        /// Get position of worldpoint at gui relative to widget container.
+        /// </summary>
+        /// <param name="worldCamera">World camera.</param>
+        /// <param name="worldPoint">World point.</param>
+        /// <param name="widgetContainer">Widget container, can be null.</param>
+        public Vector3 GetOverlayPosition (Camera worldCamera, Vector3 worldPoint, Transform widgetContainer) {
+            if ((System.Object) worldCamera == null) {
+                return worldPoint;
+            }
+            var pos = worldCamera.WorldToScreenPoint (worldPoint);
+            pos = Camera.ScreenToWorldPoint (pos);
+            if ((System.Object) widgetContainer != null) {
+                pos = widgetContainer.InverseTransformPoint (pos);
+            }
+            pos.z = 0f;
+            return pos;
+        }
+
         struct GuiTouchInfo {
             public int ID;
 

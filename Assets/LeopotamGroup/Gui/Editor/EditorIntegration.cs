@@ -107,139 +107,139 @@ namespace LeopotamGroup.Gui.UnityEditors {
         [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/Sprite", false, 1)]
         static void CreateWidgetSprite () {
             SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, assetPath => {
-                var spr = GuiControlFactory.CreateWidgetSprite ();
-                Undo.RegisterCreatedObjectUndo (spr.gameObject, "leopotamgroup.gui.create-sprite");
-                if (!string.IsNullOrEmpty (assetPath)) {
-                    spr.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
-                    var sprNames = spr.SpriteAtlas.GetSpriteNames ();
-                    spr.SpriteName = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
-                    spr.ResetSize ();
-                }
-                FixWidgetParent (spr);
-                UpdateVisuals (spr);
-            });
+                    var spr = GuiControlFactory.CreateWidgetSprite ();
+                    Undo.RegisterCreatedObjectUndo (spr.gameObject, "leopotamgroup.gui.create-sprite");
+                    if (!string.IsNullOrEmpty (assetPath)) {
+                        spr.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                        var sprNames = spr.SpriteAtlas.GetSpriteNames ();
+                        spr.SpriteName = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                        spr.ResetSize ();
+                    }
+                    FixWidgetParent (spr);
+                    UpdateVisuals (spr);
+                });
         }
 
         [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/Label", false, 1)]
         static void CreateWidgetLabel () {
             SearchWindow.Open<Font> ("Select font", "t:font", null, assetPath => {
-                var label = GuiControlFactory.CreateWidgetLabel ();
-                Undo.RegisterCreatedObjectUndo (label.gameObject, "leopotamgroup.gui.create-label");
-                label.Font = string.IsNullOrEmpty (assetPath) ?
+                    var label = GuiControlFactory.CreateWidgetLabel ();
+                    Undo.RegisterCreatedObjectUndo (label.gameObject, "leopotamgroup.gui.create-label");
+                    label.Font = string.IsNullOrEmpty (assetPath) ?
                     Resources.GetBuiltinResource<Font> ("Arial.ttf") : AssetDatabase.LoadAssetAtPath<Font> (assetPath);
-                label.Text = "Label";
-                FixWidgetParent (label);
-                UpdateVisuals (label);
-            });
+                    label.Text = "Label";
+                    FixWidgetParent (label);
+                    UpdateVisuals (label);
+                });
         }
 
         [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/Button", false, 1)]
         static void CreateWidgetButton () {
             SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, assetPath => {
-                var button = GuiControlFactory.CreateWidgetButton ();
-                Undo.RegisterCreatedObjectUndo (button.gameObject, "leopotamgroup.gui.create-btn");
-                FixWidgetParent (button);
-                if (!string.IsNullOrEmpty (assetPath)) {
-                    var spr = button.GetComponentInChildren<GuiSprite> ();
-                    spr.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
-                    var sprNames = spr.SpriteAtlas.GetSpriteNames ();
-                    spr.SpriteName = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
-                    spr.ResetSize ();
-                    button.Width = spr.Width;
-                    button.Height = spr.Height;
-                    UpdateVisuals (spr);
-                }
-                UpdateVisuals (button);
-            });
+                    var button = GuiControlFactory.CreateWidgetButton ();
+                    Undo.RegisterCreatedObjectUndo (button.gameObject, "leopotamgroup.gui.create-btn");
+                    FixWidgetParent (button);
+                    if (!string.IsNullOrEmpty (assetPath)) {
+                        var spr = button.GetComponentInChildren<GuiSprite> ();
+                        spr.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                        var sprNames = spr.SpriteAtlas.GetSpriteNames ();
+                        spr.SpriteName = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                        spr.ResetSize ();
+                        button.Width = spr.Width;
+                        button.Height = spr.Height;
+                        UpdateVisuals (spr);
+                    }
+                    UpdateVisuals (button);
+                });
         }
 
         [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/Button with label", false, 1)]
         static void CreateWidgetButtonWithLabel () {
             SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, sprAssetPath => {
-                var button = GuiControlFactory.CreateWidgetButtonWithLabel ();
-                Undo.RegisterCreatedObjectUndo (button.gameObject, "leopotamgroup.gui.create-btn");
-                FixWidgetParent (button);
-                if (!string.IsNullOrEmpty (sprAssetPath)) {
-                    var spr = button.GetComponentInChildren<GuiSprite> ();
-                    spr.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (sprAssetPath);
-                    var sprNames = spr.SpriteAtlas.GetSpriteNames ();
-                    spr.SpriteName = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
-                    spr.ResetSize ();
-                    button.Width = spr.Width;
-                    button.Height = spr.Height;
-                    UpdateVisuals (spr);
-                }
+                    var button = GuiControlFactory.CreateWidgetButtonWithLabel ();
+                    Undo.RegisterCreatedObjectUndo (button.gameObject, "leopotamgroup.gui.create-btn");
+                    FixWidgetParent (button);
+                    if (!string.IsNullOrEmpty (sprAssetPath)) {
+                        var spr = button.GetComponentInChildren<GuiSprite> ();
+                        spr.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (sprAssetPath);
+                        var sprNames = spr.SpriteAtlas.GetSpriteNames ();
+                        spr.SpriteName = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                        spr.ResetSize ();
+                        button.Width = spr.Width;
+                        button.Height = spr.Height;
+                        UpdateVisuals (spr);
+                    }
 
-                SearchWindow.Open<Font> ("Select font", "t:font", null, fontAssetPath => {
-                    var label = button.GetComponentInChildren<GuiLabel> ();
-                    label.Font = string.IsNullOrEmpty (fontAssetPath) ?
+                    SearchWindow.Open<Font> ("Select font", "t:font", null, fontAssetPath => {
+                            var label = button.GetComponentInChildren<GuiLabel> ();
+                            label.Font = string.IsNullOrEmpty (fontAssetPath) ?
                         Resources.GetBuiltinResource<Font> ("Arial.ttf") : AssetDatabase.LoadAssetAtPath<Font> (fontAssetPath);
-                    label.Text = "Button";
-                    UpdateVisuals (label);
-                });
+                            label.Text = "Button";
+                            UpdateVisuals (label);
+                        });
 
-                UpdateVisuals (button);
-            });
+                    UpdateVisuals (button);
+                });
         }
 
         [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/ProgressBar", false, 1)]
         static void CreateWidgetProgressBar () {
             SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, assetPath => {
-                var slider = GuiControlFactory.CreateWidgetSlider ();
-                slider.name = "ProgressBar";
-                Undo.RegisterCreatedObjectUndo (slider.gameObject, "leopotamgroup.gui.create-progressbar");
-                FixWidgetParent (slider);
-                if (!string.IsNullOrEmpty (assetPath)) {
-                    var atlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
-                    var sprNames = atlas.GetSpriteNames ();
-                    var name = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
-                    slider.Background.name = "Background";
-                    slider.Foreground.name = "Foreground";
-                    slider.Background.SpriteAtlas = atlas;
-                    slider.Foreground.SpriteAtlas = atlas;
-                    slider.Background.SpriteName = name;
-                    slider.Foreground.SpriteName = name;
-                    slider.Background.ResetSize ();
-                    slider.Foreground.ResetSize ();
-                }
-                slider.Value = 0.5f;
-                slider.UpdateVisuals ();
-                UpdateVisuals (slider);
-            });
+                    var slider = GuiControlFactory.CreateWidgetSlider ();
+                    slider.name = "ProgressBar";
+                    Undo.RegisterCreatedObjectUndo (slider.gameObject, "leopotamgroup.gui.create-progressbar");
+                    FixWidgetParent (slider);
+                    if (!string.IsNullOrEmpty (assetPath)) {
+                        var atlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                        var sprNames = atlas.GetSpriteNames ();
+                        var name = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                        slider.Background.name = "Background";
+                        slider.Foreground.name = "Foreground";
+                        slider.Background.SpriteAtlas = atlas;
+                        slider.Foreground.SpriteAtlas = atlas;
+                        slider.Background.SpriteName = name;
+                        slider.Foreground.SpriteName = name;
+                        slider.Background.ResetSize ();
+                        slider.Foreground.ResetSize ();
+                    }
+                    slider.Value = 0.5f;
+                    slider.UpdateVisuals ();
+                    UpdateVisuals (slider);
+                });
         }
 
         [MenuItem ("GameObject/LeopotamGroup.Gui/Widgets/Slider", false, 1)]
         static void CreateWidgetSlider () {
             SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", null, assetPath => {
-                var slider = GuiControlFactory.CreateWidgetSlider (true, true);
-                Undo.RegisterCreatedObjectUndo (slider.gameObject, "leopotamgroup.gui.create-slider");
-                FixWidgetParent (slider);
-                if (!string.IsNullOrEmpty (assetPath)) {
-                    var atlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
-                    var sprNames = atlas.GetSpriteNames ();
-                    var name = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
-                    var thumb = slider.GetComponentInChildren<GuiBindPosition> ().GetComponent<GuiSprite> ();
-                    slider.Background.name = "Background";
-                    slider.Foreground.name = "Foreground";
-                    thumb.name = "Thumb";
-                    slider.Background.SpriteAtlas = atlas;
-                    slider.Foreground.SpriteAtlas = atlas;
-                    thumb.SpriteAtlas = atlas;
-                    slider.Background.SpriteName = name;
-                    slider.Foreground.SpriteName = name;
-                    thumb.SpriteName = name;
-                    slider.Background.ResetSize ();
-                    slider.Foreground.ResetSize ();
-                    thumb.ResetSize ();
+                    var slider = GuiControlFactory.CreateWidgetSlider (true, true);
+                    Undo.RegisterCreatedObjectUndo (slider.gameObject, "leopotamgroup.gui.create-slider");
+                    FixWidgetParent (slider);
+                    if (!string.IsNullOrEmpty (assetPath)) {
+                        var atlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
+                        var sprNames = atlas.GetSpriteNames ();
+                        var name = sprNames != null && sprNames.Length > 0 ? sprNames[0] : null;
+                        var thumb = slider.GetComponentInChildren<GuiBindPosition> ().GetComponent<GuiSprite> ();
+                        slider.Background.name = "Background";
+                        slider.Foreground.name = "Foreground";
+                        thumb.name = "Thumb";
+                        slider.Background.SpriteAtlas = atlas;
+                        slider.Foreground.SpriteAtlas = atlas;
+                        thumb.SpriteAtlas = atlas;
+                        slider.Background.SpriteName = name;
+                        slider.Foreground.SpriteName = name;
+                        thumb.SpriteName = name;
+                        slider.Background.ResetSize ();
+                        slider.Foreground.ResetSize ();
+                        thumb.ResetSize ();
 
-                    var receiver = slider.Background.GetComponent <GuiEventReceiver> ();
-                    receiver.Width = slider.Background.Width;
-                    receiver.Height = slider.Background.Height;
-                }
-                slider.Value = 0.5f;
-                slider.UpdateVisuals ();
-                UpdateVisuals (slider);
-            });
+                        var receiver = slider.Background.GetComponent <GuiEventReceiver> ();
+                        receiver.Width = slider.Background.Width;
+                        receiver.Height = slider.Background.Height;
+                    }
+                    slider.Value = 0.5f;
+                    slider.UpdateVisuals ();
+                    UpdateVisuals (slider);
+                });
         }
 
         [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/Panel", false, 1)]
@@ -294,6 +294,15 @@ namespace LeopotamGroup.Gui.UnityEditors {
             if (scroll != null) {
                 Undo.RegisterCreatedObjectUndo (scroll.gameObject, "leopotamgroup.gui.create-scrollview");
                 FixWidgetParent (scroll);
+            }
+        }
+
+        [MenuItem ("GameObject/LeopotamGroup.Gui/Layout/OverlayTransform", false, 1)]
+        static void CreateLayoutOverlayTransform () {
+            var bind = GuiControlFactory.CreateLayoutOverlayTransform (Selection.activeGameObject);
+            if (bind != null) {
+                Undo.RegisterCreatedObjectUndo (bind.gameObject, "leopotamgroup.gui.create-overlay-transform");
+                FixWidgetParent (bind);
             }
         }
 

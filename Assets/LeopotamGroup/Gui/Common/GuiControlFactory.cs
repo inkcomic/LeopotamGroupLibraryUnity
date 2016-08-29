@@ -140,6 +140,14 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         /// <summary>
+        /// Create overlay following to world transform.
+        /// </summary>
+        /// <param name="go">GameObject.</param>
+        public static GuiOverlayTransform CreateLayoutOverlayTransform (GameObject go) {
+            return go != null ? go.EnsureGetComponent<GuiOverlayTransform> () : null;
+        }
+
+        /// <summary>
         /// Create component for dragging GuiScrollView content.
         /// </summary>
         /// <param name="go">GameObject.</param>
