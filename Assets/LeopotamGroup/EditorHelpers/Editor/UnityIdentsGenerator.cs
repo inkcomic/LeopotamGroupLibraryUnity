@@ -18,21 +18,21 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string NamespaceKey = "lg.editor.unity-idents-gen.ns";
 
-        const string LayerMaskKey = "lg.editor.unity-idents-gen.layer";
-
         const string DefaultFileName = "Scripts/Common/UnityIdents.cs";
 
         const string DefaultNamespace = "Client.Common";
 
-        const string DefaultLayerMask = "Layer{0}";
+        const string CodeTemplate = "using UnityEngine;\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\t}}\n}}";
 
-        const string CodeTemplate = "namespace {0} {{\n\tpublic static partial class {1} {{\n{2}\t}}\n}}";
+        const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");\n";
+
+        const string LayerMask = "{0}public static readonly int LayerMask{1} = 1 << Layer{1};\n";
+
+        const string TagName = "{0}public const string Tag{1} = \"{2}\";\n";
 
         string _fileName;
 
         string _nsName;
-
-        string _layerName;
 
         [MenuItem ("Window/LeopotamGroupLibrary/UnityIdents generator...")]
         static void InitGeneration () {
@@ -43,7 +43,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             titleContent.text = Title;
             _fileName = ProjectPrefs.GetString (TargetFileKey, DefaultFileName);
             _nsName = ProjectPrefs.GetString (NamespaceKey, DefaultNamespace);
-            _layerName = ProjectPrefs.GetString (LayerMaskKey, DefaultLayerMask);
         }
 
         void OnGUI () {
@@ -55,15 +54,10 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (string.IsNullOrEmpty (_nsName)) {
                 _nsName = DefaultNamespace;
             }
-            _layerName = EditorGUILayout.TextField ("Layer mask", _layerName).Trim ();
-            if (string.IsNullOrEmpty (_layerName)) {
-                _layerName = DefaultLayerMask;
-            }
 
             if (GUILayout.Button ("Reset settings")) {
                 ProjectPrefs.DeleteKey (TargetFileKey);
                 ProjectPrefs.DeleteKey (NamespaceKey);
-                ProjectPrefs.DeleteKey (LayerMaskKey);
                 OnEnable ();
                 Repaint ();
             }
@@ -71,15 +65,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (GUILayout.Button ("Save settings & generate")) {
                 ProjectPrefs.SetString (TargetFileKey, _fileName);
                 ProjectPrefs.SetString (NamespaceKey, _nsName);
-                ProjectPrefs.SetString (LayerMaskKey, _layerName);
-                Generate (_fileName, _nsName, _layerName);
+                Generate (_fileName, _nsName);
             }
         }
 
-        static void Generate (string assetName, string nsName, string layerName) {
-            if (string.IsNullOrEmpty (assetName) || string.IsNullOrEmpty (nsName) || string.IsNullOrEmpty (layerName)) {
+        static void Generate (string assetName, string nsName) {
+            if (string.IsNullOrEmpty (assetName) || string.IsNullOrEmpty (nsName)) {
                 return;
             }
+
             var fileName = Application.dataPath + "/" + assetName;
             var className = Path.GetFileNameWithoutExtension (fileName);
 
@@ -88,7 +82,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 if (!Directory.Exists (path)) {
                     Directory.CreateDirectory (path);
                 }
-                var content = string.Format (CodeTemplate, nsName, className, GenerateFields (new string ('\t', 2)));
+                var fields = GenerateFields (new string ('\t', 2));
+                var content = string.Format (CodeTemplate, nsName, className, fields);
                 File.WriteAllText (fileName, content.Replace ("\t", new string (' ', 4)));
                 AssetDatabase.Refresh ();
             } catch (Exception ex) {
@@ -98,17 +93,25 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static string GenerateFields (string indent) {
             var sb = new StringBuilder ();
-            var layerMask = ProjectPrefs.GetString (LayerMaskKey);
-            string fieldName;
+            // layers
             foreach (var layerName in InternalEditorUtility.layers) {
-                fieldName = layerName.Replace (" ", string.Empty);
-                fieldName = char.ToUpperInvariant (fieldName[0]) + fieldName.Substring (1);
-                fieldName = string.Format (layerMask, fieldName);
-                if (!string.IsNullOrEmpty (fieldName)) {
-                    sb.AppendFormat ("{0}public const string {1} = \"{2}\";\n", indent, fieldName, layerName);
-                }
+                sb.AppendFormat (LayerName, indent, CleanupName (layerName), layerName);
+            }
+            // layer masks
+            foreach (var layerName in InternalEditorUtility.layers) {
+                sb.AppendFormat (LayerMask, indent, CleanupName (layerName));
+            }
+            // tags
+            foreach (var tagName in InternalEditorUtility.tags) {
+                sb.AppendFormat (TagName, indent, CleanupName (tagName), tagName);
             }
             return sb.ToString ();
+        }
+
+        static string CleanupName (string dirtyName) {
+            dirtyName = dirtyName.Replace (" ", string.Empty);
+            dirtyName = dirtyName.Replace ("-", "_");
+            return char.ToUpperInvariant (dirtyName[0]) + dirtyName.Substring (1);
         }
 
         static void LogError (string msg) {
