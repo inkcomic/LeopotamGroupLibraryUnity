@@ -11,8 +11,11 @@ using UnityEditorInternal;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
+    /// <summary>
+    /// Unity idents generator.
+    /// </summary>
     class UnityIdentsGenerator : EditorWindow {
-        const string Title = "IdentsGen";
+        const string Title = "Unity idents generator";
 
         const string TargetFileKey = "lg.editor.unity-idents-gen.path";
 
@@ -29,6 +32,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string LayerMask = "{0}public static readonly int LayerMask{1} = 1 << Layer{1};\n";
 
         const string TagName = "{0}public const string Tag{1} = \"{2}\";\n";
+
+        const string SceneName = "{0}public const string Scene{1} = \"{2}\";\n";
 
         string _fileName;
 
@@ -54,18 +59,17 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (string.IsNullOrEmpty (_nsName)) {
                 _nsName = DefaultNamespace;
             }
-
             if (GUILayout.Button ("Reset settings")) {
                 ProjectPrefs.DeleteKey (TargetFileKey);
                 ProjectPrefs.DeleteKey (NamespaceKey);
                 OnEnable ();
                 Repaint ();
             }
-
             if (GUILayout.Button ("Save settings & generate")) {
                 ProjectPrefs.SetString (TargetFileKey, _fileName);
                 ProjectPrefs.SetString (NamespaceKey, _nsName);
-                Generate (_fileName, _nsName);
+                var res = Generate (_fileName, _nsName);
+                EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }
         }
 
@@ -73,7 +77,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             var sb = new StringBuilder ();
             // layers
             foreach (var layerName in InternalEditorUtility.layers) {
-                sb.AppendFormat (LayerName, indent, CleanupName (layerName), layerName);
+                sb.AppendFormat (LayerName, indent, CleanupName (layerName), CleanupValue (layerName));
             }
             // layer masks
             foreach (var layerName in InternalEditorUtility.layers) {
@@ -81,40 +85,60 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             }
             // tags
             foreach (var tagName in InternalEditorUtility.tags) {
-                sb.AppendFormat (TagName, indent, CleanupName (tagName), tagName);
+                sb.AppendFormat (TagName, indent, CleanupName (tagName), CleanupValue (tagName));
+            }
+            // screens
+            string sceneName;
+            foreach (var scene in EditorBuildSettings.scenes) {
+                sceneName = Path.GetFileNameWithoutExtension (scene.path);
+                sb.AppendFormat (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName));
             }
             return sb.ToString ();
         }
 
         static string CleanupName (string dirtyName) {
-            dirtyName = dirtyName.Replace (" ", string.Empty);
-            dirtyName = dirtyName.Replace ("-", "_");
-            return char.ToUpperInvariant (dirtyName[0]) + dirtyName.Substring (1);
-        }
-
-        static void LogError (string msg) {
-            Debug.LogWarning ("UnityIdentsGenerator: " + msg);
-        }
-
-        public static void Generate (string assetName, string nsName) {
-            if (string.IsNullOrEmpty (assetName) || string.IsNullOrEmpty (nsName)) {
-                return;
+            // cant use "CultureInfo.InvariantCulture.TextInfo.ToTitleCase" due it will break already upcased chars.
+            var sb = new StringBuilder ();
+            var needUp = true;
+            foreach (var c in dirtyName) {
+                if (char.IsLetterOrDigit (c)) {
+                    sb.Append (needUp ? char.ToUpperInvariant (c) : c);
+                    needUp = false;
+                } else {
+                    needUp = true;
+                }
             }
+            return sb.ToString ();
+        }
 
-            var fileName = Application.dataPath + "/" + assetName;
-            var className = Path.GetFileNameWithoutExtension (fileName);
+        static string CleanupValue (string dirtyValue) {
+            return dirtyValue.Replace ("\"", "\\\"");
+        }
 
+        /// <summary>
+        /// Generate class with idents at specified filename and with specified namespace.
+        /// </summary>
+        /// <returns>Error message or null on success.</returns>
+        /// <param name="fileName">Filename.</param>
+        /// <param name="nsName">Namespace.</param>
+        public static string Generate (string fileName, string nsName) {
+            if (string.IsNullOrEmpty (fileName) || string.IsNullOrEmpty (nsName)) {
+                return "invalid parameters";
+            }
+            var fullFileName = Path.Combine (Application.dataPath, fileName);
+            var className = Path.GetFileNameWithoutExtension (fullFileName);
             try {
-                var path = Path.GetDirectoryName (fileName);
+                var path = Path.GetDirectoryName (fullFileName);
                 if (!Directory.Exists (path)) {
                     Directory.CreateDirectory (path);
                 }
                 var fields = GenerateFields (new string ('\t', 2));
                 var content = string.Format (CodeTemplate, nsName, className, fields);
-                File.WriteAllText (fileName, content.Replace ("\t", new string (' ', 4)));
+                File.WriteAllText (fullFileName, content.Replace ("\t", new string (' ', 4)));
                 AssetDatabase.Refresh ();
+                return null;
             } catch (Exception ex) {
-                LogError (ex.Message);
+                return ex.Message;
             }
         }
     }
