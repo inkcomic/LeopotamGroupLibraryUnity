@@ -36,7 +36,8 @@ namespace LeopotamGroup.Common {
         /// <summary>
         /// Normalized NumberFormatInfo.
         /// </summary>
-        public static readonly NumberFormatInfo NumberFormatInfo = new NumberFormatInfo {
+        public static readonly NumberFormatInfo NumberFormatInfo = new NumberFormatInfo
+        {
             NumberDecimalSeparator = "."
         };
 
