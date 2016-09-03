@@ -69,28 +69,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             }
         }
 
-        static void Generate (string assetName, string nsName) {
-            if (string.IsNullOrEmpty (assetName) || string.IsNullOrEmpty (nsName)) {
-                return;
-            }
-
-            var fileName = Application.dataPath + "/" + assetName;
-            var className = Path.GetFileNameWithoutExtension (fileName);
-
-            try {
-                var path = Path.GetDirectoryName (fileName);
-                if (!Directory.Exists (path)) {
-                    Directory.CreateDirectory (path);
-                }
-                var fields = GenerateFields (new string ('\t', 2));
-                var content = string.Format (CodeTemplate, nsName, className, fields);
-                File.WriteAllText (fileName, content.Replace ("\t", new string (' ', 4)));
-                AssetDatabase.Refresh ();
-            } catch (Exception ex) {
-                LogError (ex.Message);
-            }
-        }
-
         static string GenerateFields (string indent) {
             var sb = new StringBuilder ();
             // layers
@@ -116,6 +94,28 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void LogError (string msg) {
             Debug.LogWarning ("UnityIdentsGenerator: " + msg);
+        }
+
+        public static void Generate (string assetName, string nsName) {
+            if (string.IsNullOrEmpty (assetName) || string.IsNullOrEmpty (nsName)) {
+                return;
+            }
+
+            var fileName = Application.dataPath + "/" + assetName;
+            var className = Path.GetFileNameWithoutExtension (fileName);
+
+            try {
+                var path = Path.GetDirectoryName (fileName);
+                if (!Directory.Exists (path)) {
+                    Directory.CreateDirectory (path);
+                }
+                var fields = GenerateFields (new string ('\t', 2));
+                var content = string.Format (CodeTemplate, nsName, className, fields);
+                File.WriteAllText (fileName, content.Replace ("\t", new string (' ', 4)));
+                AssetDatabase.Refresh ();
+            } catch (Exception ex) {
+                LogError (ex.Message);
+            }
         }
     }
 }
