@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using LeopotamGroup.EditorHelpers;
 using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
     sealed class LocalizationUpdater : EditorWindow {
         const string Title = "Locale updater";
 
-        const string EditorPrefsKey = "_lgl_localeAutoUpdaterData";
+        const string ProjectPrefsKey = "lg.localization.auto-update";
 
         const string UrlDefault = "http://localhost";
 
@@ -33,7 +34,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         void Load () {
             try {
-                _paths = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (EditorPrefs.GetString (EditorPrefsKey, string.Empty));
+                _paths = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
             } catch {
                 _paths = new Dictionary<string, string> ();
             }
@@ -41,7 +42,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         void Save () {
             if (_paths != null) {
-                EditorPrefs.SetString (EditorPrefsKey, JsonSerialization.SerializeStatic (_paths));
+                ProjectPrefs.SetString (ProjectPrefsKey, JsonSerialization.SerializeStatic (_paths));
             }
         }
 
