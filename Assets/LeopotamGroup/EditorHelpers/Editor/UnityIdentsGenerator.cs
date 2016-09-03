@@ -25,7 +25,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string DefaultNamespace = "Client.Common";
 
-        const string CodeTemplate = "using UnityEngine;\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\t}}\n}}";
+        const string CodeTemplate =
+            "// Auto generated code, dont change it manually!\n" +
+            "using UnityEngine;\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\t}}\n}}";
 
         const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");\n";
 
