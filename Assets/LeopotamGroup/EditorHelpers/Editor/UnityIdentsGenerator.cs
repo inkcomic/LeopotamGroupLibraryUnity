@@ -4,6 +4,7 @@
 //-------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -26,16 +27,18 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string DefaultNamespace = "Client.Common";
 
         const string CodeTemplate =
-            "// Auto generated code, dont change it manually!\n" +
-            "using UnityEngine;\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\t}}\n}}";
+            "// Auto generated code, dont change it manually!\n\n" +
+            "using UnityEngine;\n\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\n\t}}\n}}";
 
-        const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");\n";
+        const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");";
 
-        const string LayerMask = "{0}public static readonly int LayerMask{1} = 1 << Layer{1};\n";
+        const string LayerMask = "{0}public static readonly int LayerMask{1} = 1 << Layer{1};";
 
-        const string TagName = "{0}public const string Tag{1} = \"{2}\";\n";
+        const string TagName = "{0}public const string Tag{1} = \"{2}\";";
 
-        const string SceneName = "{0}public const string Scene{1} = \"{2}\";\n";
+        const string SceneName = "{0}public const string Scene{1} = \"{2}\";";
+
+        const string AnimatorName = "{0}public static readonly int Animator{1} = Animator.StringToHash (\"{2}\");";
 
         string _fileName;
 
@@ -76,26 +79,41 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         static string GenerateFields (string indent) {
-            var sb = new StringBuilder ();
-            // layers
+            var lines = new List<string> (128);
+
+            // layers, layer masks
             foreach (var layerName in InternalEditorUtility.layers) {
-                sb.AppendFormat (LayerName, indent, CleanupName (layerName), CleanupValue (layerName));
+                lines.Add (string.Format (LayerName, indent, CleanupName (layerName), CleanupValue (layerName)));
+                lines.Add (string.Format (LayerMask, indent, CleanupName (layerName)));
             }
-            // layer masks
-            foreach (var layerName in InternalEditorUtility.layers) {
-                sb.AppendFormat (LayerMask, indent, CleanupName (layerName));
-            }
+
             // tags
             foreach (var tagName in InternalEditorUtility.tags) {
-                sb.AppendFormat (TagName, indent, CleanupName (tagName), CleanupValue (tagName));
+                lines.Add (string.Format (TagName, indent, CleanupName (tagName), CleanupValue (tagName)));
             }
-            // screens
-            string sceneName;
+
+            // scenes
             foreach (var scene in EditorBuildSettings.scenes) {
-                sceneName = Path.GetFileNameWithoutExtension (scene.path);
-                sb.AppendFormat (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName));
+                var sceneName = Path.GetFileNameWithoutExtension (scene.path);
+                lines.Add (string.Format (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName)));
             }
-            return sb.ToString ();
+
+            // animators
+            var animNames = new HashSet<string> ();
+            foreach (var guid in AssetDatabase.FindAssets ("t:animatorcontroller")) {
+                var assetPath = AssetDatabase.GUIDToAssetPath (guid);
+                var ac = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController> (assetPath);
+                for (int i = 0, iMax = ac.parameters.Length; i < iMax; i++) {
+                    var name = ac.parameters[i].name;
+                    if (!animNames.Contains (name)) {
+                        lines.Add (string.Format (AnimatorName, indent, CleanupName (name), CleanupValue (name)));
+                        animNames.Add (name);
+                    }
+                }
+            }
+
+            lines.Sort ();
+            return string.Join ("\n\n", lines.ToArray ());
         }
 
         static string CleanupName (string dirtyName) {
