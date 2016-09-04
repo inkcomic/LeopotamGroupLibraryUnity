@@ -16,15 +16,30 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
     /// Unity idents generator.
     /// </summary>
     class UnityIdentsGenerator : EditorWindow {
+        [Flags]
+        public enum Options {
+            Layers = 1,
+            Tags = 2,
+            Scenes = 4,
+            Animators = 8,
+            Axes = 16
+        }
+
         const string Title = "Unity idents generator";
 
-        const string TargetFileKey = "lg.editor.unity-idents-gen.path";
+        const string TargetFileKey = "lg.unity-idents-gen.path";
 
-        const string NamespaceKey = "lg.editor.unity-idents-gen.ns";
+        const string NamespaceKey = "lg.unity-idents-gen.ns";
+
+        const string OptionsKey = "lg.unity-idents-gen.options";
 
         const string DefaultFileName = "Scripts/Common/UnityIdents.cs";
 
         const string DefaultNamespace = "Client.Common";
+
+        const Options DefaultOptions =
+            Options.Layers | Options.Tags |
+            Options.Scenes | Options.Animators | Options.Axes;
 
         const string CodeTemplate =
             "// Auto generated code, dont change it manually!\n\n" +
@@ -40,9 +55,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string AnimatorName = "{0}public static readonly int Animator{1} = Animator.StringToHash (\"{2}\");";
 
+        const string AxisName = "{0}public const string Axis{1} = \"{2}\";";
+
         string _fileName;
 
         string _nsName;
+
+        Options _options;
+
+        string[] _optionNames;
 
         [MenuItem ("Window/LeopotamGroupLibrary/UnityIdents generator...")]
         static void InitGeneration () {
@@ -53,9 +74,14 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             titleContent.text = Title;
             _fileName = ProjectPrefs.GetString (TargetFileKey, DefaultFileName);
             _nsName = ProjectPrefs.GetString (NamespaceKey, DefaultNamespace);
+            _options = (Options) ProjectPrefs.GetInt (OptionsKey, (int) DefaultOptions);
         }
 
         void OnGUI () {
+            if (_optionNames == null) {
+                _optionNames = Enum.GetNames (typeof (Options));
+            }
+
             _fileName = EditorGUILayout.TextField ("Target file", _fileName).Trim ();
             if (string.IsNullOrEmpty (_fileName)) {
                 _fileName = DefaultFileName;
@@ -64,52 +90,79 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (string.IsNullOrEmpty (_nsName)) {
                 _nsName = DefaultNamespace;
             }
+            _options = (Options) EditorGUILayout.MaskField ("Options", (int) _options, _optionNames);
+
             if (GUILayout.Button ("Reset settings")) {
                 ProjectPrefs.DeleteKey (TargetFileKey);
                 ProjectPrefs.DeleteKey (NamespaceKey);
+                ProjectPrefs.DeleteKey (OptionsKey);
                 OnEnable ();
                 Repaint ();
             }
             if (GUILayout.Button ("Save settings & generate")) {
                 ProjectPrefs.SetString (TargetFileKey, _fileName);
                 ProjectPrefs.SetString (NamespaceKey, _nsName);
-                var res = Generate (_fileName, _nsName);
+                ProjectPrefs.SetInt (OptionsKey, (int) _options);
+                var res = Generate (_fileName, _nsName, _options);
                 EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }
         }
 
-        static string GenerateFields (string indent) {
+        static string GenerateFields (string indent, Options options) {
             var lines = new List<string> (128);
+            var uniquesList = new HashSet<string> ();
 
             // layers, layer masks
-            foreach (var layerName in InternalEditorUtility.layers) {
-                lines.Add (string.Format (LayerName, indent, CleanupName (layerName), CleanupValue (layerName)));
-                lines.Add (string.Format (LayerMask, indent, CleanupName (layerName)));
+            if ((int) (options & Options.Layers) != 0) {
+                foreach (var layerName in InternalEditorUtility.layers) {
+                    lines.Add (string.Format (LayerName, indent, CleanupName (layerName), CleanupValue (layerName)));
+                    lines.Add (string.Format (LayerMask, indent, CleanupName (layerName)));
+                }
             }
 
             // tags
-            foreach (var tagName in InternalEditorUtility.tags) {
-                lines.Add (string.Format (TagName, indent, CleanupName (tagName), CleanupValue (tagName)));
+            if ((int) (options & Options.Tags) != 0) {
+                foreach (var tagName in InternalEditorUtility.tags) {
+                    lines.Add (string.Format (TagName, indent, CleanupName (tagName), CleanupValue (tagName)));
+                }
             }
 
             // scenes
-            foreach (var scene in EditorBuildSettings.scenes) {
-                var sceneName = Path.GetFileNameWithoutExtension (scene.path);
-                lines.Add (string.Format (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName)));
+            if ((int) (options & Options.Scenes) != 0) {
+                foreach (var scene in EditorBuildSettings.scenes) {
+                    var sceneName = Path.GetFileNameWithoutExtension (scene.path);
+                    lines.Add (string.Format (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName)));
+                }
             }
 
             // animators
-            var animNames = new HashSet<string> ();
-            foreach (var guid in AssetDatabase.FindAssets ("t:animatorcontroller")) {
-                var assetPath = AssetDatabase.GUIDToAssetPath (guid);
-                var ac = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController> (assetPath);
-                for (int i = 0, iMax = ac.parameters.Length; i < iMax; i++) {
-                    var name = ac.parameters[i].name;
-                    if (!animNames.Contains (name)) {
-                        lines.Add (string.Format (AnimatorName, indent, CleanupName (name), CleanupValue (name)));
-                        animNames.Add (name);
+            if ((int) (options & Options.Animators) != 0) {
+                foreach (var guid in AssetDatabase.FindAssets ("t:animatorcontroller")) {
+                    var assetPath = AssetDatabase.GUIDToAssetPath (guid);
+                    var ac = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController> (assetPath);
+                    for (int i = 0, iMax = ac.parameters.Length; i < iMax; i++) {
+                        var name = ac.parameters[i].name;
+                        if (!uniquesList.Contains (name)) {
+                            lines.Add (string.Format (AnimatorName, indent, CleanupName (name), CleanupValue (name)));
+                            uniquesList.Add (name);
+                        }
                     }
                 }
+                uniquesList.Clear ();
+            }
+
+            // axes
+            if ((int) (options & Options.Axes) != 0) {
+                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset")[0];
+                var axes = new SerializedObject (inputManager).FindProperty ("m_Axes");
+                for (int i = 0, iMax = axes.arraySize; i < iMax; i++) {
+                    var axis = axes.GetArrayElementAtIndex (i).FindPropertyRelative ("m_Name").stringValue;
+                    if (!uniquesList.Contains (axis)) {
+                        lines.Add (string.Format (AxisName, indent, CleanupName (axis), CleanupValue (axis)));
+                        uniquesList.Add (axis);
+                    }
+                }
+                uniquesList.Clear ();
             }
 
             lines.Sort ();
@@ -141,9 +194,12 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         /// <returns>Error message or null on success.</returns>
         /// <param name="fileName">Filename.</param>
         /// <param name="nsName">Namespace.</param>
-        public static string Generate (string fileName, string nsName) {
+        public static string Generate (string fileName, string nsName, Options options) {
             if (string.IsNullOrEmpty (fileName) || string.IsNullOrEmpty (nsName)) {
                 return "invalid parameters";
+            }
+            if ((int) options == 0) {
+                return string.Empty;
             }
             var fullFileName = Path.Combine (Application.dataPath, fileName);
             var className = Path.GetFileNameWithoutExtension (fullFileName);
@@ -152,7 +208,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 if (!Directory.Exists (path)) {
                     Directory.CreateDirectory (path);
                 }
-                var fields = GenerateFields (new string ('\t', 2));
+                var fields = GenerateFields (new string ('\t', 2), options);
                 var content = string.Format (CodeTemplate, nsName, className, fields);
                 File.WriteAllText (fullFileName, content.Replace ("\t", new string (' ', 4)));
                 AssetDatabase.Refresh ();
