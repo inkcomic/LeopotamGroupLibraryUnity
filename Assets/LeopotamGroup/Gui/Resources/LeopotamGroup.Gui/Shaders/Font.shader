@@ -3,7 +3,7 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
-Shader "LeopotamGroup/Gui/Font" {
+Shader "Hidden/LeopotamGroup/Gui/Font" {
     Properties {
         _MainTex ("Texture (RGB)", 2D) = "black" {}
         _ClipData ("clip-data", Vector) = (0,0,0,0)
@@ -24,7 +24,7 @@ Shader "LeopotamGroup/Gui/Font" {
 
         Pass {
             CGPROGRAM
-            //#include "UnityCG.cginc"
+            #include "UnityCG.cginc"
             #pragma fragmentoption ARB_precision_hint_fastest
             #pragma multi_compile __ GUI_CLIP_RANGE
             //#pragma glsl_no_auto_normalization
@@ -36,13 +36,6 @@ Shader "LeopotamGroup/Gui/Font" {
             #ifdef GUI_CLIP_RANGE
             float4 _ClipData;
             #endif
-
-            struct app2v
-			{
-				float4 vertex : POSITION;
-				fixed2 texcoord : TEXCOORD0;
-				fixed4 color : COLOR;
-			};
      
             struct v2f {
                 float4 pos : SV_POSITION;
@@ -54,8 +47,7 @@ Shader "LeopotamGroup/Gui/Font" {
                 #endif
             };
 
-            v2f vert(app2v v)
-            {
+            v2f vert(appdata_full v) {
                 v2f o;
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 o.uv = v.texcoord;
@@ -68,8 +60,7 @@ Shader "LeopotamGroup/Gui/Font" {
                 return o;
             }
 
-            fixed4 frag (v2f i) : COLOR
-            {
+            fixed4 frag (v2f i) : SV_Target {
                 fixed4 c = i.color;
                 c.a *= tex2D (_MainTex, i.uv).a;
 

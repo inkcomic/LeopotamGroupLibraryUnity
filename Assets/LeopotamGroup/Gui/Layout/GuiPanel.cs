@@ -80,6 +80,12 @@ namespace LeopotamGroup.Gui.Layout {
 
         const float PanelDepthSlice = 50f;
 
+        const string OpaqueShaderName = "Hidden/LeopotamGroup/Gui/Opaque";
+
+        const string StandardShaderName = "Hidden/LeopotamGroup/Gui/Standard";
+
+        const string FontShaderName = "Hidden/LeopotamGroup/Gui/Font";
+
         [HideInInspector]
         [SerializeField]
         int _depth;
@@ -205,7 +211,7 @@ namespace LeopotamGroup.Gui.Layout {
             }
             Material mtrl;
             if (!_mtrlCache.ContainsKey (atlas)) {
-                mtrl = new Material (Shader.Find (atlas.AlphaTexture != null ? "LeopotamGroup/Gui/Standard" : "LeopotamGroup/Gui/Opaque"));
+                mtrl = new Material (Shader.Find (atlas.AlphaTexture != null ? StandardShaderName : OpaqueShaderName));
                 mtrl.mainTexture = atlas.ColorTexture;
                 mtrl.SetTexture ("_AlphaTex", atlas.AlphaTexture);
                 mtrl.hideFlags = HideFlags.DontSave | HideFlags.HideInInspector;
@@ -227,7 +233,7 @@ namespace LeopotamGroup.Gui.Layout {
             }
             Material mtrl;
             if (!_fontCache.ContainsKey (font)) {
-                mtrl = new Material (Shader.Find ("LeopotamGroup/Gui/Font"));
+                mtrl = new Material (Shader.Find (FontShaderName));
                 mtrl.mainTexture = font.material.mainTexture;
                 mtrl.hideFlags = HideFlags.DontSave | HideFlags.HideInInspector;
                 _fontCache[font] = mtrl;
