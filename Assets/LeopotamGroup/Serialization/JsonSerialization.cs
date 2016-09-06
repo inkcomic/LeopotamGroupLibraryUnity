@@ -233,10 +233,8 @@ namespace LeopotamGroup.Serialization {
         }
 
         class Reader {
-            const string WordStoppers = "{}[],:\"";
-
-            static bool IsWordBreak (char c) {
-                return Char.IsWhiteSpace (c) || WordStoppers.IndexOf (c) != -1;
+            static bool IsWordBreak (int c) {
+                return (c >= 0x01 && c <= 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x5e) || (c == 0x60) || (c >= 0x7b);
             }
 
             enum JsonToken {
@@ -280,11 +278,11 @@ namespace LeopotamGroup.Serialization {
                 }
             }
 
-            int jsonPeek () {
+            int JsonPeek () {
                 return _jsonPos < _json.Length ? _json[_jsonPos] : -1;
             }
 
-            char jsonRead () {
+            char GetNextChar () {
                 return _json[_jsonPos++];
             }
 
@@ -322,7 +320,7 @@ namespace LeopotamGroup.Serialization {
                     }
                 }
                 // {
-                jsonRead ();
+                GetNextChar ();
                 while (true) {
                     switch (PeekNextToken ()) {
                         case JsonToken.None:
@@ -337,7 +335,7 @@ namespace LeopotamGroup.Serialization {
                             if (name == null || PeekNextToken () != JsonToken.Colon) {
                                 throw new Exception ("Invalid object format");
                             }
-                            jsonRead ();
+                            GetNextChar ();
 
                             // value
                             if (objType != null) {
@@ -371,7 +369,7 @@ namespace LeopotamGroup.Serialization {
                     list = GetArrayItem ();
                 }
                 // [
-                jsonRead ();
+                GetNextChar ();
                 var parsing = true;
                 while (parsing) {
                     switch (PeekNextToken ()) {
@@ -414,10 +412,10 @@ namespace LeopotamGroup.Serialization {
                 _stringBuf.Length = 0;
                 char c;
                 // "
-                jsonRead ();
+                GetNextChar ();
                 bool parsing = true;
                 while (parsing) {
-                    if (jsonPeek () == -1) {
+                    if (JsonPeek () == -1) {
                         break;
                     }
                     c = GetNextChar ();
@@ -426,7 +424,7 @@ namespace LeopotamGroup.Serialization {
                             parsing = false;
                             break;
                         case '\\':
-                            if (jsonPeek () == -1) {
+                            if (JsonPeek () == -1) {
                                 throw new Exception ("Invalid string format");
                             }
                             c = GetNextChar ();
@@ -471,6 +469,18 @@ namespace LeopotamGroup.Serialization {
                 var numString = GetNextWord ();
                 if (_type != null) {
                     var n = numString.ToFloatUnchecked ();
+                    if (_type == typeof (float)) {
+                        return n;
+                    }
+                    if (_type == typeof (int)) {
+                        return (int) n;
+                    }
+                    if (_type == typeof (long)) {
+                        return (long) ((int) n);
+                    }
+                    if (_type == typeof (byte)) {
+                        return (byte) ((int) n);
+                    }
                     if (_type.IsEnum) {
                         return Enum.ToObject (_type, (int) n);
                     } else {
@@ -482,28 +492,20 @@ namespace LeopotamGroup.Serialization {
             }
 
             void SkipWhiteSpaces () {
-                while (Char.IsWhiteSpace (PeekChar ())) {
-                    jsonRead ();
-                    if (jsonPeek () == -1) {
+                while (Char.IsWhiteSpace ((char) JsonPeek ())) {
+                    GetNextChar ();
+                    if (JsonPeek () == -1) {
                         break;
                     }
                 }
             }
 
-            char PeekChar () {
-                return Convert.ToChar (jsonPeek ());
-            }
-
-            char GetNextChar () {
-                return jsonRead ();
-            }
-
             string GetNextWord () {
                 _stringBuf.Length = 0;
-                while (!IsWordBreak (PeekChar ())) {
+                while (!IsWordBreak (JsonPeek ())) {
                     _stringBuf.Append (GetNextChar ());
 
-                    if (jsonPeek () == -1) {
+                    if (JsonPeek () == -1) {
                         break;
                     }
                 }
@@ -512,22 +514,22 @@ namespace LeopotamGroup.Serialization {
 
             JsonToken PeekNextToken () {
                 SkipWhiteSpaces ();
-                if (jsonPeek () == -1) {
+                if (JsonPeek () == -1) {
                     return JsonToken.None;
                 }
-                switch (PeekChar ()) {
+                switch ((char) JsonPeek ()) {
                     case '{':
                         return JsonToken.CurlyOpen;
                     case '}':
-                        jsonRead ();
+                        GetNextChar ();
                         return JsonToken.CurlyClose;
                     case '[':
                         return JsonToken.SquaredOpen;
                     case ']':
-                        jsonRead ();
+                        GetNextChar ();
                         return JsonToken.SquaredClose;
                     case ',':
-                        jsonRead ();
+                        GetNextChar ();
                         return JsonToken.Comma;
                     case '"':
                         return JsonToken.String;
