@@ -44,9 +44,8 @@ namespace LeopotamGroup.Gui.Common {
             generateOutOfBounds = false,
             updateBounds = false,
             resizeTextMinSize = 0,
-            resizeTextMaxSize = 256,
-            resizeTextForBestFit = false,
-            alignByGeometry = false
+            resizeTextForBestFit = true,
+            alignByGeometry = false,
         };
 
         static readonly TextGenerator _generator = new TextGenerator ();
@@ -76,6 +75,7 @@ namespace LeopotamGroup.Gui.Common {
             }
 
             _settings.fontSize = (int) (fontSize * GuiSystem.Instance.VirtualToRealScaleFactor);
+            _settings.resizeTextMaxSize = _settings.fontSize;
 
             var scale = fontSize / (float) _settings.fontSize;
 
