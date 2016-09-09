@@ -173,10 +173,12 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     var shader = AssetDatabase.LoadAssetAtPath<Shader> (assetPath);
                     if (shader.name.IndexOf ("Hidden") != 0) {
                         for (int i = 0, iMax = ShaderUtil.GetPropertyCount (shader); i < iMax; i++) {
-                            var name = ShaderUtil.GetPropertyName (shader, i);
-                            if (!uniquesList.Contains (name)) {
-                                lines.Add (string.Format (ShaderName, indent, CleanupName (name), CleanupValue (name)));
-                                uniquesList.Add (name);
+                            if (!ShaderUtil.IsShaderPropertyHidden (shader, i)) {
+                                var name = ShaderUtil.GetPropertyName (shader, i);
+                                if (!uniquesList.Contains (name)) {
+                                    lines.Add (string.Format (ShaderName, indent, CleanupName (name), CleanupValue (name)));
+                                    uniquesList.Add (name);
+                                }
                             }
                         }
                     }
