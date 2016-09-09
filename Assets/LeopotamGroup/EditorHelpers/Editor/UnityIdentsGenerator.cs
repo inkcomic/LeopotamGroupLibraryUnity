@@ -22,7 +22,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             Tags = 2,
             Scenes = 4,
             Animators = 8,
-            Axes = 16
+            Axes = 16,
+            Shaders = 32
         }
 
         const string Title = "Unity idents generator";
@@ -37,9 +38,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string DefaultNamespace = "Client.Common";
 
-        const Options DefaultOptions =
-            Options.Layers | Options.Tags |
-            Options.Scenes | Options.Animators | Options.Axes;
+        const Options DefaultOptions = (Options) (-1);
 
         const string CodeTemplate =
             "// Auto generated code, dont change it manually!\n\n" +
@@ -56,6 +55,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string AnimatorName = "{0}public static readonly int Animator{1} = Animator.StringToHash (\"{2}\");";
 
         const string AxisName = "{0}public const string Axis{1} = \"{2}\";";
+
+        const string ShaderName = "{0}public const string Shader{1} = \"{2}\";";
 
         string _fileName;
 
@@ -160,6 +161,24 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     if (!uniquesList.Contains (axis)) {
                         lines.Add (string.Format (AxisName, indent, CleanupName (axis), CleanupValue (axis)));
                         uniquesList.Add (axis);
+                    }
+                }
+                uniquesList.Clear ();
+            }
+
+            // shaders
+            if ((int) (options & Options.Shaders) != 0) {
+                foreach (var guid in AssetDatabase.FindAssets ("t:shader")) {
+                    var assetPath = AssetDatabase.GUIDToAssetPath (guid);
+                    var shader = AssetDatabase.LoadAssetAtPath<Shader> (assetPath);
+                    if (shader.name.IndexOf ("Hidden") != 0) {
+                        for (int i = 0, iMax = ShaderUtil.GetPropertyCount (shader); i < iMax; i++) {
+                            var name = ShaderUtil.GetPropertyName (shader, i);
+                            if (!uniquesList.Contains (name)) {
+                                lines.Add (string.Format (ShaderName, indent, CleanupName (name), CleanupValue (name)));
+                                uniquesList.Add (name);
+                            }
+                        }
                     }
                 }
                 uniquesList.Clear ();
