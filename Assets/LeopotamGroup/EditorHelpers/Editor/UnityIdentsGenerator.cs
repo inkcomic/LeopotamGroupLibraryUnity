@@ -56,7 +56,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string AxisName = "{0}public const string Axis{1} = \"{2}\";";
 
-        const string ShaderName = "{0}public const string Shader{1} = \"{2}\";";
+        const string ShaderName = "{0}public static readonly int Shader{1} = Shader.PropertyToID (\"{2}\");";
 
         string _fileName;
 
