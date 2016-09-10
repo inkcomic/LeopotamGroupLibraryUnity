@@ -28,12 +28,12 @@ namespace LeopotamGroup.Pooling {
     /// <summary>
     /// Helper for PoolContainer.
     /// </summary>
-    public sealed class PoolObject : MonoBehaviourBase, IPoolObject {
+    public class PoolObject : MonoBehaviourBase, IPoolObject {
 #region IPoolObject implementation
 
-        public PoolContainer PoolContainer { get; set; }
+        public virtual PoolContainer PoolContainer { get; set; }
 
-        public Transform PoolTransform { get { return transform; } }
+        public virtual Transform PoolTransform { get { return transform; } }
 
         public void PoolRecycle () {
             if ((System.Object) PoolContainer != null) {

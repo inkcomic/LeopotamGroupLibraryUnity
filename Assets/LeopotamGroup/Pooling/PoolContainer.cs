@@ -19,9 +19,11 @@ namespace LeopotamGroup.Pooling {
 
         readonly Stack<IPoolObject> _store = new Stack<IPoolObject> (64);
 
-        IPoolObject _cachedAsset;
+        Object _cachedAsset;
 
         Vector3 _cachedScale;
+
+        bool _needToAddPoolObject;
 
         bool LoadPrefab () {
             var go = Resources.Load<GameObject> (_prefabPath);
@@ -29,9 +31,10 @@ namespace LeopotamGroup.Pooling {
                 Debug.LogWarning ("Cant load asset " + _prefabPath);
                 return false;
             }
-            _cachedAsset = go.GetComponent <IPoolObject> ();
-            if ((System.Object) _cachedAsset == null) {
-                _cachedAsset = go.AddComponent<PoolObject> ();
+            _cachedAsset = go.GetComponent (typeof (IPoolObject));
+            _needToAddPoolObject = (System.Object) _cachedAsset == null;
+            if (_needToAddPoolObject) {
+                _cachedAsset = go;
             }
 
             _cachedScale = go.transform.localScale;
@@ -54,7 +57,7 @@ namespace LeopotamGroup.Pooling {
         public IPoolObject Get (out bool isNew) {
             if ((System.Object) _cachedAsset == null) {
                 if (!LoadPrefab ()) {
-                    isNew = false;
+                    isNew = true;
                     return null;
                 }
             }
@@ -64,7 +67,9 @@ namespace LeopotamGroup.Pooling {
                 obj = _store.Pop ();
                 isNew = false;
             } else {
-                obj = Instantiate ((Object) _cachedAsset) as IPoolObject;
+                obj = _needToAddPoolObject ?
+                    (Instantiate (_cachedAsset) as GameObject).AddComponent<PoolObject> () :
+                    Instantiate (_cachedAsset) as IPoolObject;
                 obj.PoolContainer = this;
                 var tr = obj.PoolTransform;
                 if ((System.Object) tr != null) {
@@ -86,7 +91,7 @@ namespace LeopotamGroup.Pooling {
             if ((System.Object) obj != null) {
                 #if UNITY_EDITOR
                 if (obj.PoolContainer != this) {
-                    Debug.LogWarning ("Invalid obj to recycle", (Object)obj);
+                    Debug.LogWarning ("Invalid obj to recycle", (Object) obj);
                     return;
                 }
                 #endif
