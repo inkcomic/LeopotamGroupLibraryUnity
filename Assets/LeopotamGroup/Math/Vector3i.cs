@@ -106,6 +106,15 @@ namespace LeopotamGroup.Math {
         }
 
         /// <summary>
+        /// Initialization from Vector4i instance.
+        /// </summary>
+        public Vector3i (Vector4i v) {
+            x = v.x;
+            y = v.y;
+            z = v.z;
+        }
+
+        /// <summary>
         /// Initialization from Vector2 instance.
         /// </summary>
         public Vector3i (Vector2 v) {
@@ -118,6 +127,15 @@ namespace LeopotamGroup.Math {
         /// Initialization from Vector3 instance.
         /// </summary>
         public Vector3i (Vector3 v) {
+            x = Mathf.RoundToInt (v.x);
+            y = Mathf.RoundToInt (v.y);
+            z = Mathf.RoundToInt (v.z);
+        }
+
+        /// <summary>
+        /// Initialization from Vector4 instance.
+        /// </summary>
+        public Vector3i (Vector4 v) {
             x = Mathf.RoundToInt (v.x);
             y = Mathf.RoundToInt (v.y);
             z = Mathf.RoundToInt (v.z);
@@ -165,7 +183,7 @@ namespace LeopotamGroup.Math {
         }
 
         /// <summary>
-        /// Combine new Vector2i from max values of two vectors.
+        /// Combine new Vector3i from max values of two vectors.
         /// </summary>
         /// <param name="lhs">First vector.</param>
         /// <param name="rhs">Second vector.</param>
@@ -223,23 +241,35 @@ namespace LeopotamGroup.Math {
             return new Vector3i (lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
         }
 
-        public static implicit operator Vector3 (Vector3i lhs) {
-            return new Vector3 (lhs.x, lhs.y, lhs.z);
-        }
-
         public static implicit operator Vector2 (Vector3i lhs) {
             return new Vector2 (lhs.x, lhs.y);
         }
 
-        public static implicit operator Vector3i (Vector3 lhs) {
-            return new Vector3i (lhs);
+        public static implicit operator Vector3 (Vector3i lhs) {
+            return new Vector3 (lhs.x, lhs.y, lhs.z);
+        }
+
+        public static implicit operator Vector4 (Vector3i lhs) {
+            return new Vector4 (lhs.x, lhs.y, lhs.z, 0f);
         }
 
         public static implicit operator Vector3i (Vector2 lhs) {
             return new Vector3i (lhs);
         }
 
-        public static implicit operator Vector3i (Vector2i lhs) {
+        public static implicit operator Vector3i (Vector3 lhs) {
+            return new Vector3i (lhs);
+        }
+
+        public static implicit operator Vector3i (Vector4 lhs) {
+            return new Vector3i (lhs);
+        }
+
+        public static explicit operator Vector3i (Vector2i lhs) {
+            return new Vector3i (lhs);
+        }
+
+        public static explicit operator Vector3i (Vector4i lhs) {
             return new Vector3i (lhs);
         }
     }
