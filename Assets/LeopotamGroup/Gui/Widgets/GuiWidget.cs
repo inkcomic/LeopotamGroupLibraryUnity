@@ -198,9 +198,10 @@ namespace LeopotamGroup.Gui.Widgets {
             }
 
             if ((changes & GuiDirtyType.Depth) != GuiDirtyType.None) {
-                var localPos = _cachedTransform.localPosition;
-                localPos.z = -DepthSlice * Depth;
-                _cachedTransform.localPosition = localPos;
+                var panelTrans = Panel.transform;
+                var pos = panelTrans.InverseTransformPoint (_cachedTransform.position);
+                pos.z = -DepthSlice * Depth;
+                _cachedTransform.position = panelTrans.TransformPoint (pos);
             }
 
             if ((changes & GuiDirtyType.Geometry) != GuiDirtyType.None) {

@@ -58,6 +58,15 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
                 _positionProperty.FindPropertyRelative ("x").floatValue = 0f;
                 _positionProperty.FindPropertyRelative ("y").floatValue = 0f;
                 _positionProperty.FindPropertyRelative ("z").floatValue = 0f;
+                if (isFound) {
+                    foreach (var item in targets) {
+                        var state = (item as Transform).gameObject.activeSelf;
+                        if (state) {
+                            (item as Transform).gameObject.SetActive (false);
+                            (item as Transform).gameObject.SetActive (true);
+                        }
+                    }
+                }
             }
         }
 
