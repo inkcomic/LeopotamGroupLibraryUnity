@@ -35,6 +35,9 @@ namespace LeopotamGroup.Localization.UnityEditors {
         void Load () {
             try {
                 _paths = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
+                if (_paths == null) {
+                    throw new Exception ();
+                }
             } catch {
                 _paths = new Dictionary<string, string> ();
             }
@@ -54,24 +57,25 @@ namespace LeopotamGroup.Localization.UnityEditors {
             if (_paths == null) {
                 Load ();
             }
-
-            GUILayout.BeginScrollView (_scrollPos);
-            var removed = false;
-            foreach (var key in new List<string> (_paths.Keys)) {
-                GUILayout.BeginHorizontal ();
-                EditorGUILayout.LabelField ("Url:", key);
-                if (GUILayout.Button ("Remove")) {
-                    _paths.Remove (key);
-                    removed = true;
+            if (_paths.Count > 0) {
+                GUILayout.BeginScrollView (_scrollPos);
+                var removed = false;
+                foreach (var key in new List<string> (_paths.Keys)) {
+                    GUILayout.BeginHorizontal ();
+                    EditorGUILayout.LabelField ("Url:", key);
+                    if (GUILayout.Button ("Remove")) {
+                        _paths.Remove (key);
+                        removed = true;
+                    }
+                    GUILayout.EndHorizontal ();
+                    if (!removed) {
+                        _paths[key] = EditorGUILayout.TextField ("Resources file:", _paths[key]).Trim ();
+                    } else {
+                        removed = false;
+                    }
                 }
-                GUILayout.EndHorizontal ();
-                if (!removed) {
-                    _paths[key] = EditorGUILayout.TextField ("Resources file:", _paths[key]).Trim ();
-                } else {
-                    removed = false;
-                }
+                GUILayout.EndScrollView ();
             }
-            GUILayout.EndScrollView ();
 
             GUILayout.BeginHorizontal ();
             if (string.IsNullOrEmpty (_newUrl)) {
