@@ -51,7 +51,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         protected override void OnEnable () {
             base.OnEnable ();
-            UpdateAttachedWidgets (EnableColor, TweenTime);
+            UpdateAttachedWidgets (EnableColor, 0f);
         }
 
         protected override void OnDisable () {
