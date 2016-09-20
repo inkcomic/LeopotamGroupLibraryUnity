@@ -25,7 +25,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Callback. Should returns state - is event interrupted / should not be processed by next callbacks or not.</param>
         /// <param name="insertAsFirst">Is callback should be raised first in sequence.</param>
-        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) where T : class {
+        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) {
             if (eventAction == null) {
                 return;
             }
@@ -55,7 +55,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Event action.</param>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
-        public void Unsubscribe<T> (Func<T, bool> eventAction, bool keepEvent = false) where T : class {
+        public void Unsubscribe<T> (Func<T, bool> eventAction, bool keepEvent = false) {
             if (eventAction == null) {
                 return;
             }
@@ -81,7 +81,7 @@ namespace LeopotamGroup.Events {
         /// Unsubscribe all callbacks from event.
         /// </summary>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
-        public void UnsubscribeAll<T> (bool keepEvent = false) where T : class {
+        public void UnsubscribeAll<T> (bool keepEvent = false) {
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
@@ -109,10 +109,7 @@ namespace LeopotamGroup.Events {
         /// Publish event.
         /// </summary>
         /// <param name="eventMessage">Event message.</param>
-        public void Publish<T> (T eventMessage) where T : class {
-            if (eventMessage == null) {
-                return;
-            }
+        public void Publish<T> (T eventMessage) {
             var eventType = typeof (T);
             List<Func<T, bool>> list = null;
             lock (_syncObj) {

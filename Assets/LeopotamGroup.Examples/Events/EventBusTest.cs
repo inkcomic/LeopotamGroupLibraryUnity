@@ -22,6 +22,10 @@ namespace LeopotamGroup.Examples.EventsTest {
         }
     }
 
+    struct TestEvent3 {
+        public string StringValue;
+    }
+
     class EventBusTest : MonoBehaviour {
         EventBus _bus;
 
@@ -30,50 +34,76 @@ namespace LeopotamGroup.Examples.EventsTest {
         }
 
         void OnEnable () {
-            _bus.Subscribe<TestEvent1> (OnEvent1);
-            _bus.Subscribe<TestEvent1> (OnEvent2);
+            // subscription.
+            _bus.Subscribe<TestEvent1> (OnEvent11);
+            _bus.Subscribe<TestEvent1> (OnEvent12);
             _bus.Subscribe<TestEvent1> (d => {
-                // This callback should not be called due OnEvent2 interrupted execution flow.
-                Debug.Log ("[EVENT1-SUBSCRIBER3] => " + d);
-                return false;
-            });
+                    // This callback should not be called due OnEvent2 interrupted execution flow.
+                    Debug.Log ("[EVENT1-SUBSCRIBER3] => " + d);
+                    return false;
+                });
 
-            _bus.Subscribe<TestEvent2> (OnEvent3);
+            _bus.Subscribe<TestEvent2> (OnEvent21);
 
+            _bus.Subscribe<TestEvent3> (OnEvent31);
+
+            _bus.Subscribe<float> (OnEventFloat);
+
+            // test data.
+            // class 1
             var data1 = new TestEvent1
             {
                 IntValue = 1,
                 StringValue = "123"
             };
-
+            // class 2
             var data2 = new TestEvent2
             {
                 FloatValue = 123.456f,
                 ObjectValue = "String as object"
             };
+            // struct
+            var data3 = new TestEvent3 ()
+            {
+                StringValue = "String inside struct"
+            };
 
-            _bus.Publish (data1);
+            // publishing.
+            _bus.Publish<TestEvent1> (data1);
 
-            _bus.Publish (data2);
+            _bus.Publish<TestEvent2> (data2);
+
+            _bus.Publish<TestEvent3> (data3);
+            // test simple typed value
+            _bus.Publish<float> (1f + 0.2345f);
         }
 
         void OnDisable () {
-            _bus.UnsubscribeAll<TestEvent1> ();
-            _bus.UnsubscribeAll<TestEvent2> ();
+            _bus.UnsubscribeAndClearAllEvents ();
         }
 
-        bool OnEvent1 (TestEvent1 msg) {
+        bool OnEvent11 (TestEvent1 msg) {
             Debug.Log ("[EVENT1-SUBSCRIBER1] => " + msg);
             return false;
         }
 
-        bool OnEvent2 (TestEvent1 msg) {
+        bool OnEvent12 (TestEvent1 msg) {
             Debug.Log ("[EVENT1-SUBSCRIBER2] => " + msg + " -> interrupt execution flow of " + msg.GetType ().Name);
             return true;
         }
 
-        bool OnEvent3 (TestEvent2 msg) {
+        bool OnEvent21 (TestEvent2 msg) {
             Debug.Log ("[EVENT2-SUBSCRIBER] => " + msg);
+            return false;
+        }
+
+        bool OnEvent31 (TestEvent3 msg) {
+            Debug.Log ("[EVENT3-SUBSCRIBER] => " + msg.StringValue);
+            return false;
+        }
+
+        bool OnEventFloat (float msg) {
+            Debug.Log ("[FLOATEVENT-SUBSCRIBER] => " + msg);
             return false;
         }
     }

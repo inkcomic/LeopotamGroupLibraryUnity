@@ -22,7 +22,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Callback.</param>
         /// <param name="insertAsFirst">Is callback should be raised first in sequence.</param>
-        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) where T : class {
+        public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) {
             _eventBus.Subscribe (eventAction, insertAsFirst);
         }
 
@@ -31,7 +31,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Event action.</param>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
-        public void Unsubscribe<T> (Func<T, bool> eventAction, bool keepEvent = false) where T : class {
+        public void Unsubscribe<T> (Func<T, bool> eventAction, bool keepEvent = false) {
             _eventBus.Unsubscribe (eventAction, keepEvent);
         }
 
@@ -39,7 +39,7 @@ namespace LeopotamGroup.Events {
         /// Unsubscribes all callbacks from event.
         /// </summary>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
-        public void UnsubscribeAll<T> (bool keepEvent = false) where T : class {
+        public void UnsubscribeAll<T> (bool keepEvent = false) {
             _eventBus.UnsubscribeAll<T> (keepEvent);
         }
 
@@ -54,7 +54,7 @@ namespace LeopotamGroup.Events {
         /// Publish event.
         /// </summary>
         /// <param name="eventMessage">Event message.</param>
-        public void Publish<T> (T eventMessage) where T : class {
+        public void Publish<T> (T eventMessage) {
             _eventBus.Publish (eventMessage);
         }
     }
