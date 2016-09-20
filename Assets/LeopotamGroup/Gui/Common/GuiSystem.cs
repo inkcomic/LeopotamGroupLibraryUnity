@@ -261,8 +261,7 @@ namespace LeopotamGroup.Gui.Common {
             GuiEventReceiver newReceiver;
             Vector3 worldPos;
 
-            _eventReceivers.Sort ((a, b) => a.GlobalDepthOrder - b.GlobalDepthOrder);
-
+            _eventReceivers.Sort ((a, b) => b.GlobalDepthOrder - a.GlobalDepthOrder);
 
             for (var i = 0; i < touchCount; i++) {
                 if (!isMouse) {

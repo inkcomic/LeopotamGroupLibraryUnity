@@ -64,7 +64,7 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         void LateUpdate () {
-            GlobalDepthOrder = (int) (GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, Depth)).z * 100f);
+            GlobalDepthOrder = (int) (GuiSystem.Instance.CameraTransform.InverseTransformPoint (_cachedTransform.TransformPoint (0f, 0f, -Depth)).z * 100f);
         }
 
         /// <summary>
