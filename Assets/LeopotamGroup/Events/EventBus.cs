@@ -78,7 +78,7 @@ namespace LeopotamGroup.Events {
         }
 
         /// <summary>
-        /// Unsubscribes all callbacks from event.
+        /// Unsubscribe all callbacks from event.
         /// </summary>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
         public void UnsubscribeAll<T> (bool keepEvent = false) where T : class {
@@ -96,9 +96,9 @@ namespace LeopotamGroup.Events {
         }
 
         /// <summary>
-        /// Unsubscribes all events.
+        /// Unsubscribe all listeneres and clear all events.
         /// </summary>
-        public void UnsubscribeAllEvents () {
+        public void UnsubscribeAndClearAllEvents () {
             lock (_syncObj) {
                 _events.Clear ();
                 _eventSubscribersInCall.Clear ();

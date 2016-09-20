@@ -4,17 +4,24 @@
 //-------------------------------------------------------
 
 using System;
+using LeopotamGroup.Common;
 
 namespace LeopotamGroup.Events {
     /// <summary>
-    /// Event bus singleton, global for all code paths.
+    /// Event bus singleton, local for unity scene.
     /// </summary>
-    public sealed class GlobalEventBus {
-        public static readonly GlobalEventBus Instance = new GlobalEventBus ();
+    public class UnityEventBus : UnitySingleton<UnityEventBus> {
+        
+        protected EventBus _eventBus;
 
-        readonly EventBus _eventBus = new EventBus ();
+        protected override void OnConstruct () {
+            base.OnConstruct ();
+            _eventBus = new EventBus ();
+        }
 
-        GlobalEventBus () {
+        protected override void OnDestruct () {
+            UnsubscribeAndClearAllEvents ();
+            base.OnDestruct ();
         }
 
         /// <summary>
@@ -36,7 +43,7 @@ namespace LeopotamGroup.Events {
         }
 
         /// <summary>
-        /// Unsubscribes all callbacks from event.
+        /// Unsubscribe all callbacks from event.
         /// </summary>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
         public void UnsubscribeAll<T> (bool keepEvent = false) where T : class {
