@@ -46,7 +46,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");";
 
-        const string LayerMask = "{0}public static readonly int LayerMask{1} = 1 << Layer{1};";
+        const string LayerMask = "{0}public static readonly int MaskLayer{1} = 1 << Layer{1};";
 
         const string TagName = "{0}public const string Tag{1} = \"{2}\";";
 

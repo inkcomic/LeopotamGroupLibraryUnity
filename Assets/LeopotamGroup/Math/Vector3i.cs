@@ -118,8 +118,8 @@ namespace LeopotamGroup.Math {
         /// Initialization from Vector2 instance.
         /// </summary>
         public Vector3i (Vector2 v) {
-            x = Mathf.RoundToInt (v.x);
-            y = Mathf.RoundToInt (v.y);
+            x = (int) System.Math.Round (v.x);
+            y = (int) System.Math.Round (v.y);
             z = 0;
         }
 
@@ -127,18 +127,18 @@ namespace LeopotamGroup.Math {
         /// Initialization from Vector3 instance.
         /// </summary>
         public Vector3i (Vector3 v) {
-            x = Mathf.RoundToInt (v.x);
-            y = Mathf.RoundToInt (v.y);
-            z = Mathf.RoundToInt (v.z);
+            x = (int) System.Math.Round (v.x);
+            y = (int) System.Math.Round (v.y);
+            z = (int) System.Math.Round (v.z);
         }
 
         /// <summary>
         /// Initialization from Vector4 instance.
         /// </summary>
         public Vector3i (Vector4 v) {
-            x = Mathf.RoundToInt (v.x);
-            y = Mathf.RoundToInt (v.y);
-            z = Mathf.RoundToInt (v.z);
+            x = (int) System.Math.Round (v.x);
+            y = (int) System.Math.Round (v.y);
+            z = (int) System.Math.Round (v.z);
         }
 
         /// <summary>

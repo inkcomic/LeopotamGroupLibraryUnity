@@ -63,7 +63,7 @@ namespace LeopotamGroup.Examples.EventsTest {
                 ObjectValue = "String as object"
             };
             // struct
-            var data3 = new TestEvent3 ()
+            var data3 = new TestEvent3
             {
                 StringValue = "String inside struct"
             };

@@ -90,24 +90,24 @@ namespace LeopotamGroup.Math {
         /// Initialization from Vector2 instance.
         /// </summary>
         public Vector2i (Vector2 v) {
-            x = Mathf.RoundToInt (v.x);
-            y = Mathf.RoundToInt (v.y);
+            x = (int) System.Math.Round (v.x);
+            y = (int) System.Math.Round (v.y);
         }
 
         /// <summary>
         /// Initialization from Vector3 instance.
         /// </summary>
         public Vector2i (Vector3 v) {
-            x = Mathf.RoundToInt (v.x);
-            y = Mathf.RoundToInt (v.y);
+            x = (int) System.Math.Round (v.x);
+            y = (int) System.Math.Round (v.y);
         }
 
         /// <summary>
         /// Initialization from Vector4 instance.
         /// </summary>
         public Vector2i (Vector4 v) {
-            x = Mathf.RoundToInt (v.x);
-            y = Mathf.RoundToInt (v.y);
+            x = (int) System.Math.Round (v.x);
+            y = (int) System.Math.Round (v.y);
         }
 
         /// <summary>
