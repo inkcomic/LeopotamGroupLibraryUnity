@@ -91,7 +91,7 @@ namespace LeopotamGroup.Gui.Common {
         /// <value>The camera.</value>
         public Camera Camera {
             get {
-                if (_camera == null) {
+                if ((System.Object) _camera == null) {
                     FixCamera ();
                 }
                 return _camera;
@@ -120,20 +120,17 @@ namespace LeopotamGroup.Gui.Common {
         /// <value>The instance.</value>
         public static GuiSystem Instance {
             get {
-                if (!_isInstanceCreated) {
+                if ((System.Object) _instance == null) {
                     _instance = FindObjectOfType <GuiSystem> ();
                     if (_instance == null) {
                         var go = new GameObject ("GuiSystem");
                         go.layer = GuiConsts.DefaultGuiLayer;
                         go.AddComponent <GuiSystem> ().CullingMask = GuiConsts.DefaultGuiLayerMask;
                     }
-                    _isInstanceCreated = _instance != null;
                 }
                 return _instance;
             }
         }
-
-        static bool _isInstanceCreated;
 
         static GuiSystem _instance;
 
@@ -178,7 +175,6 @@ namespace LeopotamGroup.Gui.Common {
                 return;
             }
             _instance = this;
-            _isInstanceCreated = true;
 
             _lastScreenWidth = -1;
             _lastScreenHeight = -1;
@@ -191,22 +187,21 @@ namespace LeopotamGroup.Gui.Common {
         void OnDestroy () {
             if (_instance == this) {
                 _instance = null;
-                _isInstanceCreated = false;
             }
             _eventReceivers.Clear ();
         }
 
         void OnEnable () {
-            if (_instance == null) {
+            if ((System.Object) _instance == null) {
                 Awake ();
             }
-            if (_instance != null) {
+            if ((System.Object) _instance != null) {
                 FixCamera ();
             }
         }
 
         void FixCamera () {
-            if (_camera == null) {
+            if ((System.Object) _camera == null) {
                 _camera = GetComponent <Camera> ();
             }
             _camera.hideFlags = HideFlags.HideInInspector;
