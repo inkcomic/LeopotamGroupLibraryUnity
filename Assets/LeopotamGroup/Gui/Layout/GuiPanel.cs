@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Common;
+using LeopotamGroup.Gui.Widgets;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Layout {
@@ -15,11 +16,6 @@ namespace LeopotamGroup.Gui.Layout {
     /// </summary>
     [ExecuteInEditMode]
     public sealed class GuiPanel : MonoBehaviourBase {
-        /// <summary>
-        /// Will be raised on panel paramters changing (even on OnDisable).
-        /// </summary>
-        public event Action<GuiPanel> OnChanged = delegate {};
-
         /// <summary>
         /// Clipping type of children. Not realized yet.
         /// </summary>
@@ -108,13 +104,31 @@ namespace LeopotamGroup.Gui.Layout {
 
         bool _isChanged;
 
+        readonly List<GuiWidget> _onChangeListeners = new List<GuiWidget> (32);
+
+        readonly List<GuiWidget> _onChangedListenersCallingList = new List<GuiWidget> (32);
+
         void OnEnable () {
             InvalidateClipData (transform.position);
             _isChanged = true;
         }
 
         void OnDisable () {
-            OnChanged (null);
+            RaiseOnChanged (null);
+#if UNITY_EDITOR
+            if (_onChangeListeners.Count > 0) {
+                Debug.LogWarning ("GuiPanel: memory leak for unsubscribed widgets", this.gameObject);
+            }
+#endif
+        }
+
+        void RaiseOnChanged (GuiPanel panel) {
+            _onChangedListenersCallingList.Clear ();
+            _onChangedListenersCallingList.AddRange (_onChangeListeners);
+            for (var i = _onChangedListenersCallingList.Count - 1; i >= 0; i--) {
+                _onChangeListeners[i].ValidatePanel (panel);
+            }
+            _onChangedListenersCallingList.Clear ();
         }
 
         void InvalidateClipData (Vector3 worldPos) {
@@ -144,6 +158,29 @@ namespace LeopotamGroup.Gui.Layout {
                 default:
                     mtrl.DisableKeyword (GuiConsts.ShaderKeyWordClipRange);
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Add OnChange event listener.
+        /// </summary>
+        /// <param name="listener">Listener.</param>
+        public void AddOnChangeListener (GuiWidget listener) {
+            if ((System.Object) listener != null && !_onChangeListeners.Contains (listener)) {
+                _onChangeListeners.Add (listener);
+            }
+        }
+
+        /// <summary>
+        /// Remove OnChange event listener.
+        /// </summary>
+        /// <param name="listener">Listener.</param>
+        public void RemoveOnChangeListener (GuiWidget listener) {
+            if ((System.Object) listener != null) {
+                var idx = _onChangeListeners.IndexOf (listener);
+                if (idx != -1) {
+                    _onChangeListeners.RemoveAt (idx);
+                }
             }
         }
 
@@ -188,7 +225,7 @@ namespace LeopotamGroup.Gui.Layout {
             foreach (var texPair in _fontCache) {
                 UpdateMaterial (texPair.Value);
             }
-            OnChanged (this);
+            RaiseOnChanged (this);
         }
 
         /// <summary>
@@ -259,5 +296,7 @@ namespace LeopotamGroup.Gui.Layout {
             }
             return panel;
         }
+
+        public delegate void OnChangeHandler (GuiPanel panel);
     }
 }

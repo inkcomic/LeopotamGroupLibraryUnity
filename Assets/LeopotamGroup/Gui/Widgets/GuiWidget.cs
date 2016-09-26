@@ -16,11 +16,6 @@ namespace LeopotamGroup.Gui.Widgets {
     [ExecuteInEditMode]
     public abstract class GuiWidget : MonoBehaviourBase {
         /// <summary>
-        /// Will be raised on each geometry update.
-        /// </summary>
-        public event Action<GuiWidget> OnGeometryUpdated = delegate {};
-
-        /// <summary>
         /// Enable dirty state for specified types.
         /// </summary>
         /// <param name="changes">Specified dirty types.</param>
@@ -91,9 +86,9 @@ namespace LeopotamGroup.Gui.Widgets {
         /// <value>The panel.</value>
         public GuiPanel Panel {
             get {
-                if (_visualPanel == null) {
+                if ((System.Object) _visualPanel == null) {
                     _visualPanel = GuiPanel.GetPanel (transform);
-                    _visualPanel.OnChanged += OnPanelChanged;
+                    _visualPanel.AddOnChangeListener (this);
                 }
                 return _visualPanel;
             }
@@ -135,14 +130,6 @@ namespace LeopotamGroup.Gui.Widgets {
             ResetPanel ();
         }
 
-        void OnPanelChanged (GuiPanel panel) {
-            if (_visualPanel != panel) {
-                ResetPanel ();
-            } else {
-                UpdateVisuals (GuiDirtyType.None);
-            }
-        }
-
         void LateUpdate () {
             var transformChanged = _cachedTransform.hasChanged;
             if (transformChanged || _dirtyState != GuiDirtyType.None) {
@@ -162,14 +149,26 @@ namespace LeopotamGroup.Gui.Widgets {
         }
 
         /// <summary>
+        /// Reset or update content dependent on panel value.
+        /// </summary>
+        /// <param name="panel">Panel.</param>
+        public void ValidatePanel (GuiPanel panel) {
+            if (_visualPanel != panel) {
+                ResetPanel ();
+            } else {
+                UpdateVisuals (GuiDirtyType.None);
+            }
+        }
+
+        /// <summary>
         /// Force reset cached parent panel reference.
         /// </summary>
         public void ResetPanel () {
             SetDirty (GuiDirtyType.Panel);
-            if (_visualPanel) {
-                _visualPanel.OnChanged -= OnPanelChanged;
+            if ((System.Object) _visualPanel != null) {
+                _visualPanel.RemoveOnChangeListener (this);
+                _visualPanel = null;
             }
-            _visualPanel = null;
         }
 
         /// <summary>
@@ -204,9 +203,6 @@ namespace LeopotamGroup.Gui.Widgets {
                 _cachedTransform.position = panelTrans.TransformPoint (pos);
             }
 
-            if ((changes & GuiDirtyType.Geometry) != GuiDirtyType.None) {
-                OnGeometryUpdated (this);
-            }
             return true;
         }
 
