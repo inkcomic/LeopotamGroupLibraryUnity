@@ -68,7 +68,7 @@ namespace LeopotamGroup.Gui.Layout {
                     boundWidth *= ItemsInRow > 0 ? Mathf.Max (0, (childCount / ItemsInRow) - 1) : 0;
                     boundHeight *= (ItemsInRow > 0 ? ItemsInRow : childCount) - 1;
                 } else {
-                    boundWidth *= ((ItemsInRow > 0 ? ItemsInRow : childCount) - 1) * ItemWidth;
+                    boundWidth *= (ItemsInRow > 0 ? ItemsInRow : childCount) - 1;
                     boundHeight *= ItemsInRow > 0 ? Mathf.Max (0, (childCount / ItemsInRow) - 1) : 0;
                 }
 
