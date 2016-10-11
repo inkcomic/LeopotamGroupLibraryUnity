@@ -24,6 +24,12 @@ Animator helpers, for updating parameters during graph execution flow.
 
 ----------------------------------------------------------------------------
 
+* Collections
+
+Additional collections or replacements of standards with target on performance.
+
+----------------------------------------------------------------------------
+
 * Common
 
 Common helpers, uses by other subsystems.
@@ -58,7 +64,7 @@ Mobile gui. Oriented to be fat free, fast, no or low gc allocation.
 
 * Localization
 
-Localization support with csv support.
+Localization support with external csv import (for ex, Google Docs).
 
 ----------------------------------------------------------------------------
 
