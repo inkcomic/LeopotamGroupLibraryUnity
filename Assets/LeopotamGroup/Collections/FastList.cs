@@ -1,0 +1,192 @@
+﻿//-------------------------------------------------------
+// LeopotamGroupLibrary for unity3d
+// Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
+//-------------------------------------------------------
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace LeopotamGroup.Collections {
+    /// <summary>
+    /// List class replacement without additional checks and public access to internal array data.
+    /// </summary>
+    [Serializable]
+    public class FastList<T> : IList<T> {
+        /// <summary>
+        /// Get items count.
+        /// </summary>
+        public int Count { get { return _count; } }
+
+        /// <summary>
+        /// Get / set item at specified index.
+        /// </summary>
+        /// <param name="index">Index.</param>
+        public T this [int index] {
+            get { return _items[index]; }
+            set { _items[index] = value; }
+        }
+
+        const int InitCapacity = 4;
+
+        readonly bool _isNullable;
+
+        T[] _items;
+
+        int _count;
+
+        int _capacity;
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public FastList () : this (InitCapacity) {
+        }
+
+        /// <summary>
+        /// Constructor with capacity initialization.
+        /// </summary>
+        /// <param name="capacity">Capacity on start.</param>
+        public FastList (int capacity) {
+            var type = typeof (T);
+            _isNullable = !type.IsValueType || (Nullable.GetUnderlyingType (type) != null);
+            _capacity = capacity > InitCapacity ? capacity : InitCapacity;
+            _count = 0;
+            _items = new T[_capacity];
+        }
+
+        /// <summary>
+        /// Add new item to end of collection.
+        /// </summary>
+        /// <param name="item">New item.</param>
+        public void Add (T item) {
+            if (_count == _capacity) {
+                _capacity <<= 1;
+                var items = new T[_capacity];
+                Array.Copy (_items, items, _count);
+                _items = items;
+            }
+            _items[_count] = item;
+            _count++;
+        }
+
+        /// <summary>
+        /// Clear collection without release memory for performance optimization.
+        /// </summary>
+        public void Clear () {
+            if (_isNullable) {
+                for (var i = _count - 1; i >= 0; i--) {
+                    _items[i] = default(T);
+                }
+            }
+            _count = 0;
+        }
+
+        /// <summary>
+        /// Is collection contains specified item.
+        /// </summary>
+        /// <param name="item">Item to check.</param>
+        public bool Contains (T item) {
+            return Array.IndexOf<T> (_items, item) != -1;
+        }
+
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="array">Array.</param>
+        /// <param name="arrayIndex">Array index.</param>
+        public void CopyTo (T[] array, int arrayIndex) {
+            throw new NotImplementedException ();
+        }
+
+        /// <summary>
+        /// Get index of specified item.
+        /// </summary>
+        /// <returns>Found index or -1.</returns>
+        /// <param name="item">Item to check.</param>
+        public int IndexOf (T item) {
+            return Array.IndexOf<T> (_items, item);
+        }
+
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="index">Index.</param>
+        /// <param name="item">Item.</param>
+        public void Insert (int index, T item) {
+            throw new NotImplementedException ();
+        }
+
+        /// <summary>
+        /// Is collection readonly (for compatibility to IList).
+        /// </summary>
+        public bool IsReadOnly { get { return false; } }
+
+        /// <summary>
+        /// Get internal data, use it on your own risk!
+        /// Can be used for external implementation any other methods.
+        /// </summary>
+        /// <returns>The data.</returns>
+        public T[] GetData () {
+            return _items;
+        }
+
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
+        public IEnumerator<T> GetEnumerator () {
+            throw new NotImplementedException ();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator () {
+            throw new NotImplementedException ();
+        }
+
+        /// <summary>
+        /// Try to remove specified item.
+        /// </summary>
+        /// <param name="item">Item to remove.</param>
+        public bool Remove (T item) {
+            int id = Array.IndexOf (_items, item);
+            if (id != -1) {
+                RemoveAt (id);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Remove item from collection at index.
+        /// </summary>
+        /// <param name="id">Index of item to remove.</param>
+        public void RemoveAt (int id) {
+            if (id >= 0 && id < _count) {
+                Array.Copy (_items, id + 1, _items, id, _count - id);
+            }
+        }
+
+        /// <summary>
+        /// Try to remove last item in collection.
+        /// </summary>
+        public bool RemoveLast () {
+            if (_count > 0) {
+                _count--;
+                if (_isNullable) {
+                    _items[_count] = default(T);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Reverse items order in collection.
+        /// </summary>
+        public void Reverse () {
+            if (_count > 0) {
+                Array.Reverse (_items, 0, _count);
+            }
+        }
+    }
+}
