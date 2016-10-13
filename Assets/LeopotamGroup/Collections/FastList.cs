@@ -123,12 +123,18 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Add new empty values to end of collection.
+        /// Add new items with default values to end of collection.
         /// </summary>
         /// <param name="amount">Amount of new items.</param>
-        public void FillWithEmpty (int amount) {
+        /// <param name="clearCollection">Is collection should be cleared before.</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        public void FillWithEmpty (int amount, bool clearCollection = false, bool forceSetDefaultValues = true) {
             if (amount <= 0) {
                 return;
+            }
+
+            if (clearCollection) {
+                _count = 0;
             }
             var newCount = _count + amount;
             if (newCount > _capacity) {
@@ -142,7 +148,12 @@ namespace LeopotamGroup.Collections {
                 Array.Copy (_items, items, _count);
                 _items = items;
             }
-            _count = newCount;
+            if (forceSetDefaultValues) {
+                while (_count < newCount) {
+                    _items[_count] = default(T);
+                    _count++;
+                }
+            }
         }
 
         /// <summary>
