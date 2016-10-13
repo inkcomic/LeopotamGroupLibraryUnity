@@ -71,6 +71,20 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
+        /// Assign items array as new internal data of collection. Use carefully and only if you understand what you want!
+        /// </summary>
+        /// <param name="data">Data.</param>
+        /// <param name="count">Count.</param>
+        public void AssignData (T[] data, int count) {
+            if (data == null) {
+                throw new NullReferenceException ("data");
+            }
+            _items = data;
+            _count = count >= 0 ? count : 0;
+            _capacity = _items.Length;
+        }
+
+        /// <summary>
         /// Clear collection without release memory for performance optimization.
         /// </summary>
         public void Clear () {
@@ -96,7 +110,27 @@ namespace LeopotamGroup.Collections {
         /// <param name="array">Array.</param>
         /// <param name="arrayIndex">Array index.</param>
         public void CopyTo (T[] array, int arrayIndex) {
-            throw new NotImplementedException ();
+            Array.Copy (_items, 0, array, arrayIndex, _count);
+        }
+
+        /// <summary>
+        /// Add new empty values to end of collection.
+        /// </summary>
+        /// <param name="amount">Amount of new items.</param>
+        public void FillWithEmpty (int amount) {
+            if (amount <= 0) {
+                return;
+            }
+            var newCount = _count + amount;
+            if (newCount > _capacity) {
+                while (_capacity < newCount) {
+                    _capacity <<= 1;
+                }
+                var items = new T[_capacity];
+                Array.Copy (_items, items, _count);
+                _items = items;
+            }
+            _count = newCount;
         }
 
         /// <summary>
