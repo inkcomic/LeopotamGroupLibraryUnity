@@ -19,6 +19,11 @@ namespace LeopotamGroup.Collections {
         public int Count { get { return _count; } }
 
         /// <summary>
+        /// Get collection capacity.
+        /// </summary>
+        public int Capacity { get { return _capacity; } }
+
+        /// <summary>
         /// Get / set item at specified index.
         /// </summary>
         /// <param name="index">Index.</param>
@@ -61,7 +66,11 @@ namespace LeopotamGroup.Collections {
         /// <param name="item">New item.</param>
         public void Add (T item) {
             if (_count == _capacity) {
-                _capacity <<= 1;
+                if (_capacity > 0) {
+                    _capacity <<= 1;
+                } else {
+                    _capacity = InitCapacity;
+                }
                 var items = new T[_capacity];
                 Array.Copy (_items, items, _count);
                 _items = items;
@@ -71,7 +80,7 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Assign items array as new internal data of collection. Use carefully and only if you understand what you want!
+        /// Set internal data, use it on your own risk!
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="count">Count.</param>
@@ -123,6 +132,9 @@ namespace LeopotamGroup.Collections {
             }
             var newCount = _count + amount;
             if (newCount > _capacity) {
+                if (_capacity <= 0) {
+                    _capacity = InitCapacity;
+                }
                 while (_capacity < newCount) {
                     _capacity <<= 1;
                 }
@@ -158,6 +170,7 @@ namespace LeopotamGroup.Collections {
 
         /// <summary>
         /// Get internal data, use it on your own risk!
+        /// Dont forget, length of result array equals Capacity, not Count!
         /// Can be used for external implementation any other methods.
         /// </summary>
         /// <returns>The data.</returns>
