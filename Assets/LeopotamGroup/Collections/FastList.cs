@@ -149,11 +149,11 @@ namespace LeopotamGroup.Collections {
                 _items = items;
             }
             if (forceSetDefaultValues) {
-                while (_count < newCount) {
-                    _items[_count] = default(T);
-                    _count++;
+                for (var i = _count; i < newCount; i++) {
+                    _items[i] = default(T);
                 }
             }
+            _count = newCount;
         }
 
         /// <summary>
