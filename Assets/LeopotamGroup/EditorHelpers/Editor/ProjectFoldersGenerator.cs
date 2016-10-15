@@ -136,12 +136,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         /// Generate class with idents at specified filename and with specified namespace.
         /// </summary>
         /// <returns>Error message or null on success.</returns>
-        /// <param name="rootFolder">Root folder path.</param>
+        /// <param name="rootFolder">Root folder path or empty/null for disable.</param>
         /// <param name="options">Options</param>
         /// <param name="cvsFileName">Cvs filename for keep empty folders or null for disable.</param>
         public static string Generate (string rootFolder, Options options, string cvsFileName) {
             if ((int) options == 0) {
                 return string.Empty;
+            }
+            if (rootFolder == null) {
+                rootFolder = string.Empty;
             }
             try {
                 foreach (Options item in Enum.GetValues (typeof (Options))) {
