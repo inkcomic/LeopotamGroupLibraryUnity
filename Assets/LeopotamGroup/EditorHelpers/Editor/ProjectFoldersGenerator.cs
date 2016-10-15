@@ -30,7 +30,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static readonly Dictionary<int, List<string>> _paths = new Dictionary<int, List<string>>
         {
-            { (int) Options.Textures, new List<string>{ "AppIcon", "UI" } }
+            { (int) Options.Textures, new List<string> { "AppIcon", "UI" } }
         };
 
         const string Title = "Project folders generator";
@@ -57,7 +57,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             win.Reset ();
         }
 
-        void Awake() {
+        void Awake () {
             Reset ();
         }
 

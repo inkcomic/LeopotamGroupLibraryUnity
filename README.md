@@ -5,7 +5,7 @@ LeopotamGroup library for unity3d engine.
 
 ### 'LeopotamGroup' - main library.
 
-***Unity tested version: 5.4.1.***
+***Unity tested version: 5.4.2.***
 
 All code separated to independent subsystems (folders),
 you can remove unnecessary code for current project:
