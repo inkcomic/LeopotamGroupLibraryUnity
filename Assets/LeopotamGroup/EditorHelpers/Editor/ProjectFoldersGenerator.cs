@@ -57,6 +57,10 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             win.Reset ();
         }
 
+        void Awake() {
+            Reset ();
+        }
+
         void OnEnable () {
             titleContent.text = Title;
         }
