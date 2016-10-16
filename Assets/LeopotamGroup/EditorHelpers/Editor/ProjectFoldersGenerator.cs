@@ -30,6 +30,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static readonly Dictionary<int, List<string>> _paths = new Dictionary<int, List<string>>
         {
+            { (int) Options.Scripts, new List<string> { "Editor" } },
             { (int) Options.Textures, new List<string> { "AppIcon", "UI" } }
         };
 
@@ -106,7 +107,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void GenerateCvsSupport (string path, string cvsFileName) {
             if (!string.IsNullOrEmpty (cvsFileName)) {
-                Debug.Log (Path.Combine (path, cvsFileName));
                 path = Path.Combine (path, cvsFileName);
                 if (!File.Exists (path)) {
                     File.WriteAllText (path, string.Empty);
