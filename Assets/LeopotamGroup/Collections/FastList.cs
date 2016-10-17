@@ -94,10 +94,23 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Clear collection without release memory for performance optimization.
+        /// Clear collection without release memory for performance optimization. Similar as Clear(true) call for reference T-type.
         /// </summary>
         public void Clear () {
             if (_isNullable) {
+                for (var i = _count - 1; i >= 0; i--) {
+                    _items[i] = default(T);
+                }
+            }
+            _count = 0;
+        }
+
+        /// <summary>
+        /// Clear collection without release memory for performance optimization. 
+        /// </summary>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        public void Clear (bool forceSetDefaultValues) {
+            if (forceSetDefaultValues) {
                 for (var i = _count - 1; i >= 0; i--) {
                     _items[i] = default(T);
                 }
@@ -136,24 +149,8 @@ namespace LeopotamGroup.Collections {
             if (clearCollection) {
                 _count = 0;
             }
-            var newCount = _count + amount;
-            if (newCount > _capacity) {
-                if (_capacity <= 0) {
-                    _capacity = InitCapacity;
-                }
-                while (_capacity < newCount) {
-                    _capacity <<= 1;
-                }
-                var items = new T[_capacity];
-                Array.Copy (_items, items, _count);
-                _items = items;
-            }
-            if (forceSetDefaultValues) {
-                for (var i = _count; i < newCount; i++) {
-                    _items[i] = default(T);
-                }
-            }
-            _count = newCount;
+            Reserve (amount, clearCollection, forceSetDefaultValues);
+            _count += amount;
         }
 
         /// <summary>
@@ -227,15 +224,47 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Try to remove last item in collection.
         /// </summary>
-        public bool RemoveLast () {
+        /// <returns><c>true</c>, if last was removed, <c>false</c> otherwise.</returns>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        public bool RemoveLast (bool forceSetDefaultValues = true) {
             if (_count > 0) {
                 _count--;
-                if (_isNullable) {
+                if (forceSetDefaultValues) {
                     _items[_count] = default(T);
                 }
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Reserve the specified amount of items, absolute or relative.
+        /// </summary>
+        /// <param name="amount">Amount.</param>
+        /// <param name="totalAmount">Is amount value means - total items amount at collection or relative otherwise.</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        public void Reserve (int amount, bool totalAmount = false, bool forceSetDefaultValues = true) {
+            if (amount <= 0) {
+                return;
+            }
+            var start = totalAmount ? 0 : _count;
+            var newCount = start + amount;
+            if (newCount > _capacity) {
+                if (_capacity <= 0) {
+                    _capacity = InitCapacity;
+                }
+                while (_capacity < newCount) {
+                    _capacity <<= 1;
+                }
+                var items = new T[_capacity];
+                Array.Copy (_items, items, _count);
+                _items = items;
+            }
+            if (forceSetDefaultValues) {
+                for (var i = _count; i < newCount; i++) {
+                    _items[i] = default(T);
+                }
+            }
         }
 
         /// <summary>
