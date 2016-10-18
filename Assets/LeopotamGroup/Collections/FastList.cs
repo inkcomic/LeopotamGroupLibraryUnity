@@ -218,6 +218,7 @@ namespace LeopotamGroup.Collections {
         public void RemoveAt (int id) {
             if (id >= 0 && id < _count) {
                 Array.Copy (_items, id + 1, _items, id, _count - id);
+                _count--;
             }
         }
 
