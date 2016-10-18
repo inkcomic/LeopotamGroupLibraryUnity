@@ -217,8 +217,8 @@ namespace LeopotamGroup.Collections {
         /// <param name="id">Index of item to remove.</param>
         public void RemoveAt (int id) {
             if (id >= 0 && id < _count) {
-                Array.Copy (_items, id + 1, _items, id, _count - id);
                 _count--;
+                Array.Copy (_items, id + 1, _items, id, _count - id);
             }
         }
 
@@ -273,7 +273,12 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         public void Reverse () {
             if (_count > 0) {
-                Array.Reverse (_items, 0, _count);
+                T temp;
+                for (int i = 0, iMax = _count >> 1; i < iMax; i++) {
+                    temp = _items[i];
+                    _items[i] = _items[_count - i - 1];
+                    _items[_count - i - 1] = temp;
+                }
             }
         }
     }
