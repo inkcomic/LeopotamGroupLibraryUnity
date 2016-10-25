@@ -105,6 +105,12 @@ structs and nested objects (lists, arrays, structs, etc).
 
 ----------------------------------------------------------------------------
 
+* SystemUI
+
+Helpers / performance replacements for new gui system (unity 4.6+).
+
+----------------------------------------------------------------------------
+
 * Tutorials
 
 Step by step behaviour helpers, useful for creating tutorial or any
