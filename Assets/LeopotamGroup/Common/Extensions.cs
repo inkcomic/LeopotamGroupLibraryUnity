@@ -195,7 +195,7 @@ namespace LeopotamGroup.Common {
         }
 
         /// <summary>
-        /// Convert string "rrggbb" to Color.
+        /// Convert hex string "rrggbb" to Color.
         /// </summary>
         /// <returns>Color.</returns>
         /// <param name="text">"rrggbb" string.</param>
@@ -213,7 +213,7 @@ namespace LeopotamGroup.Common {
         }
 
         /// <summary>
-        /// Convert string "rrggbbaa" to Color32.
+        /// Convert hex string "rrggbbaa" to Color.
         /// </summary>
         /// <returns>Color.</returns>
         /// <param name="text">"rrggbbaa" string.</param>
@@ -228,6 +228,27 @@ namespace LeopotamGroup.Common {
             } catch {
                 return Color.black;
             }
+        }
+
+        /// <summary>
+        /// Convert color to hex string "rrggbb".
+        /// </summary>
+        /// <param name="color">Color.</param>
+        public static string ToHexString24 (this Color color) {
+            var data = ((int) (color.r * 255f) << 16) + ((int) (color.g * 255f) << 8) + (int) (color.b * 255f);
+            return data.ToString ("x6");
+        }
+
+        /// <summary>
+        /// Convert color to hex string "rrggbbaa".
+        /// </summary>
+        /// <param name="color">Color.</param>
+        public static string ToHexString32 (this Color color) {
+            var data = ((int) (color.r * 255f) << 24) +
+                       ((int) (color.g * 255f) << 16) +
+                       ((int) (color.b * 255f) << 8) +
+                       (int) (color.a * 255f);
+            return data.ToString ("x8");
         }
 
         /// <summary>
