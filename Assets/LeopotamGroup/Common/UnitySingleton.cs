@@ -7,6 +7,19 @@ using UnityEngine;
 
 namespace LeopotamGroup.Common {
     /// <summary>
+    /// Attribute for locking usage of UnitySingleton-based classes only at named scenes.
+    /// </summary>
+    [System.AttributeUsage (System.AttributeTargets.Class, AllowMultiple = true)]
+    [System.Diagnostics.Conditional ("UNITY_EDITOR")]
+    sealed class UnitySingletonAllowedSceneAttribute : System.Attribute {
+        public string Name;
+
+        public UnitySingletonAllowedSceneAttribute (string name) {
+            Name = name;
+        }
+    }
+
+    /// <summary>
     /// Singleton pattern, unity version.
     /// </summary>
     public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour {
@@ -45,6 +58,23 @@ namespace LeopotamGroup.Common {
                 DestroyImmediate (gameObject);
                 return;
             }
+                
+#if UNITY_EDITOR
+            // check for allowed scenes if possible.
+            var attrs = GetType ().GetCustomAttributes (typeof (UnitySingletonAllowedSceneAttribute), true);
+            if (attrs != null && attrs.Length > 0) {
+                var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+                int i;
+                for (i = attrs.Length - 1; i >= 0; i--) {
+                    if (System.Text.RegularExpressions.Regex.IsMatch (sceneName, (attrs[i] as UnitySingletonAllowedSceneAttribute).Name)) {
+                        break;
+                    }
+                }
+                if (i == -1) {
+                    throw new UnityException (string.Format ("\"{0}\" singleton cant be used at scene \"{1}\"", GetType ().Name, sceneName));
+                }
+            }
+#endif
 
             _instance = this as T;
 

@@ -42,7 +42,13 @@ namespace LeopotamGroup.EditorHelpers {
 
         static void SaveData () {
             try {
-                File.WriteAllText (_storeFile, JsonSerialization.SerializeStatic (_data));
+                if (_data.Count > 0) {
+                    File.WriteAllText (_storeFile, JsonSerialization.SerializeStatic (_data));
+                } else {
+                    if (File.Exists (_storeFile)) {
+                        File.Delete (_storeFile);
+                    }
+                }
             } catch (Exception ex) {
                 Debug.LogWarning ("ProjectPrefs.SaveData: " + ex.Message);
             }

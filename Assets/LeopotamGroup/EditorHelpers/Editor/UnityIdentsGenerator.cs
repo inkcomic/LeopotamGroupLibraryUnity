@@ -34,7 +34,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string OptionsKey = "lg.unity-idents-gen.options";
 
-        const string DefaultFileName = "Scripts/Common/UnityIdents.cs";
+        const string DefaultFileName = "Client/Scripts/Common/UnityIdents.cs";
 
         const string DefaultNamespace = "Client.Common";
 
