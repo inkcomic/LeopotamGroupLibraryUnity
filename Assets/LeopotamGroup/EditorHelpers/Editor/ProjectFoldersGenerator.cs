@@ -19,13 +19,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             Animations = 1,
             Fonts = 2,
             Models = 4,
-            Prefabs = 8,
-            Resources = 16,
-            Scenes = 32,
-            Scripts = 64,
-            Shaders = 128,
-            Sounds = 256,
-            Textures = 512,
+            Plugins = 8,
+            Prefabs = 16,
+            Resources = 32,
+            Scenes = 64,
+            Scripts = 128,
+            Shaders = 256,
+            Sounds = 512,
+            StreamingAssets = 1024,
+            Textures = 2048,
         }
 
         static readonly Dictionary<int, List<string>> _paths = new Dictionary<int, List<string>>
@@ -37,6 +39,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string Title = "Project folders generator";
 
         const Options DefaultOptions = (Options) (-1);
+
+        const Options RootOnlyOptions = Options.Plugins;
 
         const string DefaultRootProjectFolder = "Client";
 
@@ -115,7 +119,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         static void GenerateItem (string rootFolder, int item, string cvsFileName) {
-            var fullPath = Path.Combine (Application.dataPath, rootFolder);
+            var fullPath = (((int) RootOnlyOptions) & item) != 0 ?
+                Application.dataPath : Path.Combine (Application.dataPath, rootFolder);
 
             fullPath = Path.Combine (fullPath, ((Options) item).ToString ());
             if (!Directory.Exists (fullPath)) {
