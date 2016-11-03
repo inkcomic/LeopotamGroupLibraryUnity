@@ -28,8 +28,18 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="index">Index.</param>
         public T this [int index] {
-            get { return _items[index]; }
-            set { _items[index] = value; }
+            get {
+                if (index < _count) {
+                    return _items[index];
+                }
+                throw new ArgumentOutOfRangeException ();
+            }
+            set {
+                if (index < _count) {
+                    _items[index] = value;
+                }
+                throw new ArgumentOutOfRangeException ();
+            }
         }
 
         const int InitCapacity = 4;
@@ -80,13 +90,38 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
+        /// Add items to end of this collection.
+        /// </summary>
+        /// <param name="data">Data.</param>
+        public void AddRange (IEnumerable<T> data) {
+            if (data == null) {
+                throw new  ArgumentNullException ("data");
+            }
+            var casted = data as ICollection<T>;
+            if (casted != null) {
+                var amount = casted.Count;
+                if (amount > 0) {
+                    Reserve (amount);
+                    casted.CopyTo (_items, _count);
+                    _count += amount;
+                }
+            } else {
+                using (var it = data.GetEnumerator ()) {
+                    while (it.MoveNext ()) {
+                        Add (it.Current); 
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Set internal data, use it on your own risk!
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="count">Count.</param>
         public void AssignData (T[] data, int count) {
             if (data == null) {
-                throw new NullReferenceException ("data");
+                throw new  ArgumentNullException ("data");
             }
             _items = data;
             _count = count >= 0 ? count : 0;
