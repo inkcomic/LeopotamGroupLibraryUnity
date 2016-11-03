@@ -101,7 +101,7 @@ namespace LeopotamGroup.Collections {
             if (casted != null) {
                 var amount = casted.Count;
                 if (amount > 0) {
-                    Reserve (amount);
+                    Reserve (amount, false, false);
                     casted.CopyTo (_items, _count);
                     _count += amount;
                 }
