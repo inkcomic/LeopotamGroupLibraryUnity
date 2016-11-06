@@ -113,7 +113,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
                         if (!string.IsNullOrEmpty (pair.Value)) {
                             // Dirty hack for url, because standard "publish to web" has huge lag up to 30 minutes.
                             data = www.DownloadString (pair.Key.Replace ("?", string.Empty).Replace ("/edit", "/export?format=csv&"));
-                            var path = string.Format ("{0}/Resources/{1}", Application.dataPath, pair.Value);
+                            var path = string.Format ("{0}/{1}", Application.dataPath, pair.Value);
                             var folder = Path.GetDirectoryName (path);
                             if (!Directory.Exists (folder)) {
                                 Directory.CreateDirectory (folder);
