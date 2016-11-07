@@ -122,6 +122,8 @@ Simple tweening.
 
 ----------------------------------------------------------------------------
 
+Examples moved to [separate repository](https://github.com/Leopotam/LeopotamGroupLibraryUnity.Examples/)
+
 ## LICENSE
 Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 
