@@ -1,11 +1,9 @@
 # LeopotamGroupLibraryUnity
 LeopotamGroup library for unity3d engine.
 
-## CODE STRUCTURE
-
-### 'LeopotamGroup' - main library.
-
 ***Unity tested version: 5.4.2.***
+
+## CODE STRUCTURE
 
 All code separated to independent subsystems (folders),
 you can remove unnecessary code for current project:
@@ -123,9 +121,6 @@ other behaviour with ordered / dependent execution. Progress can be saved.
 Simple tweening.
 
 ----------------------------------------------------------------------------
-
-### 'LeopotamGroup.Examples' - examples of using main library.
-
 
 ## LICENSE
 Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
