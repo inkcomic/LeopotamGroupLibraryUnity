@@ -216,8 +216,18 @@ namespace LeopotamGroup.Collections {
         /// Dont forget, length of result array equals Capacity, not Count!
         /// Can be used for external implementation any other methods.
         /// </summary>
-        /// <returns>The data.</returns>
         public T[] GetData () {
+            return _items;
+        }
+
+        /// <summary>
+        /// Get internal data, use it on your own risk!
+        /// Dont forget, length of result array equals Capacity, not Count!
+        /// Can be used for external implementation any other methods.
+        /// </summary>
+        /// <param name="count">Actual count of items.</param>
+        public T[] GetData (out int count) {
+            count = _count;
             return _items;
         }
 
