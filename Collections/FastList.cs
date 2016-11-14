@@ -37,6 +37,7 @@ namespace LeopotamGroup.Collections {
             set {
                 if (index < _count) {
                     _items[index] = value;
+                    return;
                 }
                 throw new ArgumentOutOfRangeException ();
             }
