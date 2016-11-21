@@ -73,7 +73,9 @@ namespace LeopotamGroup.FX {
                 return;
             }
 
-            _cameraIndex++;
+            if (Camera.current.gameObject.scene.IsValid ()) {
+                _cameraIndex++;
+            }
             if (_cameraIndex == Camera.allCamerasCount) {
                 GL.PushMatrix ();
                 GL.LoadOrtho ();
