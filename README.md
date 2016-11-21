@@ -1,7 +1,7 @@
 # LeopotamGroupLibraryUnity
 LeopotamGroup library for unity3d engine.
 
-***Unity tested version: 5.4.2.***
+***Unity tested version: 5.4.3.***
 
 ## CODE STRUCTURE
 
