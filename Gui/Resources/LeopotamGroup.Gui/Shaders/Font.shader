@@ -25,9 +25,7 @@ Shader "Hidden/LeopotamGroup/Gui/Font" {
         Pass {
             CGPROGRAM
             #include "UnityCG.cginc"
-            #pragma fragmentoption ARB_precision_hint_fastest
             #pragma multi_compile __ GUI_CLIP_RANGE
-            //#pragma glsl_no_auto_normalization
             #pragma vertex vert
             #pragma fragment frag
      

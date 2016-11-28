@@ -10,10 +10,10 @@ Shader "Hidden/LeopotamGroup/FX/ScreenFade" {
 	SubShader {
 		Tags { "RenderType" = "Overlay" "Queue" = "Overlay" }
 		LOD 100
-		Lighting Off
-		ZWrite Off
-		ZTest Off
-		Cull Off
+
+        ZTest Off
+        Cull Off
+        ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha
 		
 		CGINCLUDE
@@ -23,23 +23,23 @@ Shader "Hidden/LeopotamGroup/FX/ScreenFade" {
 			float4 pos : SV_POSITION;
 			fixed4 color : TEXCOORD0;
 		};
-              
+        
 		v2f vert (appdata_full v) {
 			v2f o;
 			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 			o.color = v.color;
 			return o;
 		}
+
+        fixed4 frag (v2f i) : SV_Target {
+            return i.color;
+        }
 		ENDCG
 
 		Pass {
 			CGPROGRAM
 			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest		
-			fixed4 frag (v2f i) : SV_Target {
-				return i.color;
-			}
+			#pragma fragment frag         
 			ENDCG 
 		}
 	}

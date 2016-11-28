@@ -20,8 +20,6 @@ Shader "Hidden/LeopotamGroup/Gui/Opaque" {
         Pass {
             CGPROGRAM
             #include "UnityCG.cginc"
-            #pragma fragmentoption ARB_precision_hint_fastest
-            //#pragma glsl_no_auto_normalization
             #pragma vertex vert
             #pragma fragment frag
      
