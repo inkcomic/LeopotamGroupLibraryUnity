@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace LeopotamGroup.Shaders.UnityEditors {
     static class EditorIntegration {
-        const string _unlitShader =
+        const string ShaderTemplate =
             "Shader \"Custom/Unlit<<TYPE>>\"{\tProperties{\t\t_MainTex(\"Texture\", 2D) = \"white\" <<>>\n\t}\n\n\tSubShader{" +
             "\t\tTags << \"RenderType\"=\"<<TYPE>>\" \"Queue\"=\"<<QUEUE>>\" \"IgnoreProjector\"=\"True\" \"ForceNoShadowCasting\"=\"True\" >>\n" +
             "\t\tLOD 100\n\n<<SHADERFLAGS>>\t\tCGINCLUDE\n\t\t#include \"UnityCG.cginc\"\n\n" +
@@ -18,7 +18,7 @@ namespace LeopotamGroup.Shaders.UnityEditors {
             "\t\t\treturn tex2D(_MainTex,i.uv);\t\t}\n\t\tENDCG\n\n\t\tPass{\t\t\tTags << \"LightMode\"=\"ForwardBase\" >>\n" +
             "\t\t\tCGPROGRAM\n\t\t\t#pragma vertex vert\n\t\t\t#pragma fragment frag\n\t\t\tENDCG\n\t\t}\n\t}\n\tFallback Off\n}";
 
-        const string AlphaBlendTags = "\t\tCull Off\n\t\tZWrite Off\n\t\tBlend SrcAlpha OneMinusSrcAlpha\n\n";
+        const string ShaderAlphaBlendTags = "\t\tCull Off\n\t\tZWrite Off\n\t\tBlend SrcAlpha OneMinusSrcAlpha\n\n";
 
         static string GetAssetPath () {
             var path = AssetDatabase.GetAssetPath (Selection.activeObject);
@@ -35,7 +35,7 @@ namespace LeopotamGroup.Shaders.UnityEditors {
         static string CreateShaderCode (string template, string renderType, string renderQueue, bool isAlphaBlend) {
             template = template.Replace ("<<TYPE>>", renderType);
             template = template.Replace ("<<QUEUE>>", renderQueue);
-            template = template.Replace ("<<SHADERFLAGS>>", isAlphaBlend ? AlphaBlendTags : "");
+            template = template.Replace ("<<SHADERFLAGS>>", isAlphaBlend ? ShaderAlphaBlendTags : "");
             template = template.Replace ("\t", new string (' ', 4));
             template = template.Replace ("{", " {\n");
             template = template.Replace ("<<", "{");
@@ -49,18 +49,18 @@ namespace LeopotamGroup.Shaders.UnityEditors {
         }
 
         [MenuItem ("Assets/LeopotamGroup/Shaders/Create unlit opaque shader", false, 1)]
-        static void CreateUnlitOpaqueShaderAtlas () {
+        static void CreateUnlitOpaqueShader () {
             File.WriteAllText (
                 AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", GetAssetPath (), "UnlitOpaqueShader")),
-                CreateShaderCode (_unlitShader, "Opaque", "Geometry", false));
+                CreateShaderCode (ShaderTemplate, "Opaque", "Geometry", false));
             AssetDatabase.Refresh ();
         }
 
         [MenuItem ("Assets/LeopotamGroup/Shaders/Create unlit transparent shader", false, 1)]
-        static void CreateUnlitTransparentShaderAtlas () {
+        static void CreateUnlitTransparentShader () {
             File.WriteAllText (
                 AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", GetAssetPath (), "UnlitTransparentShader")),
-                CreateShaderCode (_unlitShader, "Transparent", "Transparent", true));
+                CreateShaderCode (ShaderTemplate, "Transparent", "Transparent", true));
             AssetDatabase.Refresh ();
         }
     }
