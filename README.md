@@ -78,15 +78,15 @@ Helpers for mobiles only.
 
 ----------------------------------------------------------------------------
 
-* Protection
-
-Protection for Int, Long, Float types from in-memory searching.
-
-----------------------------------------------------------------------------
-
 * Pooling
 
 Pooling support for any prefabs.
+
+----------------------------------------------------------------------------
+
+* Protection
+
+Protection for Int, Long, Float types from in-memory searching.
 
 ----------------------------------------------------------------------------
 
@@ -100,6 +100,12 @@ Embedded scripting engine, optimized for low gc usage.
 
 Csv deserialization, Json serialization / deserialization with support of
 structs and nested objects (lists, arrays, structs, etc).
+
+----------------------------------------------------------------------------
+
+* Shaders
+
+Editor helpers for optimized shaders generation.
 
 ----------------------------------------------------------------------------
 
