@@ -163,10 +163,10 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Not implemented.
+        /// Copy collection to array and insert from specified index.
         /// </summary>
-        /// <param name="array">Array.</param>
-        /// <param name="arrayIndex">Array index.</param>
+        /// <param name="array">Target array.</param>
+        /// <param name="arrayIndex">Start index at target array.</param>
         public void CopyTo (T[] array, int arrayIndex) {
             Array.Copy (_items, 0, array, arrayIndex, _count);
         }
