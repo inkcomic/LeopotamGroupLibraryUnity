@@ -221,21 +221,21 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             pointerEventData.pointerCurrentRaycast = pointerCurrentRaycast;
             m_RaycastResultCache.Clear ();
 
-            _mouseState.SetButtonState (PointerEventData.InputButton.Left, PointerInputModule.StateForMouseButton (0), pointerEventData);
+            _mouseState.SetButtonState (PointerEventData.InputButton.Left, StateForMouseButton (0), pointerEventData);
 
             if (_useRightMouseButton) {
                 PointerEventData pointerEventData2;
                 GetPointerData (-2, out pointerEventData2, true);
                 CopyFromTo (pointerEventData, pointerEventData2);
                 pointerEventData2.button = PointerEventData.InputButton.Right;
-                _mouseState.SetButtonState (PointerEventData.InputButton.Right, PointerInputModule.StateForMouseButton (1), pointerEventData2);
+                _mouseState.SetButtonState (PointerEventData.InputButton.Right, StateForMouseButton (1), pointerEventData2);
             }
             if (_useMiddleMouseButton) {
                 PointerEventData pointerEventData3;
                 GetPointerData (-3, out pointerEventData3, true);
                 CopyFromTo (pointerEventData, pointerEventData3);
                 pointerEventData3.button = PointerEventData.InputButton.Middle;
-                _mouseState.SetButtonState (PointerEventData.InputButton.Middle, PointerInputModule.StateForMouseButton (2), pointerEventData3);
+                _mouseState.SetButtonState (PointerEventData.InputButton.Middle, StateForMouseButton (2), pointerEventData3);
             }
             return _mouseState;
         }
@@ -250,6 +250,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             ProcessDrag (leftButtonData.buttonData);
 
             // Now process right / middle clicks
+#if !(UNITY_ANDROID || UNITY_IOS)
             if (_useRightMouseButton) {
                 ProcessMousePress (mouseData.GetButtonState (PointerEventData.InputButton.Right).eventData);
                 ProcessDrag (mouseData.GetButtonState (PointerEventData.InputButton.Right).eventData.buttonData);
@@ -258,6 +259,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
                 ProcessMousePress (mouseData.GetButtonState (PointerEventData.InputButton.Middle).eventData);
                 ProcessDrag (mouseData.GetButtonState (PointerEventData.InputButton.Middle).eventData.buttonData);
             }
+#endif
 
             if (leftButtonData.buttonData.scrollDelta.sqrMagnitude > float.Epsilon) {
                 var scrollHandler =

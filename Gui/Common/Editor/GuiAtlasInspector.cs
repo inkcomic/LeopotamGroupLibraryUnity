@@ -232,10 +232,10 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             splatSettings.anisoLevel = 2;
             splatSettings.filterMode = FilterMode.Bilinear;
             splatSettings.alphaIsTransparency = true;
-            splatSettings.textureFormat = TextureImporterFormat.AutomaticCompressed;
+            splatSettings.textureCompression = TextureImporterCompression.Compressed;
             splatSettings.compressionQuality = 100;
             splatSettings.mipmapEnabled = false;
-            splatSettings.textureType = TextureImporterType.Advanced;
+            splatSettings.textureType = TextureImporterType.Default;
             return atlasTex;
         }
     }
