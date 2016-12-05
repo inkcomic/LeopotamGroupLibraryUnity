@@ -4,6 +4,7 @@
 //-------------------------------------------------------
 
 using System;
+using LeopotamGroup.Common;
 using LeopotamGroup.EditorHelpers;
 using UnityEngine;
 
@@ -63,13 +64,13 @@ namespace LeopotamGroup.Tutorials {
         public TutorialMask ShowChildrenOnMask = 0;
 
         void OnEnable () {
-            TutorialManager.Instance.OnTutorialUpdated += OnTutorialUpdated;
+            Singleton.Get<TutorialManager> ().OnTutorialUpdated += OnTutorialUpdated;
             OnTutorialUpdated ();
         }
 
         void OnDisable () {
-            if (TutorialManager.IsInstanceCreated ()) {
-                TutorialManager.Instance.OnTutorialUpdated -= OnTutorialUpdated;
+            if (Singleton.IsTypeRegistered<TutorialManager> ()) {
+                Singleton.Get<TutorialManager> ().OnTutorialUpdated -= OnTutorialUpdated;
             }
         }
 
@@ -77,11 +78,11 @@ namespace LeopotamGroup.Tutorials {
             var isProcessed = false;
             var result = false;
 
-            if ((int) HideChildrenOnMask != 0 && TutorialManager.Instance.ValidateMask (HideChildrenOnMask)) {
+            if ((int) HideChildrenOnMask != 0 && Singleton.Get<TutorialManager> ().ValidateMask (HideChildrenOnMask)) {
                 isProcessed = true;
                 result = false;
             }
-            if (!isProcessed && (int) ShowChildrenOnMask != 0 && TutorialManager.Instance.ValidateMask (ShowChildrenOnMask)) {
+            if (!isProcessed && (int) ShowChildrenOnMask != 0 && Singleton.Get<TutorialManager> ().ValidateMask (ShowChildrenOnMask)) {
                 isProcessed = true;
                 result = true;
             }

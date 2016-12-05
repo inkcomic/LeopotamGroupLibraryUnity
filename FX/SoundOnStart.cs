@@ -4,6 +4,7 @@
 //-------------------------------------------------------
 
 using System.Collections;
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.FX {
@@ -11,15 +12,11 @@ namespace LeopotamGroup.FX {
     /// Setup FX parameters on start.
     /// </summary>
     public sealed class SoundOnStart : MonoBehaviour {
-        /// <summary>
-        /// FX AudioClip.
-        /// </summary>
-        public AudioClip Sound = null;
+        [SerializeField]
+        AudioClip _sound;
 
-        /// <summary>
-        /// FX channel at SoundManager.
-        /// </summary>
-        public SoundFXChannel Channel = SoundFXChannel.First;
+        [SerializeField]
+        SoundFXChannel _channel = SoundFXChannel.First;
 
         /// <summary>
         /// Should new FX force interrupts FX at channel or not.
@@ -28,7 +25,7 @@ namespace LeopotamGroup.FX {
 
         IEnumerator Start () {
             yield return null;
-            SoundManager.Instance.PlayFX (Sound, Channel, IsInterrupt);
+            Singleton.Get<SoundManager> ().PlayFX (_sound, _channel, IsInterrupt);
         }
     }
 }

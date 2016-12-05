@@ -20,7 +20,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
     /// </summary>
     [ExecuteInEditMode]
     sealed class ScreenCapturer : MonoBehaviour {
-        readonly static List<Vector2i> _resList = new List<Vector2i>
+        static readonly List<Vector2i> _resList = new List<Vector2i>
         {
             new Vector2i (800, 480),
             new Vector2i (960, 640),

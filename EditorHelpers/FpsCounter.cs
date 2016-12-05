@@ -10,7 +10,7 @@ namespace LeopotamGroup.EditorHelpers {
     /// <summary>
     /// Fps counter.
     /// </summary>
-    sealed class FpsCounter : UnitySingleton<FpsCounter> {
+    sealed class FpsCounter : UnitySingletonBase {
         const int UpdateFrequency = 2;
 
         const float _invUpdatesPerSecond = 1 / (float) UpdateFrequency;

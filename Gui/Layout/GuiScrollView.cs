@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace LeopotamGroup.Gui.Layout {
     public class GuiScrollView : MonoBehaviourBase {
-        readonly static List<GuiWidget> _widgetsBuf = new List<GuiWidget> ();
+        static readonly List<GuiWidget> _widgetsBuf = new List<GuiWidget> ();
 
         Vector3 _min;
 

@@ -4,6 +4,7 @@
 //-------------------------------------------------------
 
 using System.Collections;
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.FX {
@@ -11,23 +12,19 @@ namespace LeopotamGroup.FX {
     /// Setup music parameters on start.
     /// </summary>
     public sealed class MusicOnStart : MonoBehaviour {
-        /// <summary>
-        /// Music path (for SoundManager).
-        /// </summary>
-        public string Music = null;
+        [SerializeField]
+        string _music;
 
-        /// <summary>
-        /// Is music looped.
-        /// </summary>
-        public bool IsLooped = true;
+        [SerializeField]
+        bool _isLooped = true;
 
         IEnumerator Start () {
             yield return null;
-            if (SoundManager.Instance.MusicVolume <= 0f) {
-                SoundManager.Instance.StopMusic ();
+            var sm = Singleton.Get<SoundManager> ();
+            if (sm.MusicVolume <= 0f) {
+                sm.StopMusic ();
             }
-
-            SoundManager.Instance.PlayMusic (Music, IsLooped);
+            sm.PlayMusic (_music, _isLooped);
         }
     }
 }

@@ -55,9 +55,9 @@ namespace LeopotamGroup.EditorHelpers {
 
         const string ImageIconLargeSuffix = "_pix16_gizmo";
 
-        readonly static MethodInfo _setIcon;
+        static readonly MethodInfo _setIcon;
 
-        readonly static object[] _setIconArgs;
+        static readonly object[] _setIconArgs;
 
         static GameObjectIcon () {
             _setIconArgs = new object[2];

@@ -3,6 +3,7 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.Analytics {
@@ -18,7 +19,7 @@ namespace LeopotamGroup.Analytics {
 
         void OnEnable () {
             if (!string.IsNullOrEmpty (_category) && !string.IsNullOrEmpty (_event)) {
-                GoogleAnalyticsManager.Instance.TrackEvent (_category, _event);
+                Singleton.Get<GoogleAnalyticsManager> ().TrackEvent (_category, _event);
             }
         }
     }

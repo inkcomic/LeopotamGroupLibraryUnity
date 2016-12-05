@@ -17,9 +17,9 @@ namespace LeopotamGroup.Analytics {
     /// <summary>
     /// Simple GoogleAnalytics manager. Supports tracking of events, screens.
     /// </summary>
-    sealed class GoogleAnalyticsManager : UnitySingleton<GoogleAnalyticsManager> {
+    sealed class GoogleAnalyticsManager : UnitySingletonBase {
         [SerializeField]
-        string _trackerID = null;
+        string _trackerID;
 
         /// <summary>
         /// Is TrackerID filled ans manager ready to send data.
@@ -123,7 +123,7 @@ namespace LeopotamGroup.Analytics {
         /// Track current screen.
         /// </summary>
         public void TrackScreen () {
-            TrackScreen (ScreenManager.Instance.Current);
+            TrackScreen (Singleton.Get<ScreenManager> ().Current);
         }
 
         /// <summary>
@@ -141,9 +141,9 @@ namespace LeopotamGroup.Analytics {
         /// <param name="action">Action name.</param>
         public void TrackEvent (string category, string action) {
             EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}",
-                WWW.EscapeURL (category),
-                WWW.EscapeURL (action)
-            ));
+                    WWW.EscapeURL (category),
+                    WWW.EscapeURL (action)
+                ));
         }
 
         /// <summary>
@@ -155,11 +155,11 @@ namespace LeopotamGroup.Analytics {
         /// <param name="value">Value.</param>
         public void TrackEvent (string category, string action, string label, string value) {
             EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}&el={2}&ev={3}",
-                WWW.EscapeURL (category),
-                WWW.EscapeURL (action),
-                WWW.EscapeURL (label),
-                WWW.EscapeURL (value)
-            ));
+                    WWW.EscapeURL (category),
+                    WWW.EscapeURL (action),
+                    WWW.EscapeURL (label),
+                    WWW.EscapeURL (value)
+                ));
         }
 
         /// <summary>

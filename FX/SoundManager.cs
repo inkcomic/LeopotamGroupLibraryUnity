@@ -19,7 +19,7 @@ namespace LeopotamGroup.FX {
     /// <summary>
     /// Sound manager.
     /// </summary>
-    sealed class SoundManager : UnitySingleton<SoundManager> {
+    sealed class SoundManager : UnitySingletonBase {
         /// <summary>
         /// FX-es volume.
         /// </summary>

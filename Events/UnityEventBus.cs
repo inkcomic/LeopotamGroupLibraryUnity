@@ -10,7 +10,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Event bus singleton, local for unity scene.
     /// </summary>
-    public class UnityEventBus : UnitySingleton<UnityEventBus> {
+    public class UnityEventBus : UnitySingletonBase {
         
         protected EventBus _eventBus;
 

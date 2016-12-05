@@ -3,6 +3,7 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.FX {
@@ -10,23 +11,20 @@ namespace LeopotamGroup.FX {
     /// Setup FX parameters on enable.
     /// </summary>
     public sealed class SoundOnEnable : MonoBehaviour {
-        /// <summary>
-        /// FX AudioClip.
-        /// </summary>
-        public AudioClip Sound = null;
+        [SerializeField]
+        AudioClip _sound;
 
-        /// <summary>
-        /// FX channel at SoundManager.
-        /// </summary>
-        public SoundFXChannel Channel = SoundFXChannel.First;
+        [SerializeField]
+        SoundFXChannel _channel = SoundFXChannel.First;
 
         /// <summary>
         /// Should new FX force interrupts FX at channel or not.
         /// </summary>
-        public bool IsInterrupt = false;
+        [SerializeField]
+        bool _isInterrupt;
 
         void OnEnable () {
-            SoundManager.Instance.PlayFX (Sound, Channel, IsInterrupt);
+            Singleton.Get<SoundManager> ().PlayFX (_sound, _channel, _isInterrupt);
         }
     }
 }

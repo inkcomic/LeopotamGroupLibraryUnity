@@ -11,7 +11,7 @@ namespace LeopotamGroup.FX {
     /// <summary>
     /// Fade manager for Camera with tag "MainCamera".
     /// </summary>
-    sealed class FadeManager : UnitySingleton<FadeManager> {
+    sealed class FadeManager : UnitySingletonBase {
         /// <summary>
         /// Callback for extensions.
         /// </summary>
