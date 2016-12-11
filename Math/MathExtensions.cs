@@ -32,7 +32,7 @@ namespace LeopotamGroup.Math {
         /// <param name="data">Source number.</param>
         /// <param name="digitsAfterPoint">Digits after floating point.</param>
         public static string ToStringWithSuffix (this int data, int digitsAfterPoint = 2) {
-            return ToStringWithSuffix (data, digitsAfterPoint);
+            return ToStringWithSuffix ((long) data, digitsAfterPoint);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace LeopotamGroup.Math {
                 sign = 1;
             }
 
-            var i = (int) (System.Math.Floor (System.Math.Log (data) * InvLog1k));
+            var i = data > 0 ? (int) (System.Math.Floor (System.Math.Log (data) * InvLog1k)) : 0;
             if (i >= _shortNumberOrders.Length) {
                 i = _shortNumberOrders.Length - 1;
             }
