@@ -149,7 +149,7 @@ namespace LeopotamGroup.Localization {
         /// </summary>
         /// <returns>The user interface.</returns>
         public static void RelocalizeUI () {
-            Extensions.BroadcastToAll (OnLocalizeMethodName);
+            UnityExtensions.BroadcastToAll (OnLocalizeMethodName);
         }
     }
 }

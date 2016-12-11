@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using LeopotamGroup.Common;
+using LeopotamGroup.Math;
 
 namespace LeopotamGroup.Serialization {
     /// <summary>
@@ -97,7 +98,7 @@ namespace LeopotamGroup.Serialization {
 
             // number
             if (_numericTypes.Contains (objType)) {
-                _sb.Append (((float) Convert.ChangeType (obj, typeof (float))).ToNormalizedString ());
+                _sb.Append (((float) Convert.ChangeType (obj, typeof (float))).ToStringFast ());
                 return;
             }
             if (objType.IsEnum) {
@@ -345,7 +346,7 @@ namespace LeopotamGroup.Serialization {
                             if (objType != null) {
                                 if (v1 != null) {
                                     if (dict != null) {
-                                        dict.Add (Convert.ChangeType (name, dictTypes[0], Extensions.NumberFormatInfo), v1);
+                                        dict.Add (Convert.ChangeType (name, dictTypes[0], MathExtensions.UnifiedNumberFormat), v1);
                                     } else {
                                         TypesCache.Instance.SetValue (objType, name, v, v1);
                                     }
@@ -383,7 +384,7 @@ namespace LeopotamGroup.Serialization {
                         default:
                             var v1 = ParseByToken (PeekNextToken ());
                             if (arrType != null) {
-                                list.Add (Convert.ChangeType (v1, itemType, Extensions.NumberFormatInfo));
+                                list.Add (Convert.ChangeType (v1, itemType, MathExtensions.UnifiedNumberFormat));
                                 _type = itemType;
                             }
                             break;
@@ -485,7 +486,7 @@ namespace LeopotamGroup.Serialization {
                         return Enum.ToObject (_type, (int) n);
                     } else {
                         var nullableType = Nullable.GetUnderlyingType (_type);
-                        return Convert.ChangeType (n, nullableType ?? _type, Extensions.NumberFormatInfo);
+                        return Convert.ChangeType (n, nullableType ?? _type, MathExtensions.UnifiedNumberFormat);
                     }
                 }
                 return null;

@@ -4,7 +4,7 @@
 //-------------------------------------------------------
 
 using System.Collections.Generic;
-using LeopotamGroup.Common;
+using LeopotamGroup.Math;
 
 namespace LeopotamGroup.Scripting {
     /// <summary>
@@ -46,7 +46,7 @@ namespace LeopotamGroup.Scripting {
         /// On getting of number value it will be converted to string without casting error.
         /// </summary>
         public string AsString {
-            get { return IsUndefined ? "undefined" : (IsNumber ? _asNumber.ToNormalizedString () : _asString); }
+            get { return IsUndefined ? "undefined" : (IsNumber ? _asNumber.ToStringFast () : _asString); }
             set {
                 Type = ScriptVarType.String;
                 _asString = value;

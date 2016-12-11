@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using LeopotamGroup.Common;
+using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using UnityEngine;
 
@@ -138,7 +138,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="key">Key.</param>
         /// <param name="data">Data.</param>
         public static void SetInt (string key, int data) {
-            SetString (key, data.ToString (Extensions.NumberFormatInfo));
+            SetString (key, data.ToString (MathExtensions.UnifiedNumberFormat));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace LeopotamGroup.EditorHelpers {
         public static float GetFloat (string key, float defaultValue = 0f) {
             if (HasKey (key)) {
                 float val;
-                if (float.TryParse (_data[key], NumberStyles.Float, Extensions.NumberFormatInfo, out val)) {
+                if (float.TryParse (_data[key], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out val)) {
                     return val;
                 }
             }
@@ -162,7 +162,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="key">Key.</param>
         /// <param name="data">Data.</param>
         public static void SetFloat (string key, float data) {
-            SetString (key, data.ToString (Extensions.NumberFormatInfo));
+            SetString (key, data.ToString (MathExtensions.UnifiedNumberFormat));
         }
 
         /// <summary>
