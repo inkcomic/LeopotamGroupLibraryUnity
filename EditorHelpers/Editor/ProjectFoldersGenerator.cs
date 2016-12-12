@@ -13,7 +13,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
     /// <summary>
     /// Project folders generator.
     /// </summary>
-    class ProjectFoldersGenerator : EditorWindow {
+    sealed class ProjectFoldersGenerator : EditorWindow {
         [Flags]
         public enum Options {
             Animations = 1,
