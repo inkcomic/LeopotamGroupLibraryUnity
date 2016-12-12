@@ -3,11 +3,12 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 //-------------------------------------------------------
 
+using System;
 using System.IO;
 using UnityEditor;
 
-namespace LeopotamGroup.Shaders.UnityEditors {
-    static class EditorIntegration {
+namespace LeopotamGroup.EditorHelpers.UnityEditors {
+    static class ShaderTemplateGenerator {
         const string ShaderTemplate =
             "Shader \"Custom/Unlit<<TYPE>>\"{\tProperties{\t\t_MainTex(\"Texture\", 2D)=\"white\" <<>>\n\t}\n\n\tSubShader{" +
             "\t\tTags << \"RenderType\"=\"<<TYPE>>\" \"Queue\"=\"<<QUEUE>>\" \"IgnoreProjector\"=\"True\" \"ForceNoShadowCasting\"=\"True\" >>\n" +
@@ -19,6 +20,8 @@ namespace LeopotamGroup.Shaders.UnityEditors {
             "\t\t\tCGPROGRAM\n\t\t\t#pragma vertex vert\n\t\t\t#pragma fragment frag\n\t\t\tENDCG\n\t\t}\n\t}\n\tFallback Off\n}";
 
         const string ShaderAlphaBlendTags = "\t\tCull Off\n\t\tZWrite Off\n\t\tBlend SrcAlpha OneMinusSrcAlpha\n\n";
+
+        const string Title = "ShaderTemplateGenerator";
 
         static string GetAssetPath () {
             var path = AssetDatabase.GetAssetPath (Selection.activeObject);
@@ -49,19 +52,43 @@ namespace LeopotamGroup.Shaders.UnityEditors {
         }
 
         [MenuItem ("Assets/LeopotamGroup/Shaders/Create unlit opaque shader", false, 1)]
-        static void CreateUnlitOpaqueShader () {
-            File.WriteAllText (
-                AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", GetAssetPath (), "UnlitOpaqueShader")),
-                CreateShaderCode (ShaderTemplate, "Opaque", "Geometry", false));
-            AssetDatabase.Refresh ();
+        public static void CreateUnlitOpaqueShader () {
+            EditorUtility.DisplayDialog (Title, CreateUnlitOpaqueShader (GetAssetPath ()) ?? "Success", "Close");
         }
 
         [MenuItem ("Assets/LeopotamGroup/Shaders/Create unlit transparent shader", false, 1)]
-        static void CreateUnlitTransparentShader () {
-            File.WriteAllText (
-                AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", GetAssetPath (), "UnlitTransparentShader")),
-                CreateShaderCode (ShaderTemplate, "Transparent", "Transparent", true));
+        public static void CreateUnlitTransparentShader () {
+            EditorUtility.DisplayDialog (Title, CreateUnlitTransparentShader (GetAssetPath ()) ?? "Success", "Close");
+        }
+
+        public static string CreateUnlitOpaqueShader (string path) {
+            if (string.IsNullOrEmpty (path)) {
+                return "Invalid path";
+            }
+            try {
+                File.WriteAllText (
+                    AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", path, "UnlitOpaqueShader")),
+                    CreateShaderCode (ShaderTemplate, "Opaque", "Geometry", false));
+            } catch (Exception ex) {
+                return ex.Message;
+            }
             AssetDatabase.Refresh ();
+            return null;
+        }
+
+        public static string CreateUnlitTransparentShader (string path) {
+            if (string.IsNullOrEmpty (path)) {
+                return "Invalid path";
+            }
+            try {
+                File.WriteAllText (
+                    AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", path, "UnlitTransparentShader")),
+                    CreateShaderCode (ShaderTemplate, "Transparent", "Transparent", true));
+            } catch (Exception ex) {
+                return ex.Message;
+            }
+            AssetDatabase.Refresh ();
+            return null;
         }
     }
 }
