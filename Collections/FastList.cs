@@ -327,5 +327,16 @@ namespace LeopotamGroup.Collections {
                 }
             }
         }
+
+        /// <summary>
+        /// Copy collection items to array.
+        /// </summary>
+        public T[] ToArray () {
+            var target = new T[_count];
+            if (_count > 0) {
+                Array.Copy (_items, target, _count);
+            }
+            return target;
+        }
     }
 }
