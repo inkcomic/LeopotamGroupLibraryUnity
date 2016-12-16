@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace LeopotamGroup.Pooling {
         }
 
         void OnRecycle () {
-            var po = GetComponent <IPoolObject> ();
+            var po = GetComponent<IPoolObject> ();
             if (po != null) {
                 po.PoolRecycle ();
             } else {

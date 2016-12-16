@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Common;
@@ -24,9 +25,10 @@ namespace LeopotamGroup.Gui.Layout {
         public Transform WorldTarget = null;
 
         void LateUpdate () {
-            // cant cast WorldTarget to System.Object - strange behaviour at editor.
-            if (WorldTarget != null && (System.Object) WorldCamera != null) {
-                _cachedTransform.localPosition = GuiSystem.Instance.GetOverlayPosition (WorldCamera, WorldTarget.position, _cachedTransform.parent);
+            // cant cast WorldTarget to object - strange behaviour at editor.
+            if (WorldTarget != null && (object) WorldCamera != null) {
+                _cachedTransform.localPosition =
+                    GuiSystem.Instance.GetOverlayPosition (WorldCamera, WorldTarget.position, _cachedTransform.parent);
             }
         }
     }

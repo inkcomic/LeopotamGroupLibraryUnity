@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.Layout;
@@ -22,7 +23,7 @@ namespace LeopotamGroup.Gui.Interaction {
             _eventReceiver.OnDrag.AddListener (OnDrag);
             _eventReceiver.OnPress.AddListener (OnPress);
             if (ScrollView == null) {
-                ScrollView = GetComponentInParent <GuiScrollView> ();
+                ScrollView = GetComponentInParent<GuiScrollView> ();
             }
             if (ScrollView == null) {
                 enabled = false;

@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System.Collections;
 using LeopotamGroup.Common;
+using System.Collections;
 using UnityEngine;
 
 namespace LeopotamGroup.FX {

@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,8 +62,8 @@ namespace LeopotamGroup.EditorHelpers {
 
         static GameObjectIcon () {
             _setIconArgs = new object[2];
-            _setIcon = typeof (UnityEditor.EditorGUIUtility).GetMethod (SetIconMethodName,
-                BindingFlags.Static | BindingFlags.NonPublic);
+            _setIcon = typeof (UnityEditor.EditorGUIUtility).GetMethod (
+                SetIconMethodName, BindingFlags.Static | BindingFlags.NonPublic);
             _icons = new List<Texture2D> ();
             FillIcons (_icons, LabelIconMask, string.Empty, 8);
             FillIcons (_icons, ImageIconMask, ImageIconSmallSuffix, 16);
@@ -87,6 +88,7 @@ namespace LeopotamGroup.EditorHelpers {
             _setIconArgs[1] = icon;
             _setIcon.Invoke (null, _setIconArgs);
         }
+
 #endif
 
         [Conditional ("UNITY_EDITOR")]

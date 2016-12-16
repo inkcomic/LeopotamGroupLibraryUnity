@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 #if LGL_UNSAFE
 
@@ -66,6 +67,7 @@ namespace LeopotamGroup.Collections {
                 _isDirty = false;
                 UpdateLength ();
             }
+
             return _str;
         }
 
@@ -81,14 +83,14 @@ namespace LeopotamGroup.Collections {
         /// Get / set character at specified position.
         /// </summary>
         /// <param name="idx">Index.</param>
-        public char this [int idx] {
+        public char this[int idx] {
             get { return _str[idx]; }
             set {
                 if (idx < 0 || idx >= _length) {
                     throw new IndexOutOfRangeException ();
                 }
                 unsafe {
-                    fixed(char* ptr = _str) {
+                    fixed (char* ptr = _str) {
                         ptr[idx] = value;
                     }
                 }
@@ -113,6 +115,7 @@ namespace LeopotamGroup.Collections {
                 }
                 _isDirty = true;
             }
+
             return this;
         }
 
@@ -131,6 +134,7 @@ namespace LeopotamGroup.Collections {
                 }
             }
             _isDirty = true;
+
             return this;
         }
 
@@ -154,6 +158,7 @@ namespace LeopotamGroup.Collections {
                 _length -= amount;
                 _isDirty = true;
             }
+
             return this;
         }
     }

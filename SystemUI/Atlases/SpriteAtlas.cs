@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace LeopotamGroup.SystemUI.Atlases {
                 Sprite spr;
                 for (var i = _sprites.Length - 1; i >= 0; i--) {
                     spr = _sprites[i];
-                    if ((System.Object) spr != null) {
+                    if ((object) spr != null) {
                         _index[spr.name] = spr;
                     }
                 }

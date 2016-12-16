@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.UnityEditors;
 using UnityEditor;
@@ -23,7 +24,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
             serializedObject.Update ();
             EditorGUILayout.PropertyField (_widthProperty);
             EditorGUILayout.PropertyField (_heightProperty);
-                
+
             if (GUILayout.Button ("Bake scale to widget size")) {
                 Undo.RecordObject (target, "leopotamgroup.gui.empty-widget.bake-scale-size");
                 GuiWidget l;

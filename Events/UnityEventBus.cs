@@ -1,17 +1,17 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using LeopotamGroup.Common;
+using System;
 
 namespace LeopotamGroup.Events {
     /// <summary>
     /// Event bus singleton, local for unity scene.
     /// </summary>
     public class UnityEventBus : UnitySingletonBase {
-        
         protected EventBus _eventBus;
 
         protected override void OnConstruct () {

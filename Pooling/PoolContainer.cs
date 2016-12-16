@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace LeopotamGroup.Pooling {
                 return false;
             }
             _cachedAsset = go.GetComponent (typeof (IPoolObject));
-            _needToAddPoolObject = (System.Object) _cachedAsset == null;
+            _needToAddPoolObject = (object) _cachedAsset == null;
             if (_needToAddPoolObject) {
                 _cachedAsset = go;
             }
@@ -55,7 +56,7 @@ namespace LeopotamGroup.Pooling {
         /// </summary>
         /// <param name="isNew">Is instance was created during this call.</param>
         public IPoolObject Get (out bool isNew) {
-            if ((System.Object) _cachedAsset == null) {
+            if ((object) _cachedAsset == null) {
                 if (!LoadPrefab ()) {
                     isNew = true;
                     return null;
@@ -68,11 +69,11 @@ namespace LeopotamGroup.Pooling {
                 isNew = false;
             } else {
                 obj = _needToAddPoolObject ?
-                    (Instantiate (_cachedAsset) as GameObject).AddComponent<PoolObject> () :
-                    Instantiate (_cachedAsset) as IPoolObject;
+                      (Instantiate (_cachedAsset) as GameObject).AddComponent<PoolObject> () :
+                      Instantiate (_cachedAsset) as IPoolObject;
                 obj.PoolContainer = this;
                 var tr = obj.PoolTransform;
-                if ((System.Object) tr != null) {
+                if ((object) tr != null) {
                     tr.gameObject.SetActive (false);
                     tr.SetParent (_itemsRoot, false);
                     tr.localScale = _cachedScale;
@@ -88,15 +89,15 @@ namespace LeopotamGroup.Pooling {
         /// </summary>
         /// <param name="obj">Instance to recycle.</param>
         public void Recycle (IPoolObject obj) {
-            if ((System.Object) obj != null) {
-                #if UNITY_EDITOR
+            if ((object) obj != null) {
+#if UNITY_EDITOR
                 if (obj.PoolContainer != this) {
                     Debug.LogWarning ("Invalid obj to recycle", (Object) obj);
                     return;
                 }
-                #endif
+#endif
                 var tr = obj.PoolTransform;
-                if ((System.Object) tr != null) {
+                if ((object) tr != null) {
                     tr.gameObject.SetActive (false);
                 }
                 if (!_store.Contains (obj)) {
@@ -117,10 +118,10 @@ namespace LeopotamGroup.Pooling {
             }
             var container =
                 new GameObject (
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                     "_POOL_" + prefabPath
-                #endif
-                ).AddComponent <PoolContainer> ();
+#endif
+                    ).AddComponent<PoolContainer> ();
             container._prefabPath = prefabPath;
             container._itemsRoot = itemsRoot;
             return container;

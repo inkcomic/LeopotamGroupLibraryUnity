@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System;
 using UnityEngine;
@@ -198,7 +199,8 @@ namespace LeopotamGroup.Math {
         /// <param name="min">Min value.</param>
         /// <param name="max">Max value.</param>
         public static Vector3i Clamp (Vector3i value, Vector3i min, Vector3i max) {
-            return new Vector3i (Mathf.Clamp (value.x, min.x, max.x), Mathf.Clamp (value.y, min.y, max.y), Mathf.Clamp (value.z, min.z, max.z));
+            return new Vector3i (Mathf.Clamp (value.x, min.x, max.x), Mathf.Clamp (value.y, min.y, max.y),
+                                 Mathf.Clamp (value.z, min.z, max.z));
         }
 
         public static bool operator == (Vector3i lhs, Vector3i rhs) {

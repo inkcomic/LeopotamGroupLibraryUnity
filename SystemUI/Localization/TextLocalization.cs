@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Localization;
-using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine;
 
 namespace LeopotamGroup.SystemUI.Localization {
     /// <summary>
@@ -24,8 +25,8 @@ namespace LeopotamGroup.SystemUI.Localization {
 
         void OnLocalize () {
             if (!string.IsNullOrEmpty (_token)) {
-                if ((System.Object) _text == null) {
-                    _text = GetComponent <Text> ();
+                if ((object) _text == null) {
+                    _text = GetComponent<Text> ();
                 }
                 _text.text = Localizer.Get (_token);
             }

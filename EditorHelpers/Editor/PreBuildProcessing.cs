@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using System.Reflection;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies ()) {
                     foreach (var type in assembly.GetTypes ()) {
                         foreach (var method in type.GetMethods (
-                            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
+                                     BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
                             var attrs = method.GetCustomAttributes (typeof (PreBuildAttribute), false);
                             if (attrs.Length > 0) {
                                 try {

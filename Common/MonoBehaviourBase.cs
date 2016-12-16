@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace LeopotamGroup.Common {
         /// <value>The transform.</value>
         public new Transform transform {
             get {
-                if ((System.Object) _cachedTransform == null) {
+                if ((object) _cachedTransform == null) {
                     _cachedTransform = base.transform;
                 }
                 return _cachedTransform;
@@ -29,7 +30,7 @@ namespace LeopotamGroup.Common {
         protected Transform _cachedTransform;
 
         protected virtual void Awake () {
-            if ((System.Object) _cachedTransform == null) {
+            if ((object) _cachedTransform == null) {
                 _cachedTransform = base.transform;
             }
         }

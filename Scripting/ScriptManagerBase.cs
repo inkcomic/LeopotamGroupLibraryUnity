@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System.Collections.Generic;
 using LeopotamGroup.Common;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LeopotamGroup.Scripting {
@@ -133,8 +134,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public string CallFunction (string funcName, out ScriptVar result,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+                                    ScriptVar? param1 = null, ScriptVar? param2 = null,
+                                    ScriptVar? param3 = null, ScriptVar? param4 = null) {
             return _vm.CallFunction (funcName, out result, param1, param2, param3, param4);
         }
 
@@ -149,8 +150,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public string CallFunctionOrSkip (string funcName, out ScriptVar result,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+                                          ScriptVar? param1 = null, ScriptVar? param2 = null,
+                                          ScriptVar? param3 = null, ScriptVar? param4 = null) {
             if (!_vm.IsFunctionExists (funcName)) {
                 result = new ScriptVar ();
                 return null;
@@ -168,10 +169,9 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public void CallFunctionWithDelay (string funcName, float timeout,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
-            var pair = new TimeoutPair
-            {
+                                           ScriptVar? param1 = null, ScriptVar? param2 = null,
+                                           ScriptVar? param3 = null, ScriptVar? param4 = null) {
+            var pair = new TimeoutPair {
                 Event = funcName,
                 Time = Time.time + timeout,
                 Param1 = param1,
@@ -192,8 +192,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public void CallFunctionWithDelayOrSkip (string funcName, float timeout,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+                                                 ScriptVar? param1 = null, ScriptVar? param2 = null,
+                                                 ScriptVar? param3 = null, ScriptVar? param4 = null) {
             if (!_vm.IsFunctionExists (funcName)) {
                 return;
             }
@@ -231,7 +231,6 @@ namespace LeopotamGroup.Scripting {
 
             return new ScriptVar ();
         }
-
 
         ScriptVar ApiDebug (ScriptVM vm) {
             var str = string.Empty;

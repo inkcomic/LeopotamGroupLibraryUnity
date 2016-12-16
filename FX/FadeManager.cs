@@ -1,10 +1,11 @@
-//-------------------------------------------------------
+
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using LeopotamGroup.Common;
+using System;
 using UnityEngine;
 
 namespace LeopotamGroup.FX {
@@ -15,9 +16,9 @@ namespace LeopotamGroup.FX {
         /// <summary>
         /// Callback for extensions.
         /// </summary>
-        public event Action<float> OnRender = delegate {};
+        public event Action<float> OnRender = delegate { };
 
-        static Material _mtrl;
+        Material _mtrl;
 
         bool _fadeAudio;
 

@@ -1,12 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
+using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace LeopotamGroup.Localization {
@@ -109,7 +110,7 @@ namespace LeopotamGroup.Localization {
                 return token;
             }
             return _dynamics.ContainsKey (token) ?
-                _dynamics[token][_langID] : (_statics.ContainsKey (token) ? _statics[token][_langID] : token);
+                   _dynamics[token][_langID] : (_statics.ContainsKey (token) ? _statics[token][_langID] : token);
         }
 
         /// <summary>

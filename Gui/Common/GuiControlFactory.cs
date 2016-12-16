@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Interaction;
@@ -14,7 +15,7 @@ namespace LeopotamGroup.Gui.Common {
     /// Contains helpers for widget creation at runtime.
     /// </summary>
     public static class GuiControlFactory {
-        static T CreateWidget<T> (Transform parent = null) where T: MonoBehaviour {
+        static T CreateWidget<T> (Transform parent = null) where T : MonoBehaviour {
             GuiSystem.Instance.Validate ();
             var go = new GameObject (typeof (T).Name);
             go.layer = GuiConsts.DefaultGuiLayer;
@@ -56,7 +57,7 @@ namespace LeopotamGroup.Gui.Common {
         /// <returns>The widget button.</returns>
         public static GuiButton CreateWidgetButton () {
             var button = CreateWidget<GuiButton> ();
-            button.Visuals = new [] { button.gameObject.AddComponent<GuiSprite> () };
+            button.Visuals = new[] { button.gameObject.AddComponent<GuiSprite> () };
             return button;
         }
 

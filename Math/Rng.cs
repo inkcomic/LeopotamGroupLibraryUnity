@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using UnityEngine;
 
@@ -31,7 +32,7 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Default initialization.
         /// </summary>
-        public Rng () : this ((long)(Time.realtimeSinceStartup * 100000)) {
+        public Rng () : this ((long) (Time.realtimeSinceStartup * 100000)) {
         }
 
         /// <summary>
@@ -74,9 +75,9 @@ namespace LeopotamGroup.Math {
         /// </summary>
         /// <param name="seed">Seed.</param>
         public void SetSeed (long seed) {
-            _mt[0] = (ulong)seed & 0xffffffffUL;
+            _mt[0] = (ulong) seed & 0xffffffffUL;
             for (_mti = 1; _mti < N; _mti++) {
-                _mt[_mti] = (1812433253UL * (_mt[_mti - 1] ^ (_mt[_mti - 1] >> 30)) + (ulong)_mti) & 0xffffffffUL;
+                _mt[_mti] = (1812433253UL * (_mt[_mti - 1] ^ (_mt[_mti - 1] >> 30)) + (ulong) _mti) & 0xffffffffUL;
             }
         }
 
@@ -86,7 +87,7 @@ namespace LeopotamGroup.Math {
         /// <returns>Random int32 value.</returns>
         /// <param name="max">Max value (excluded).</param>
         public int GetInt32 (int max) {
-            return (int)(GetRandomUInt32 () * (max / 4294967296.0));
+            return (int) (GetRandomUInt32 () * (max / 4294967296.0));
         }
 
         /// <summary>
@@ -109,7 +110,7 @@ namespace LeopotamGroup.Math {
         /// </summary>
         /// <param name="includeOne">Include 1 value for searching.</param>
         public float GetFloat (bool includeOne = true) {
-            return (float)(GetRandomUInt32 () * (1.0 / (includeOne ? 4294967295.0 : 4294967296.0)));
+            return (float) (GetRandomUInt32 () * (1.0 / (includeOne ? 4294967295.0 : 4294967296.0)));
         }
 
         /// <summary>

@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Layout;
 using LeopotamGroup.Gui.UnityEditors;
@@ -30,7 +31,7 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             Transform tr;
             foreach (var item in targets) {
                 tr = item as Transform;
-                if (tr.GetComponent <GuiWidget> () || tr.GetComponent <GuiPanel> () || tr.GetComponent<GuiEventReceiver> ()) {
+                if (tr.GetComponent<GuiWidget> () || tr.GetComponent<GuiPanel> () || tr.GetComponent<GuiEventReceiver> ()) {
                     isFound = true;
                     break;
                 }

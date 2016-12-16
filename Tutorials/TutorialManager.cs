@@ -1,12 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
+using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace LeopotamGroup.Tutorials {
@@ -17,7 +18,7 @@ namespace LeopotamGroup.Tutorials {
         /// <summary>
         /// Will be raised on stage changes.
         /// </summary>
-        public event Action OnTutorialUpdated = delegate {};
+        public event Action OnTutorialUpdated = delegate { };
 
         Dictionary<string, int> _sceneMasks;
 
@@ -33,7 +34,6 @@ namespace LeopotamGroup.Tutorials {
 
         void LoadData () {
             try {
-                Debug.Log ("tutorials: " + PlayerPrefs.GetString (TutorialKey));
                 _sceneMasks = JsonSerialization.DeserializeStatic<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
             } catch {
 //                Debug.LogWarning (ex);

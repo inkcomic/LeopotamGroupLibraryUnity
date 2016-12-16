@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System.Collections.Generic;
 using LeopotamGroup.Math;
+using System.Collections.Generic;
 
 namespace LeopotamGroup.Scripting {
     /// <summary>
@@ -181,8 +182,7 @@ namespace LeopotamGroup.Scripting {
         /// <param name="pc">PC counter at script-s lexem stream.</param>
         /// <param name="paramList">Parameters list.</param>
         public void RegisterFunction (string funcName, int pc, List<string> paramList) {
-            var desc = new FunctionDesc
-            {
+            var desc = new FunctionDesc {
                 PC = pc - 1,
             };
             if (paramList.Count > 0) {

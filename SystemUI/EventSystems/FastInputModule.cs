@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine;
 
 namespace LeopotamGroup.SystemUI.EventSystems {
 #if UNITY_EDITOR
@@ -98,7 +99,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             base.ActivateModule ();
 
             var toSelect = eventSystem.currentSelectedGameObject;
-            if ((System.Object) toSelect == null) {
+            if ((object) toSelect == null) {
                 toSelect = eventSystem.firstSelectedGameObject;
             }
 
@@ -127,7 +128,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
         }
 
         protected bool SendSubmitEventToSelectedObject () {
-            if ((System.Object) eventSystem.currentSelectedGameObject == null) {
+            if ((object) eventSystem.currentSelectedGameObject == null) {
                 return false;
             }
 
@@ -182,8 +183,8 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             var similarDir = move.x * _lastMoveVector.x + move.y * _lastMoveVector.y > 0;
             if (!allow) {
                 allow = similarDir && _consecutiveMoveCount == 1 ?
-                    time > (_prevActionTime + _repeatDelay) :
-                    time > (_prevActionTime + 1f / _inputActionsPerSecond);
+                        time > (_prevActionTime + _repeatDelay) :
+                        time > (_prevActionTime + 1f / _inputActionsPerSecond);
             }
             if (allow) {
                 var axisEventData = GetAxisEventData (move.x, move.y, 0.6f);
@@ -269,7 +270,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
         }
 
         protected bool SendUpdateEventToSelectedObject () {
-            if ((System.Object) eventSystem.currentSelectedGameObject != null) {
+            if ((object) (eventSystem.currentSelectedGameObject) != null) {
                 var data = GetBaseEventData ();
                 ExecuteEvents.Execute (eventSystem.currentSelectedGameObject, data, ExecuteEvents.updateSelectedHandler);
                 return data.used;
@@ -295,7 +296,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
                 var newPressed = ExecuteEvents.ExecuteHierarchy (currentOverGo, pointerEvent, ExecuteEvents.pointerDownHandler);
 
                 // didnt find a press handler... search for a click handler
-                if ((System.Object) newPressed == null) {
+                if ((object) newPressed == null) {
                     newPressed = ExecuteEvents.GetEventHandler<IPointerClickHandler> (currentOverGo);
                 }
 
@@ -310,6 +311,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
                     } else {
                         pointerEvent.clickCount = 1;
                     }
+
 //                    pointerEvent.clickTime = time;
                 } else {
                     pointerEvent.clickCount = 1;

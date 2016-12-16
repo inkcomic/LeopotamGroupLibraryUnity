@@ -1,12 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 #if LGL_UNSAFE
 
-using System;
 using System.Runtime.InteropServices;
+using System;
 
 namespace LeopotamGroup.Collections {
     /// <summary>
@@ -30,17 +31,17 @@ namespace LeopotamGroup.Collections {
         /// Get / set character at index position.
         /// </summary>
         /// <param name="idx">Index position.</param>
-        public char this [byte idx] {
+        public char this[byte idx] {
             get {
                 unsafe {
-                    fixed(char* ptr = &_data) {
+                    fixed (char* ptr = &_data) {
                         return ptr[idx];
                     }
                 }
             }
             set {
                 unsafe {
-                    fixed(char* p = &_data) {
+                    fixed (char* p = &_data) {
                         p[idx] = value;
                     }
                 }

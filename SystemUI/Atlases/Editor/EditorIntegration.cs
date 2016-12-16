@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Collections.Generic;
 using System.IO;
@@ -24,8 +25,9 @@ namespace LeopotamGroup.SystemUI.Atlases.UnityEditors {
             }
 
             var asset = new GameObject ();
-            asset.AddComponent <SpriteAtlas> ();
-            PrefabUtility.CreatePrefab (AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.prefab", path, "SpriteAtlas")), asset);
+            asset.AddComponent<SpriteAtlas> ();
+            PrefabUtility.CreatePrefab (
+                AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.prefab", path, "SpriteAtlas")), asset);
             UnityEngine.Object.DestroyImmediate (asset);
             AssetDatabase.Refresh ();
         }

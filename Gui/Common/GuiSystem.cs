@@ -1,11 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using LeopotamGroup.Gui.Widgets;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Common {
@@ -91,7 +91,7 @@ namespace LeopotamGroup.Gui.Common {
         /// <value>The camera.</value>
         public Camera Camera {
             get {
-                if ((System.Object) _camera == null) {
+                if ((object) _camera == null) {
                     FixCamera ();
                 }
                 return _camera;
@@ -120,12 +120,12 @@ namespace LeopotamGroup.Gui.Common {
         /// <value>The instance.</value>
         public static GuiSystem Instance {
             get {
-                if ((System.Object) _instance == null) {
-                    _instance = FindObjectOfType <GuiSystem> ();
+                if ((object) _instance == null) {
+                    _instance = FindObjectOfType<GuiSystem> ();
                     if (_instance == null) {
                         var go = new GameObject ("GuiSystem");
                         go.layer = GuiConsts.DefaultGuiLayer;
-                        go.AddComponent <GuiSystem> ().CullingMask = GuiConsts.DefaultGuiLayerMask;
+                        go.AddComponent<GuiSystem> ().CullingMask = GuiConsts.DefaultGuiLayerMask;
                     }
                 }
                 return _instance;
@@ -169,7 +169,7 @@ namespace LeopotamGroup.Gui.Common {
         readonly GuiTouchEventArg _touchEventArg = new GuiTouchEventArg ();
 
         void Awake () {
-            var count = FindObjectsOfType <GuiSystem> ().Length;
+            var count = FindObjectsOfType<GuiSystem> ().Length;
             if (count > 1) {
                 DestroyImmediate (gameObject);
                 return;
@@ -192,17 +192,17 @@ namespace LeopotamGroup.Gui.Common {
         }
 
         void OnEnable () {
-            if ((System.Object) _instance == null) {
+            if ((object) _instance == null) {
                 Awake ();
             }
-            if ((System.Object) _instance != null) {
+            if ((object) _instance != null) {
                 FixCamera ();
             }
         }
 
         void FixCamera () {
-            if ((System.Object) _camera == null) {
-                _camera = GetComponent <Camera> ();
+            if ((object) _camera == null) {
+                _camera = GetComponent<Camera> ();
             }
             _camera.hideFlags = HideFlags.HideInInspector;
             _camera.orthographic = true;
@@ -356,12 +356,12 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="worldPoint">World point.</param>
         /// <param name="widgetContainer">Widget container, can be null.</param>
         public Vector3 GetOverlayPosition (Camera worldCamera, Vector3 worldPoint, Transform widgetContainer) {
-            if ((System.Object) worldCamera == null) {
+            if ((object) worldCamera == null) {
                 return worldPoint;
             }
             var pos = worldCamera.WorldToScreenPoint (worldPoint);
             pos = Camera.ScreenToWorldPoint (pos);
-            if ((System.Object) widgetContainer != null) {
+            if ((object) widgetContainer != null) {
                 pos = widgetContainer.InverseTransformPoint (pos);
             }
             pos.z = 0f;

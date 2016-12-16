@@ -1,12 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Localization;
 using LeopotamGroup.SystemUI.Atlases;
-using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine;
 
 namespace LeopotamGroup.SystemUI.Localization {
     /// <summary>
@@ -27,9 +28,9 @@ namespace LeopotamGroup.SystemUI.Localization {
         }
 
         void OnLocalize () {
-            if (!string.IsNullOrEmpty (_token) && (System.Object) _atlas != null) {
-                if ((System.Object) _image == null) {
-                    _image = GetComponent <Image> ();
+            if (!string.IsNullOrEmpty (_token) && (object) _atlas != null) {
+                if ((object) _image == null) {
+                    _image = GetComponent<Image> ();
                 }
                 _image.sprite = _atlas.Get (Localizer.Get (_token));
             }

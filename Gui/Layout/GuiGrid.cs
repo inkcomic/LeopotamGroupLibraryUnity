@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using UnityEngine;
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Tweening;
+using UnityEngine;
 
 namespace LeopotamGroup.Gui.Layout {
     /// <summary>
@@ -72,7 +73,6 @@ namespace LeopotamGroup.Gui.Layout {
                     boundHeight *= ItemsInRow > 0 ? Mathf.Max (0, (childCount / ItemsInRow) - 1) : 0;
                 }
 
-
                 var pivotOffset = AlignmentOffset (ItemsAlignment, boundWidth, boundHeight);
 
                 float itemOffset;
@@ -82,10 +82,10 @@ namespace LeopotamGroup.Gui.Layout {
 
                 for (var i = 0; i < childCount; i++) {
                     if (IsRowVerticalOriented) {
-                        itemOffset = ItemsInRow > 0 ? (i / ItemsInRow) * ItemWidth : 0f; 
+                        itemOffset = ItemsInRow > 0 ? (i / ItemsInRow) * ItemWidth : 0f;
                         rowOffset = (ItemsInRow > 0 ? (i % ItemsInRow) : i) * ItemHeight;
                     } else {
-                        itemOffset = (ItemsInRow > 0 ? (i % ItemsInRow) : i) * ItemWidth; 
+                        itemOffset = (ItemsInRow > 0 ? (i % ItemsInRow) : i) * ItemWidth;
                         rowOffset = ItemsInRow > 0 ? (i / ItemsInRow) * ItemHeight : 0f;
                     }
 
@@ -103,26 +103,26 @@ namespace LeopotamGroup.Gui.Layout {
 
         static Vector2 AlignmentOffset (GuiAlignment alignment, float width, float height) {
             switch (alignment) {
-                case GuiAlignment.TopLeft:
-                    return new Vector2 (width > 0f ? 0f : -width, height > 0f ? -height : 0f);
-                case GuiAlignment.TopCenter:
-                    return new Vector2 (-width * 0.5f, height > 0f ? -height : 0f);
-                case GuiAlignment.TopRight:
-                    return new Vector2 (width > 0f ? -width : 0f, height > 0f ? -height : 0f);
-                case GuiAlignment.CenterLeft:
-                    return new Vector2 (width > 0f ? 0f : -width, -height * 0.5f);
-                case GuiAlignment.Center:
-                    return new Vector2 (-width * 0.5f, -height * 0.5f);
-                case GuiAlignment.CenterRight:
-                    return new Vector2 (width > 0f ? -width : 0f, -height * 0.5f);
-                case GuiAlignment.BottomLeft:
-                    return new Vector2 (width > 0f ? 0f : -width, height > 0f ? 0f : -height);
-                case GuiAlignment.BottomCenter:
-                    return new Vector2 (-width * 0.5f, height > 0f ? 0f : -height);
-                case GuiAlignment.BottomRight:
-                    return new Vector2 (width > 0f ? -width : 0f, height > 0f ? 0f : -height);
-                default:
-                    return Vector2.zero;
+            case GuiAlignment.TopLeft:
+                return new Vector2 (width > 0f ? 0f : -width, height > 0f ? -height : 0f);
+            case GuiAlignment.TopCenter:
+                return new Vector2 (-width * 0.5f, height > 0f ? -height : 0f);
+            case GuiAlignment.TopRight:
+                return new Vector2 (width > 0f ? -width : 0f, height > 0f ? -height : 0f);
+            case GuiAlignment.CenterLeft:
+                return new Vector2 (width > 0f ? 0f : -width, -height * 0.5f);
+            case GuiAlignment.Center:
+                return new Vector2 (-width * 0.5f, -height * 0.5f);
+            case GuiAlignment.CenterRight:
+                return new Vector2 (width > 0f ? -width : 0f, -height * 0.5f);
+            case GuiAlignment.BottomLeft:
+                return new Vector2 (width > 0f ? 0f : -width, height > 0f ? 0f : -height);
+            case GuiAlignment.BottomCenter:
+                return new Vector2 (-width * 0.5f, height > 0f ? 0f : -height);
+            case GuiAlignment.BottomRight:
+                return new Vector2 (width > 0f ? -width : 0f, height > 0f ? 0f : -height);
+            default:
+                return Vector2.zero;
             }
         }
     }

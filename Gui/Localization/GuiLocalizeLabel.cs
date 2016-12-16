@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Widgets;
 using LeopotamGroup.Localization;
@@ -24,7 +25,7 @@ namespace LeopotamGroup.Gui.Localize {
 
         void OnLocalize () {
             if (_label == null) {
-                _label = GetComponent <GuiLabel> ();
+                _label = GetComponent<GuiLabel> ();
             }
             if (!string.IsNullOrEmpty (_token)) {
                 _label.Text = Localizer.Get (_token);

@@ -1,9 +1,9 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using System.Globalization;
 using System.Text;
 
@@ -15,8 +15,7 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Unified NumberFormatInfo.
         /// </summary>
-        public static readonly NumberFormatInfo UnifiedNumberFormat = new NumberFormatInfo
-        {
+        public static readonly NumberFormatInfo UnifiedNumberFormat = new NumberFormatInfo {
             NumberDecimalSeparator = "."
         };
 

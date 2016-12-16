@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System.Collections.Generic;
 using LeopotamGroup.Gui.UnityEditors;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -41,8 +42,10 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
             if (guiSystem.enabled && guiSystem.Camera != null) {
                 var oldColor = Gizmos.color;
                 Gizmos.color = Color.magenta;
-                Gizmos.matrix = Matrix4x4.TRS (guiSystem.transform.position, guiSystem.transform.rotation, guiSystem.transform.localScale);
-                Gizmos.DrawWireCube (Vector3.zero, new Vector3 (guiSystem.Camera.aspect * guiSystem.ScreenHeight, guiSystem.ScreenHeight, 0f));
+                Gizmos.matrix = Matrix4x4.TRS (guiSystem.transform.position,
+                                               guiSystem.transform.rotation, guiSystem.transform.localScale);
+                Gizmos.DrawWireCube (Vector3.zero,
+                                     new Vector3 (guiSystem.Camera.aspect * guiSystem.ScreenHeight, guiSystem.ScreenHeight, 0f));
                 Gizmos.color = oldColor;
             }
         }

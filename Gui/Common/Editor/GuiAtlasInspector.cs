@@ -1,14 +1,14 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
+using LeopotamGroup.Gui.Layout;
+using LeopotamGroup.Gui.Widgets;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using LeopotamGroup.Gui.Common;
-using LeopotamGroup.Gui.Layout;
-using LeopotamGroup.Gui.Widgets;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,16 +26,18 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
 
         public override void OnInspectorGUI () {
             EditorGUILayout.HelpBox ("Use context menu at atlas asset for options.\n\n" +
-                "Add suffix .slice_A_B_C_D to texture asset name for init slice borders for left (A), top (B), right (C) and bottom (D) sides.\n\n" +
-                "All coords - in pixels from each side!\n\n" +
-                "For example: button.sliced_10_5_10_5", MessageType.Info);
+                                     "Add suffix .slice_A_B_C_D to texture asset name for init slice borders for left (A)," +
+                                     " top (B), right (C) and bottom (D) sides.\n\n" +
+                                     "All coords - in pixels from each side!\n\n" +
+                                     "For example: button.sliced_10_5_10_5",
+                                     MessageType.Info);
 
             var atlas = target as GuiAtlas;
 
             if (atlas.AlphaTexture == null) {
                 EditorGUILayout.Separator ();
-                EditorGUILayout.HelpBox ("Without AlphaTexture sprites will be processed as opaque geometry - useful for backgrounds.\n\n" +
-                    "Any clipping will not work!", MessageType.Warning);
+                EditorGUILayout.HelpBox ("Without AlphaTexture sprites will be processed as opaque geometry - useful" +
+                                         " for backgrounds.\n\nAny clipping will not work!", MessageType.Warning);
             }
 
             EditorGUILayout.Separator ();
@@ -46,7 +48,8 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
 
             if (_alphaTexProperty.objectReferenceValue != null) {
                 if (GUILayout.Button ("Remove alpha channel")) {
-                    if (EditorUtility.DisplayDialog ("Warning", "This will turn atlas to opaque rendering, are you sure?", "Yes", "No")) {
+                    if (EditorUtility.DisplayDialog (
+                            "Warning", "This will turn atlas to opaque rendering, are you sure?", "Yes", "No")) {
                         var obj = _alphaTexProperty.objectReferenceValue;
                         _alphaTexProperty.objectReferenceValue = null;
                         serializedObject.ApplyModifiedPropertiesWithoutUndo ();
@@ -62,11 +65,12 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
                 GUILayout.Box (item.Name, GUILayout.ExpandWidth (true));
             }
 
-            if (serializedObject.ApplyModifiedProperties () || (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "UndoRedoPerformed")) {
-                foreach (var panel in FindObjectsOfType <GuiPanel>()) {
+            if (serializedObject.ApplyModifiedProperties () ||
+                (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "UndoRedoPerformed")) {
+                foreach (var panel in FindObjectsOfType<GuiPanel> ()) {
                     panel.ResetMaterialCache ();
                 }
-                foreach (var vis in FindObjectsOfType <GuiWidget>()) {
+                foreach (var vis in FindObjectsOfType<GuiWidget> ()) {
                     vis.SetDirty (GuiDirtyType.Geometry);
                     EditorUtility.SetDirty (vis);
                 }
@@ -173,6 +177,7 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
                 for (int i = 0, iMax = sprites.Count; i < iMax; i++) {
                     var sprData = new GuiSpriteData ();
                     var sprName = sprites[i].name;
+
                     // slicing
                     var match = _slicedMask.Match (sprName.ToLowerInvariant ());
                     if (match.Success) {
@@ -205,10 +210,10 @@ namespace LeopotamGroup.Gui.Common.UnityEditors {
 
                 atlas.ResetCache ();
 
-                foreach (var panel in FindObjectsOfType <GuiPanel>()) {
+                foreach (var panel in FindObjectsOfType<GuiPanel> ()) {
                     panel.ResetMaterialCache ();
                 }
-                foreach (var vis in FindObjectsOfType <GuiWidget>()) {
+                foreach (var vis in FindObjectsOfType<GuiWidget> ()) {
                     vis.SetDirty (GuiDirtyType.Geometry);
                     EditorUtility.SetDirty (vis);
                 }

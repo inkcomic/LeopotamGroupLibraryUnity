@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.UnityEditors;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -51,8 +52,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
                 _fillCenterGuiContent = new GUIContent ("Fill center");
                 _flipHorGuiContent = new GUIContent ("Flip horizontal");
                 _flipVerGuiContent = new GUIContent ("Flip vertical");
-                _textStyle = new GUIStyle
-                {
+                _textStyle = new GUIStyle {
                     alignment = TextAnchor.LowerCenter,
                     fontSize = 16,
                     normal = new GUIStyleState { textColor = Color.white }
@@ -79,18 +79,18 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
             var atlasName = string.Format ("Atlas: <{0}>", sprite.SpriteAtlas != null ? sprite.SpriteAtlas.name : "Empty");
             if (GUILayout.Button (atlasName)) {
                 SearchWindow.Open<GuiAtlas> ("Select atlas", "t:prefab", sprite.SpriteAtlas, assetPath => {
-                        // If not canceled.
-                        if (assetPath != null) {
-                            // None.
-                            if (assetPath == string.Empty) {
-                                sprite.SpriteAtlas = null;
-                                _nameProperty.stringValue = null;
-                            } else {
-                                sprite.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
-                            }
-                            _atlasProperty.objectReferenceValue = sprite.SpriteAtlas;
+                    // If not canceled.
+                    if (assetPath != null) {
+                        // None.
+                        if (assetPath == string.Empty) {
+                            sprite.SpriteAtlas = null;
+                            _nameProperty.stringValue = null;
+                        } else {
+                            sprite.SpriteAtlas = AssetDatabase.LoadAssetAtPath<GuiAtlas> (assetPath);
                         }
-                    });
+                        _atlasProperty.objectReferenceValue = sprite.SpriteAtlas;
+                    }
+                });
             }
 
             if (sprite.SpriteAtlas != null) {
@@ -101,7 +101,6 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
                     _nameProperty.stringValue = spriteList[id];
                 }
             }
-
 
             EditorGUILayout.PropertyField (_typeProperty, _typeGuiContent);
 

@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.UnityEditors;
@@ -75,7 +76,7 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
                 _effectValueProperty.vector2Value = EditorGUILayout.Vector2Field ("Effect Value", _effectValueProperty.vector2Value);
                 EditorGUILayout.PropertyField (_effectColorProperty);
             }
-                
+
             if (GUILayout.Button ("Bake scale to widget size")) {
                 Undo.RecordObject (target, "leopotamgroup.gui.label.bake-scale-size");
                 GuiLabel l;
@@ -89,9 +90,9 @@ namespace LeopotamGroup.Gui.Widgets.UnityEditors {
             }
 
             EditorGUILayout.HelpBox ("Only strings with length <= 75 (except spaces) can be batched.\n\n" +
-            "Only strings with length <= 37 and shadow effect (except spaces) can be batched.\n\n" +
-            "Only strings with length <= 15 and outline effect (except spaces) can be batched.\n\n" +
-            "Copy&paste labels for creating custom shading/glowing and keep batching.", MessageType.Warning);
+                                     "Only strings with length <= 37 and shadow effect (except spaces) can be batched.\n\n" +
+                                     "Only strings with length <= 15 and outline effect (except spaces) can be batched.\n\n" +
+                                     "Copy&paste labels for creating custom shading/glowing and keep batching.", MessageType.Warning);
 
             if (serializedObject.ApplyModifiedProperties () || EditorIntegration.IsUndo ()) {
                 EditorIntegration.UpdateVisuals (target);

@@ -1,13 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.Widgets;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Layout {
@@ -102,11 +102,11 @@ namespace LeopotamGroup.Gui.Layout {
 
         readonly Dictionary<Font, Material> _fontCache = new Dictionary<Font, Material> ();
 
-        bool _isChanged;
-
         readonly List<GuiWidget> _onChangeListeners = new List<GuiWidget> (32);
 
         readonly List<GuiWidget> _onChangedListenersCallingList = new List<GuiWidget> (32);
+
+        bool _isChanged;
 
         void OnEnable () {
             InvalidateClipData (transform.position);
@@ -151,13 +151,13 @@ namespace LeopotamGroup.Gui.Layout {
 
         void UpdateMaterial (Material mtrl) {
             switch (_clipType) {
-                case GuiPanelClipType.Range:
-                    mtrl.EnableKeyword (GuiConsts.ShaderKeyWordClipRange);
-                    mtrl.SetVector (GuiConsts.ShaderParamClipData, WorldClipRect);
-                    break;
-                default:
-                    mtrl.DisableKeyword (GuiConsts.ShaderKeyWordClipRange);
-                    break;
+            case GuiPanelClipType.Range:
+                mtrl.EnableKeyword (GuiConsts.ShaderKeyWordClipRange);
+                mtrl.SetVector (GuiConsts.ShaderParamClipData, WorldClipRect);
+                break;
+            default:
+                mtrl.DisableKeyword (GuiConsts.ShaderKeyWordClipRange);
+                break;
             }
         }
 
@@ -166,7 +166,7 @@ namespace LeopotamGroup.Gui.Layout {
         /// </summary>
         /// <param name="listener">Listener.</param>
         public void AddOnChangeListener (GuiWidget listener) {
-            if ((System.Object) listener != null && !_onChangeListeners.Contains (listener)) {
+            if ((object) listener != null && !_onChangeListeners.Contains (listener)) {
                 _onChangeListeners.Add (listener);
             }
         }
@@ -176,7 +176,7 @@ namespace LeopotamGroup.Gui.Layout {
         /// </summary>
         /// <param name="listener">Listener.</param>
         public void RemoveOnChangeListener (GuiWidget listener) {
-            if ((System.Object) listener != null) {
+            if ((object) listener != null) {
                 var idx = _onChangeListeners.IndexOf (listener);
                 if (idx != -1) {
                     _onChangeListeners.RemoveAt (idx);

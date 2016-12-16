@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Common;
 using UnityEngine;
@@ -29,18 +30,14 @@ namespace LeopotamGroup.Pooling {
     /// Helper for PoolContainer.
     /// </summary>
     public class PoolObject : MonoBehaviourBase, IPoolObject {
-#region IPoolObject implementation
-
         public virtual PoolContainer PoolContainer { get; set; }
 
         public virtual Transform PoolTransform { get { return transform; } }
 
         public void PoolRecycle () {
-            if ((System.Object) PoolContainer != null) {
+            if ((object) PoolContainer != null) {
                 PoolContainer.Recycle (this);
             }
         }
-
-#endregion
     }
 }

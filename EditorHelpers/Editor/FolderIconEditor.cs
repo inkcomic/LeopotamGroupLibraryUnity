@@ -1,12 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
+using System.Collections.Generic;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -57,7 +58,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         [InitializeOnLoadMethod]
         static void InitFolderIconEditor () {
             EditorApplication.projectWindowItemOnGUI += OnDrawProjectWindowItem;
-            if ((System.Object) _folderIconBack == null) {
+            if ((object) _folderIconBack == null) {
                 _folderIconBack = EditorGUIUtility.Load (FolderIconName) as Texture2D;
             }
             LoadInfo ();
@@ -66,7 +67,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void LoadInfo () {
             try {
-                _allDescs = JsonSerialization.DeserializeStatic<Dictionary<string, FolderIconDesc>> (ProjectPrefs.GetString (StorageKey, "{}"));
+                _allDescs =
+                    JsonSerialization.DeserializeStatic<Dictionary<string, FolderIconDesc>> (ProjectPrefs.GetString (StorageKey, "{}"));
                 if (_allDescs == null) {
                     throw new Exception ();
                 }
@@ -106,7 +108,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     if (icon.OverlayIcon != null) {
                         GUI.color = savedColor;
                         var tex = EditorGUIUtility.Load (icon.OverlayIcon) as Texture2D;
-                        if ((System.Object) tex != null) {
+                        if ((object) tex != null) {
                             rect.width *= 0.5f;
                             rect.height *= 0.5f;
                             rect.x += rect.width;

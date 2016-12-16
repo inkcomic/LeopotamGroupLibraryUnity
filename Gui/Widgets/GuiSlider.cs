@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using UnityEngine;
@@ -74,7 +75,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         void OnEnable () {
             if (_background != null) {
-                var rcv = _background.GetComponent <GuiEventReceiver> ();
+                var rcv = _background.GetComponent<GuiEventReceiver> ();
                 if (rcv != null) {
                     rcv.OnPress.AddListener (OnPress);
                     rcv.OnDrag.AddListener (OnDrag);
@@ -86,7 +87,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         void OnDisable () {
             if (_background != null) {
-                var rcv = _background.GetComponent <GuiEventReceiver> ();
+                var rcv = _background.GetComponent<GuiEventReceiver> ();
                 if (rcv != null) {
                     rcv.OnPress.RemoveListener (OnPress);
                     rcv.OnDrag.RemoveListener (OnDrag);

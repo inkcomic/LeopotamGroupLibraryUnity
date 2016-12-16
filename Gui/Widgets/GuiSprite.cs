@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Math;
@@ -134,11 +135,11 @@ namespace LeopotamGroup.Gui.Widgets {
 
         protected override void Awake () {
             base.Awake ();
+
             // Fix copy&paste mesh sharing.
             _meshFilter = GetComponent<MeshFilter> ();
             _meshFilter.sharedMesh = null;
         }
-
 
         void OnEnable () {
             if (_meshFilter == null) {
@@ -195,30 +196,30 @@ namespace LeopotamGroup.Gui.Widgets {
                 int srcHeightBorder;
                 int srcHeightCenter;
                 switch (SpriteType) {
-                    case GuiSpriteType.TiledHorizontal:
-                        srcWidthBorder = (int) ((sprData.BorderL + sprData.BorderR) * SpriteAtlas.ColorTexture.width);
-                        srcWidthCenter = (int) (sprData.CenterWidth * SpriteAtlas.ColorTexture.width);
-                        Width = Mathf.RoundToInt ((Width - srcWidthBorder) / (float) srcWidthCenter) * srcWidthCenter + srcWidthBorder;
-                        break;
-                    case GuiSpriteType.TiledVertical:
-                        srcHeightBorder = (int) ((sprData.BorderT + sprData.BorderB) * SpriteAtlas.ColorTexture.height);
-                        srcHeightCenter = (int) (sprData.CenterHeight * SpriteAtlas.ColorTexture.height);
-                        Height = Mathf.RoundToInt ((Height - srcHeightBorder) / (float) srcHeightCenter) * srcHeightCenter + srcHeightBorder;
-                        break;
-                    case GuiSpriteType.TiledBoth:
-                        srcWidthBorder = (int) ((sprData.BorderL + sprData.BorderR) * SpriteAtlas.ColorTexture.width);
-                        srcHeightBorder = (int) ((sprData.BorderT + sprData.BorderB) * SpriteAtlas.ColorTexture.height);
-                        srcWidthCenter = (int) (sprData.CenterWidth * SpriteAtlas.ColorTexture.width);
-                        srcHeightCenter = (int) (sprData.CenterHeight * SpriteAtlas.ColorTexture.height);
-                        Width = Mathf.RoundToInt ((Width - srcWidthBorder) / (float) srcWidthCenter) * srcWidthCenter + srcWidthBorder;
-                        Height = Mathf.RoundToInt ((Height - srcHeightBorder) / (float) srcHeightCenter) * srcHeightCenter + srcHeightBorder;
-                        break;
-                    default:
-                        var srcWidth = (int) (sprData.CornerW * SpriteAtlas.ColorTexture.width);
-                        var srcHeight = (int) (sprData.CornerH * SpriteAtlas.ColorTexture.height);
-                        Width = Mathf.RoundToInt (Width / (float) srcWidth) * srcWidth;
-                        Height = Mathf.RoundToInt (Height / (float) srcHeight) * srcHeight;
-                        break;
+                case GuiSpriteType.TiledHorizontal:
+                    srcWidthBorder = (int) ((sprData.BorderL + sprData.BorderR) * SpriteAtlas.ColorTexture.width);
+                    srcWidthCenter = (int) (sprData.CenterWidth * SpriteAtlas.ColorTexture.width);
+                    Width = Mathf.RoundToInt ((Width - srcWidthBorder) / (float) srcWidthCenter) * srcWidthCenter + srcWidthBorder;
+                    break;
+                case GuiSpriteType.TiledVertical:
+                    srcHeightBorder = (int) ((sprData.BorderT + sprData.BorderB) * SpriteAtlas.ColorTexture.height);
+                    srcHeightCenter = (int) (sprData.CenterHeight * SpriteAtlas.ColorTexture.height);
+                    Height = Mathf.RoundToInt ((Height - srcHeightBorder) / (float) srcHeightCenter) * srcHeightCenter + srcHeightBorder;
+                    break;
+                case GuiSpriteType.TiledBoth:
+                    srcWidthBorder = (int) ((sprData.BorderL + sprData.BorderR) * SpriteAtlas.ColorTexture.width);
+                    srcHeightBorder = (int) ((sprData.BorderT + sprData.BorderB) * SpriteAtlas.ColorTexture.height);
+                    srcWidthCenter = (int) (sprData.CenterWidth * SpriteAtlas.ColorTexture.width);
+                    srcHeightCenter = (int) (sprData.CenterHeight * SpriteAtlas.ColorTexture.height);
+                    Width = Mathf.RoundToInt ((Width - srcWidthBorder) / (float) srcWidthCenter) * srcWidthCenter + srcWidthBorder;
+                    Height = Mathf.RoundToInt ((Height - srcHeightBorder) / (float) srcHeightCenter) * srcHeightCenter + srcHeightBorder;
+                    break;
+                default:
+                    var srcWidth = (int) (sprData.CornerW * SpriteAtlas.ColorTexture.width);
+                    var srcHeight = (int) (sprData.CornerH * SpriteAtlas.ColorTexture.height);
+                    Width = Mathf.RoundToInt (Width / (float) srcWidth) * srcWidth;
+                    Height = Mathf.RoundToInt (Height / (float) srcHeight) * srcHeight;
+                    break;
                 }
             }
         }
@@ -241,23 +242,23 @@ namespace LeopotamGroup.Gui.Widgets {
                         var h = _isSpriteFlippedVertical ? -Height : Height;
                         var sprData = SpriteAtlas.GetSpriteData (SpriteName);
                         switch (SpriteType) {
-                            case GuiSpriteType.RoundFilled:
-                                GuiMeshTools.FillRoundFilledSprite (_meshFilter.sharedMesh, w, h, FillValue, Color, sprData);
-                                break;
-                            case GuiSpriteType.Sliced:
-                            case GuiSpriteType.TiledHorizontal:
-                            case GuiSpriteType.TiledVertical:
-                            case GuiSpriteType.TiledBoth:
-                                var texSize = new Vector2 (SpriteAtlas.ColorTexture.width, SpriteAtlas.ColorTexture.height);
-                                var isHorTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledHorizontal;
-                                var isVerTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledVertical;
-                                GuiMeshTools.FillSlicedTiledSprite (
-                                    _meshFilter.sharedMesh, w, h, Color, sprData,
-                                    texSize, isHorTiled, isVerTiled, IsSpriteCenterFilled);
-                                break;
-                            default:
-                                GuiMeshTools.FillSimpleSprite (_meshFilter.sharedMesh, w, h, Color, sprData);
-                                break;
+                        case GuiSpriteType.RoundFilled:
+                            GuiMeshTools.FillRoundFilledSprite (_meshFilter.sharedMesh, w, h, FillValue, Color, sprData);
+                            break;
+                        case GuiSpriteType.Sliced:
+                        case GuiSpriteType.TiledHorizontal:
+                        case GuiSpriteType.TiledVertical:
+                        case GuiSpriteType.TiledBoth:
+                            var texSize = new Vector2 (SpriteAtlas.ColorTexture.width, SpriteAtlas.ColorTexture.height);
+                            var isHorTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledHorizontal;
+                            var isVerTiled = SpriteType == GuiSpriteType.TiledBoth || SpriteType == GuiSpriteType.TiledVertical;
+                            GuiMeshTools.FillSlicedTiledSprite (
+                                _meshFilter.sharedMesh, w, h, Color, sprData,
+                                texSize, isHorTiled, isVerTiled, IsSpriteCenterFilled);
+                            break;
+                        default:
+                            GuiMeshTools.FillSimpleSprite (_meshFilter.sharedMesh, w, h, Color, sprData);
+                            break;
                         }
                     }
                 } else {

@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace LeopotamGroup.Gui.Layout {
         GuiPanel _panel;
 
         void OnEnable () {
-            _panel = GetComponent <GuiPanel> ();
+            _panel = GetComponent<GuiPanel> ();
             Validate ();
         }
 

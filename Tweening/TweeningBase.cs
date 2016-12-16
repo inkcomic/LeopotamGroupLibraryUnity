@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using UnityEngine;
 using LeopotamGroup.Common;
+using UnityEngine;
 
 namespace LeopotamGroup.Tweening {
     /// <summary>
@@ -120,7 +121,7 @@ namespace LeopotamGroup.Tweening {
                     return;
                 }
                 CurrentTime %= 1f;
-                if (_tweenCount < 0) {                    
+                if (_tweenCount < 0) {
                     _tweenCount = 0;
                 }
             }

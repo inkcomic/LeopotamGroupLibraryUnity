@@ -1,9 +1,9 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,21 +12,19 @@ namespace LeopotamGroup.Gui.Common {
     /// Mesh tools helper.
     /// </summary>
     public static class GuiMeshTools {
-        static readonly Vector2[] RoundFilledV =
-            {
-                new Vector2 (-1f, 0f),
-                new Vector2 (-1f, -1f),
-                new Vector2 (0f, -1f),
-                new Vector2 (0f, 0f)
-            };
+        static readonly Vector2[] RoundFilledV = {
+            new Vector2 (-1f, 0f),
+            new Vector2 (-1f, -1f),
+            new Vector2 (0f, -1f),
+            new Vector2 (0f, 0f)
+        };
 
-        static readonly Vector2[] RoundFilledUV =
-            {
-                new Vector2 (0f, 1f),
-                new Vector2 (0f, 0f),
-                new Vector2 (1f, 0f),
-                new Vector2 (1f, 1f)
-            };
+        static readonly Vector2[] RoundFilledUV = {
+            new Vector2 (0f, 1f),
+            new Vector2 (0f, 0f),
+            new Vector2 (1f, 0f),
+            new Vector2 (1f, 1f)
+        };
 
         static readonly List<Vector3> _cacheV = new List<Vector3> (4096);
 
@@ -76,7 +74,8 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="effect">Effect.</param>
         /// <param name="effectValue">Effect value.</param>
         /// <param name="effectColor">Effect color.</param>
-        public static void PrepareBuffer (GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
+        public static void PrepareBuffer (
+            GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
             _cacheV.Clear ();
             _cacheUV.Clear ();
             _cacheC.Clear ();
@@ -109,7 +108,8 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="uv2">Sprite UV of 3 corner.</param>
         /// <param name="uv3">Sprite UV of 4 corner.</param>
         /// <param name="color">Color.</param>
-        public static void FillBuffer (ref Rect v, ref Vector2 uv0, ref Vector2 uv1, ref Vector2 uv2, ref Vector2 uv3, ref Color color) {
+        public static void FillBuffer (
+            ref Rect v, ref Vector2 uv0, ref Vector2 uv1, ref Vector2 uv2, ref Vector2 uv3, ref Color color) {
             var v0 = new Vector3 (v.xMin, v.yMin, 0f);
             var v1 = new Vector3 (v.xMin, v.yMax, 0f);
             var v2 = new Vector3 (v.xMax, v.yMax, 0f);
@@ -132,7 +132,6 @@ namespace LeopotamGroup.Gui.Common {
         public static void FillBuffer (
             ref Vector3 v0, ref Vector3 v1, ref Vector3 v2, ref Vector3 v3,
             ref Vector2 uv0, ref Vector2 uv1, ref Vector2 uv2, ref Vector2 uv3, ref Color color) {
-
             if (_effect != GuiFontEffect.None) {
                 FillBufferT ();
 
@@ -146,47 +145,47 @@ namespace LeopotamGroup.Gui.Common {
                 _cacheUV.Add (uv2);
                 _cacheUV.Add (uv3);
                 switch (_effect) {
-                    case GuiFontEffect.Shadow:
-                        _cacheV.Add (new Vector3 (v0.x + _effectValue.x, v0.y - _effectValue.y, v0.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v1.x + _effectValue.x, v1.y - _effectValue.y, v1.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v2.x + _effectValue.x, v2.y - _effectValue.y, v2.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v3.x + _effectValue.x, v3.y - _effectValue.y, v3.z + 0.01f));
-                        break;
-                    case GuiFontEffect.Outline:
-                        for (int i = 0; i < 3; i++) {
-                            _cacheC.Add (_effectColor);
-                            _cacheC.Add (_effectColor);
-                            _cacheC.Add (_effectColor);
-                            _cacheC.Add (_effectColor);
-                            _cacheUV.Add (uv0);
-                            _cacheUV.Add (uv1);
-                            _cacheUV.Add (uv2);
-                            _cacheUV.Add (uv3);
-                        }
+                case GuiFontEffect.Shadow:
+                    _cacheV.Add (new Vector3 (v0.x + _effectValue.x, v0.y - _effectValue.y, v0.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v1.x + _effectValue.x, v1.y - _effectValue.y, v1.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v2.x + _effectValue.x, v2.y - _effectValue.y, v2.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v3.x + _effectValue.x, v3.y - _effectValue.y, v3.z + 0.01f));
+                    break;
+                case GuiFontEffect.Outline:
+                    for (int i = 0; i < 3; i++) {
+                        _cacheC.Add (_effectColor);
+                        _cacheC.Add (_effectColor);
+                        _cacheC.Add (_effectColor);
+                        _cacheC.Add (_effectColor);
+                        _cacheUV.Add (uv0);
+                        _cacheUV.Add (uv1);
+                        _cacheUV.Add (uv2);
+                        _cacheUV.Add (uv3);
+                    }
 
-                        _cacheV.Add (new Vector3 (v0.x + _effectValue.x, v0.y, v0.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v1.x + _effectValue.x, v1.y, v1.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v2.x + _effectValue.x, v2.y, v2.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v3.x + _effectValue.x, v3.y, v3.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v0.x + _effectValue.x, v0.y, v0.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v1.x + _effectValue.x, v1.y, v1.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v2.x + _effectValue.x, v2.y, v2.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v3.x + _effectValue.x, v3.y, v3.z + 0.01f));
 
-                        FillBufferT ();
-                        _cacheV.Add (new Vector3 (v0.x - _effectValue.x, v0.y, v0.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v1.x - _effectValue.x, v1.y, v1.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v2.x - _effectValue.x, v2.y, v2.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v3.x - _effectValue.x, v3.y, v3.z + 0.01f));
+                    FillBufferT ();
+                    _cacheV.Add (new Vector3 (v0.x - _effectValue.x, v0.y, v0.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v1.x - _effectValue.x, v1.y, v1.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v2.x - _effectValue.x, v2.y, v2.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v3.x - _effectValue.x, v3.y, v3.z + 0.01f));
 
-                        FillBufferT ();
-                        _cacheV.Add (new Vector3 (v0.x, v0.y + _effectValue.y, v0.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v1.x, v1.y + _effectValue.y, v1.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v2.x, v2.y + _effectValue.y, v2.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v3.x, v3.y + _effectValue.y, v3.z + 0.01f));
+                    FillBufferT ();
+                    _cacheV.Add (new Vector3 (v0.x, v0.y + _effectValue.y, v0.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v1.x, v1.y + _effectValue.y, v1.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v2.x, v2.y + _effectValue.y, v2.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v3.x, v3.y + _effectValue.y, v3.z + 0.01f));
 
-                        FillBufferT ();
-                        _cacheV.Add (new Vector3 (v0.x, v0.y - _effectValue.y, v0.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v1.x, v1.y - _effectValue.y, v1.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v2.x, v2.y - _effectValue.y, v2.z + 0.01f));
-                        _cacheV.Add (new Vector3 (v3.x, v3.y - _effectValue.y, v3.z + 0.01f));
-                        break;
+                    FillBufferT ();
+                    _cacheV.Add (new Vector3 (v0.x, v0.y - _effectValue.y, v0.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v1.x, v1.y - _effectValue.y, v1.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v2.x, v2.y - _effectValue.y, v2.z + 0.01f));
+                    _cacheV.Add (new Vector3 (v3.x, v3.y - _effectValue.y, v3.z + 0.01f));
+                    break;
                 }
             }
 
@@ -242,7 +241,8 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="effectValue">Effect value.</param>
         /// <param name="effectColor">Effect color.</param>
         public static void FillSimpleSprite (Mesh mesh, int width, int height, Color color, GuiSpriteData spriteData,
-            GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
+                                             GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null,
+                                             Color? effectColor = null) {
             if (mesh == null) {
                 return;
             }
@@ -415,8 +415,10 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="effect">Effect.</param>
         /// <param name="effectValue">Effect value.</param>
         /// <param name="effectColor">Effect color.</param>
-        public static void FillRoundFilledSprite (Mesh mesh, int width, int height, float fillValue, Color color, GuiSpriteData spriteData,
-            GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
+        public static void FillRoundFilledSprite (
+            Mesh mesh, int width, int height, float fillValue, Color color, GuiSpriteData spriteData,
+            GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null,
+            Color? effectColor = null) {
             if (mesh == null) {
                 return;
             }
@@ -482,51 +484,50 @@ namespace LeopotamGroup.Gui.Common {
                         fuvW -= _uvRect.width;
                         fuvH -= _uvRect.height;
                         switch (i) {
-                            case 0:
-                                v1.y = _vRect.yMax - fvH;
-                                uv1.y = _uvRect.yMax - fuvH;
-                                break;
-                            case 1:
-                                v3.x = _vRect.xMin + fvW;
-                                uv3.x = _uvRect.xMin + fuvW;
-                                break;
-                            case 2:
-                                v3.y = _vRect.yMin + fvH;
-                                uv3.y = _uvRect.yMin + fuvH;
-                                break;
-                            case 3:
-                                v1.x = _vRect.xMax - fvW;
-                                uv1.x = _uvRect.xMax - fuvW;
-                                break;
+                        case 0:
+                            v1.y = _vRect.yMax - fvH;
+                            uv1.y = _uvRect.yMax - fuvH;
+                            break;
+                        case 1:
+                            v3.x = _vRect.xMin + fvW;
+                            uv3.x = _uvRect.xMin + fuvW;
+                            break;
+                        case 2:
+                            v3.y = _vRect.yMin + fvH;
+                            uv3.y = _uvRect.yMin + fuvH;
+                            break;
+                        case 3:
+                            v1.x = _vRect.xMax - fvW;
+                            uv1.x = _uvRect.xMax - fuvW;
+                            break;
                         }
-
                     } else {
                         // less than 45 degrees
                         switch (i) {
-                            case 0:
-                                v0.x = _vRect.xMax - fvW;
-                                uv0.x = _uvRect.xMax - fuvW;
-                                uv1 = uv0;
-                                v1 = v0;
-                                break;
-                            case 1:
-                                v0.y = _vRect.yMax - fvH;
-                                uv0.y = _uvRect.yMax - fuvH;
-                                uv3 = uv0;
-                                v3 = v0;
-                                break;
-                            case 2:
-                                v2.x = _vRect.xMin + fvW;
-                                uv2.x = _uvRect.xMin + fuvW;
-                                uv3 = uv2;
-                                v3 = v2;
-                                break;
-                            case 3:
-                                v2.y = _vRect.yMin + fvH;
-                                uv2.y = _uvRect.yMin + fuvH;
-                                uv1 = uv2;
-                                v1 = v2;
-                                break;
+                        case 0:
+                            v0.x = _vRect.xMax - fvW;
+                            uv0.x = _uvRect.xMax - fuvW;
+                            uv1 = uv0;
+                            v1 = v0;
+                            break;
+                        case 1:
+                            v0.y = _vRect.yMax - fvH;
+                            uv0.y = _uvRect.yMax - fuvH;
+                            uv3 = uv0;
+                            v3 = v0;
+                            break;
+                        case 2:
+                            v2.x = _vRect.xMin + fvW;
+                            uv2.x = _uvRect.xMin + fuvW;
+                            uv3 = uv2;
+                            v3 = v2;
+                            break;
+                        case 3:
+                            v2.y = _vRect.yMin + fvH;
+                            uv2.y = _uvRect.yMin + fuvH;
+                            uv1 = uv2;
+                            v1 = v2;
+                            break;
                         }
                     }
 

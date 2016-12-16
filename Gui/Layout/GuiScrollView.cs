@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Widgets;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Layout {
@@ -35,7 +36,7 @@ namespace LeopotamGroup.Gui.Layout {
             if (!enabled) {
                 return false;
             }
-                
+
             if (_panel.ClipType != LeopotamGroup.Gui.Common.GuiPanelClipType.Range) {
                 return false;
             }
@@ -49,6 +50,7 @@ namespace LeopotamGroup.Gui.Layout {
 
             bool isClipped = false;
             float offset;
+
             // horizontal clip.
             if (_panel.ClipWidth < _size.x) {
                 offset = worldClip.x - worldMin.x;

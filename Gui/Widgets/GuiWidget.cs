@@ -1,9 +1,9 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using LeopotamGroup.Common;
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.Layout;
@@ -86,7 +86,7 @@ namespace LeopotamGroup.Gui.Widgets {
         /// <value>The panel.</value>
         public GuiPanel Panel {
             get {
-                if ((System.Object) _visualPanel == null) {
+                if ((object) _visualPanel == null) {
                     _visualPanel = GuiPanel.GetPanel (transform);
                     _visualPanel.AddOnChangeListener (this);
                 }
@@ -165,7 +165,7 @@ namespace LeopotamGroup.Gui.Widgets {
         /// </summary>
         public void ResetPanel () {
             SetDirty (GuiDirtyType.Panel);
-            if ((System.Object) _visualPanel != null) {
+            if ((object) _visualPanel != null) {
                 _visualPanel.RemoveOnChangeListener (this);
                 _visualPanel = null;
             }

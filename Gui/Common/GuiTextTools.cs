@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,8 +34,7 @@ namespace LeopotamGroup.Gui.Common {
 
         static readonly List<UIVertex> _verts = new List<UIVertex> (4096);
 
-        static TextGenerationSettings _settings = new TextGenerationSettings
-        {
+        static TextGenerationSettings _settings = new TextGenerationSettings {
             fontStyle = FontStyle.Normal,
             pivot = new Vector2 (0.5f, 0.5f),
             richText = true,
@@ -65,7 +65,9 @@ namespace LeopotamGroup.Gui.Common {
         /// <param name="effect">Effect.</param>
         /// <param name="effectValue">Effect value.</param>
         /// <param name="effectColor">Effect color.</param>
-        public static void FillText (Mesh mesh, int width, int height, string text, Color color, TextAnchor align, Font font, int fontSize, float lineHgt, GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
+        public static void FillText (
+            Mesh mesh, int width, int height, string text, Color color, TextAnchor align, Font font, int fontSize,
+            float lineHgt, GuiFontEffect effect = GuiFontEffect.None, Vector2? effectValue = null, Color? effectColor = null) {
             if (mesh == null) {
                 return;
             }

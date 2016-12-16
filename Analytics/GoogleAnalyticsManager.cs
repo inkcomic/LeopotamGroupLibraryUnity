@@ -1,16 +1,17 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using LeopotamGroup.Common;
 using LeopotamGroup.EditorHelpers;
 using LeopotamGroup.Localization;
+using System.Collections.Generic;
+using System.Collections;
+using System.Security.Cryptography;
+using System.Text;
+using System;
 using UnityEngine;
 
 namespace LeopotamGroup.Analytics {
@@ -36,10 +37,13 @@ namespace LeopotamGroup.Analytics {
                     if (string.IsNullOrEmpty (_deviceHash)) {
                         // Dont care about floating point regional format for double.
                         var userData = string.Format ("{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}",
-                                           SystemInfo.graphicsDeviceVendor, SystemInfo.graphicsDeviceVersion, SystemInfo.deviceModel,
-                                           SystemInfo.deviceName, SystemInfo.operatingSystem, SystemInfo.processorCount,
-                                           SystemInfo.systemMemorySize, Application.systemLanguage,
-                                           (DateTime.UtcNow - new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+                                                      SystemInfo.graphicsDeviceVendor, SystemInfo.graphicsDeviceVersion,
+                                                      SystemInfo.deviceModel,
+                                                      SystemInfo.deviceName, SystemInfo.operatingSystem,
+                                                      SystemInfo.processorCount,
+                                                      SystemInfo.systemMemorySize, Application.systemLanguage,
+                                                      (DateTime.UtcNow -
+                                                       new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
                         var data = new MD5CryptoServiceProvider ().ComputeHash (Encoding.UTF8.GetBytes (userData));
                         var sb = new StringBuilder ();
                         for (var i = 0; i < data.Length; i++) {
@@ -71,6 +75,7 @@ namespace LeopotamGroup.Analytics {
 
         IEnumerator Start () {
             _requestUrl = null;
+
             // Wait for additional init.
             yield return null;
 #if UNITY_EDITOR
@@ -86,7 +91,7 @@ namespace LeopotamGroup.Analytics {
                     Screen.width, Screen.height,
                     Application.bundleIdentifier,
                     Application.version
-                );
+                    );
             }
 
             string url = null;
@@ -95,10 +100,11 @@ namespace LeopotamGroup.Analytics {
             while (true) {
                 if (_requests.Count > 0) {
                     data = _requests.Dequeue ();
+
                     // If tracking id defined and url inited.
                     if (!string.IsNullOrEmpty (_requestUrl)) {
                         url = string.Format ("{0}{1}&{2}&ul={3}",
-                            _requestUrl, UnityEngine.Random.Range (1, 99999), data, Localizer.Language);
+                                             _requestUrl, UnityEngine.Random.Range (1, 99999), data, Localizer.Language);
                     }
                 }
 
@@ -141,9 +147,9 @@ namespace LeopotamGroup.Analytics {
         /// <param name="action">Action name.</param>
         public void TrackEvent (string category, string action) {
             EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}",
-                    WWW.EscapeURL (category),
-                    WWW.EscapeURL (action)
-                ));
+                                           WWW.EscapeURL (category),
+                                           WWW.EscapeURL (action)
+                                           ));
         }
 
         /// <summary>
@@ -155,11 +161,11 @@ namespace LeopotamGroup.Analytics {
         /// <param name="value">Value.</param>
         public void TrackEvent (string category, string action, string label, string value) {
             EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}&el={2}&ev={3}",
-                    WWW.EscapeURL (category),
-                    WWW.EscapeURL (action),
-                    WWW.EscapeURL (label),
-                    WWW.EscapeURL (value)
-                ));
+                                           WWW.EscapeURL (category),
+                                           WWW.EscapeURL (action),
+                                           WWW.EscapeURL (label),
+                                           WWW.EscapeURL (value)
+                                           ));
         }
 
         /// <summary>

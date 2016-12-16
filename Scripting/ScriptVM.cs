@@ -1,9 +1,9 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using LeopotamGroup.Scripting.Internal;
 
 namespace LeopotamGroup.Scripting {
@@ -70,8 +70,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public string CallFunction (string funcName, out ScriptVar result,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+                                    ScriptVar? param1 = null, ScriptVar? param2 = null,
+                                    ScriptVar? param3 = null, ScriptVar? param4 = null) {
             var undef = new ScriptVar ();
             if (InFunctionCall) {
                 result = undef;

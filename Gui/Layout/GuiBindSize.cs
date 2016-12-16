@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using LeopotamGroup.Gui.Widgets;
@@ -36,7 +37,7 @@ namespace LeopotamGroup.Gui.Layout {
         GuiWidget _widget;
 
         void OnEnable () {
-            _widget = GetComponent <GuiWidget> ();
+            _widget = GetComponent<GuiWidget> ();
             Validate ();
         }
 

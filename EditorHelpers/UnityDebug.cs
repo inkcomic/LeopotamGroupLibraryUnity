@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Diagnostics;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace LeopotamGroup.EditorHelpers {
                 throw new UnityException ("Editor paused after assert.");
             }
         }
+
 #endif
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="arg">Data.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogInfo (object arg) {
-#if UNITY_EDITOR            
+#if UNITY_EDITOR
             LogInternal (LogType.Log, "{0}", arg);
 #endif
         }
@@ -58,7 +60,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="arg">Argument.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogWarning (object arg) {
-#if UNITY_EDITOR            
+#if UNITY_EDITOR
             LogInternal (LogType.Warning, "{0}", arg);
 #endif
         }
@@ -85,7 +87,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="arg">Argument.</param>
         [Conditional ("UNITY_EDITOR")]
         public static void LogError (object arg) {
-#if UNITY_EDITOR            
+#if UNITY_EDITOR
             LogInternal (LogType.Error, "{0}", arg);
 #endif
         }

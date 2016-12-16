@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
+using System;
 
 namespace LeopotamGroup.Events {
     /// <summary>
@@ -37,7 +38,8 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="bt">Bt.</param>
         /// <param name="cb">Cb.</param>
-        public BehaviourTreeContainerBase Then<T> (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) where T:class, new() {
+        public BehaviourTreeContainerBase Then<T> (
+            BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) where T : class, new() {
             Then (new BehaviourTreeAction<T> (bt, cb));
             return this;
         }
@@ -83,7 +85,8 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="bt">Bt.</param>
         /// <param name="condition">Condition.</param>
-        public BehaviourTreeCondition<T> When<T> (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition) where T:class, new() {
+        public BehaviourTreeCondition<T> When<T> (
+            BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition) where T : class, new() {
             var node = new BehaviourTreeCondition<T> (bt, condition);
             AddChild (node);
             return node;
@@ -93,7 +96,7 @@ namespace LeopotamGroup.Events {
         /// Helper for add new BehaviourTreeCondition node.
         /// </summary>
         /// <param name="condition">Condition.</param>
-        public BehaviourTreeCondition<T> When<T> (BehaviourTreeNodeBase condition) where T:class, new() {
+        public BehaviourTreeCondition<T> When<T> (BehaviourTreeNodeBase condition) where T : class, new() {
             var node = new BehaviourTreeCondition<T> (condition);
             AddChild (node);
             return node;
@@ -115,7 +118,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Behaviour tree action base node.
     /// </summary>
-    public abstract class BehaviourTreeActionBase<T> : BehaviourTreeNodeBase where T:class, new() {
+    public abstract class BehaviourTreeActionBase<T> : BehaviourTreeNodeBase where T : class, new() {
         protected readonly BehaviourTree<T> _bt;
 
         /// <summary>
@@ -133,7 +136,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Behaviour tree action.
     /// </summary>
-    public sealed class BehaviourTreeAction<T> : BehaviourTreeActionBase<T> where T:class, new() {
+    public sealed class BehaviourTreeAction<T> : BehaviourTreeActionBase<T> where T : class, new() {
         readonly Func<BehaviourTree<T>, BehaviourTreeResult> _cb;
 
         /// <summary>
@@ -141,7 +144,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="bt">BehaviourTree instance.</param>
         /// <param name="cb">Callback of custom node logic.</param>
-        public BehaviourTreeAction (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) : base(bt) {
+        public BehaviourTreeAction (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) : base (bt) {
             if (cb == null) {
                 throw new ArgumentNullException ();
             }
@@ -225,7 +228,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Behaviour tree condition node.
     /// </summary>
-    public sealed class BehaviourTreeCondition<T> : BehaviourTreeNodeBase where T:class, new() {
+    public sealed class BehaviourTreeCondition<T> : BehaviourTreeNodeBase where T : class, new() {
         readonly BehaviourTreeNodeBase _condition;
 
         BehaviourTreeNodeBase _node;

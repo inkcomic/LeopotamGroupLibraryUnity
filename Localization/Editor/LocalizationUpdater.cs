@@ -1,15 +1,16 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
+using LeopotamGroup.EditorHelpers;
+using LeopotamGroup.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using LeopotamGroup.EditorHelpers;
-using LeopotamGroup.Serialization;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         string _newUrl;
 
-        [MenuItem ("Window/LeopotamGroupLibrary/Update localization...")]
+        [MenuItem ("Window/LeopotamGroupLibrary/Update CSV-data from (for ex. localization)...")]
         static void OpenEditorWindow () {
             GetWindow<LocalizationUpdater> ();
         }
@@ -39,7 +40,8 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         void Load () {
             try {
-                _paths = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
+                _paths = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (
+                    ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
                 if (_paths == null) {
                     throw new Exception ();
                 }
@@ -114,7 +116,6 @@ namespace LeopotamGroup.Localization.UnityEditors {
                     www.Encoding = Encoding.UTF8;
                     string data;
                     foreach (var pair in paths) {
-                        
                         if (!string.IsNullOrEmpty (pair.Value)) {
                             // Dirty hack for url, because standard "publish to web" has huge lag up to 30 minutes.
                             data = www.DownloadString (pair.Key.Replace ("?", string.Empty).Replace ("/edit", "/export?format=csv&"));

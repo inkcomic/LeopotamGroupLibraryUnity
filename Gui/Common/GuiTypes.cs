@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System;
-using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine;
 
 namespace LeopotamGroup.Gui.Common {
     /// <summary>
@@ -125,7 +126,8 @@ namespace LeopotamGroup.Gui.Common {
         public static readonly LayerMask DefaultGuiLayerMask = 1 << DefaultGuiLayer;
 
         public static bool IsTiled (this GuiSpriteType spriteType) {
-            return spriteType == GuiSpriteType.TiledBoth || spriteType == GuiSpriteType.TiledHorizontal || spriteType == GuiSpriteType.TiledVertical;
+            return spriteType == GuiSpriteType.TiledBoth || spriteType == GuiSpriteType.TiledHorizontal ||
+                   spriteType == GuiSpriteType.TiledVertical;
         }
     }
 

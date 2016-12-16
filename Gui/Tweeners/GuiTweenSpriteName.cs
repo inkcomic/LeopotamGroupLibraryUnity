@@ -1,12 +1,13 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using LeopotamGroup.Gui.Widgets;
 using LeopotamGroup.Tweening;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace LeopotamGroup.Gui.Tweeners {
@@ -38,7 +39,7 @@ namespace LeopotamGroup.Gui.Tweeners {
 
         protected override void OnInit () {
             if (Target == null) {
-                Target = GetComponent <GuiSprite> ();
+                Target = GetComponent<GuiSprite> ();
             }
             if (Target == null) {
                 Destroy (this);

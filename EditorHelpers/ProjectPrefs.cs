@@ -1,16 +1,17 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 #if UNITY_EDITOR
 
-using System;
+using LeopotamGroup.Math;
+using LeopotamGroup.Serialization;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using LeopotamGroup.Math;
-using LeopotamGroup.Serialization;
+using System;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers {

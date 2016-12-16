@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Widgets;
 using LeopotamGroup.Tweening;
@@ -30,7 +31,7 @@ namespace LeopotamGroup.Gui.Tweeners {
 
         protected override void OnInit () {
             if (Target == null) {
-                Target = GetComponent <GuiWidget> ();
+                Target = GetComponent<GuiWidget> ();
             }
             if (Target == null) {
                 enabled = false;

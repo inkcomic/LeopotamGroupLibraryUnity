@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace LeopotamGroup.Common {
         public static T EnsureGetComponent<T> (this GameObject go) where T : Component {
             if (go != null) {
                 var c = go.GetComponent<T> ();
-                if ((System.Object) c == null) {
+                if ((object) c == null) {
                     c = go.AddComponent<T> ();
                 }
                 return c;

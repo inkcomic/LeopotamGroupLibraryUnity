@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +23,7 @@ namespace LeopotamGroup.Serialization {
         void ParseLine (string data) {
             _tokens.Clear ();
 
-            foreach (Match m in _csvRegex.Matches(data)) {
+            foreach (Match m in _csvRegex.Matches (data)) {
                 var part = m.Value.Trim ();
                 if (part.Length > 0) {
                     if (part[0] == '"' && part[part.Length - 1] == '"') {
@@ -37,11 +38,12 @@ namespace LeopotamGroup.Serialization {
         /// <summary>
         /// Deserialize csv data from raw string source.
         /// </summary>
-        /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as Value.</returns>
+        /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as
+        // Value.</returns>
         /// <param name="data">Raw text data.</param>
         /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
-        /// <param name="skipHeaderCheck">Skip row lengths checking for header line compatibility.</param>
-        public Dictionary<string, string[]> Deserialize (string data, Dictionary<string, string[]> list = null, bool skipHeaderCheck = false) {
+        public Dictionary<string, string[]> Deserialize (
+            string data, Dictionary<string, string[]> list = null) {
             if (list == null) {
                 list = new Dictionary<string, string[]> ();
             }
@@ -55,22 +57,20 @@ namespace LeopotamGroup.Serialization {
                     if (_tokens.Count == 0 || string.IsNullOrEmpty (_tokens[0])) {
                         continue;
                     }
-                    if (!skipHeaderCheck) {
-                        if (headerLen == -1) {
-                            headerLen = _tokens.Count;
-                            if (headerLen < 2) {
-                                #if UNITY_EDITOR
-                                Debug.LogWarning ("Invalid csv header.");
-                                #endif
-                                break;
-                            }
+                    if (headerLen == -1) {
+                        headerLen = _tokens.Count;
+                        if (headerLen < 2) {
+#if UNITY_EDITOR
+                            Debug.LogWarning ("Invalid csv header.");
+#endif
+                            break;
                         }
-                        if (_tokens.Count != headerLen) {
-                            #if UNITY_EDITOR
-                            Debug.LogWarning ("Invalid csv line, skipping.");
-                            #endif
-                            continue;
-                        }
+                    }
+                    if (_tokens.Count != headerLen) {
+#if UNITY_EDITOR
+                        Debug.LogWarning ("Invalid csv line, skipping.");
+#endif
+                        continue;
                     }
                     key = _tokens[0];
                     _tokens.RemoveAt (0);
@@ -83,12 +83,13 @@ namespace LeopotamGroup.Serialization {
         /// <summary>
         /// Deserialize csv data from raw string source with singleton csv deserializator.
         /// </summary>
-        /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as Value.</returns>
+        /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as
+        // Value.</returns>
         /// <param name="data">Raw text data.</param>
         /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
-        /// <param name="skipHeaderCheck">Skip row lengths checking for header line compatibility.</param>
-        public static Dictionary<string, string[]> DeserializeStatic (string data, Dictionary<string, string[]> list = null, bool skipHeaderCheck = false) {
-            return _instance.Deserialize (data, list, skipHeaderCheck);
+        public static Dictionary<string, string[]> DeserializeStatic (
+            string data, Dictionary<string, string[]> list = null) {
+            return _instance.Deserialize (data, list);
         }
     }
 }

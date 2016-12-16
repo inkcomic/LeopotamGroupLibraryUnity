@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using LeopotamGroup.Gui.Common;
 using UnityEngine;
@@ -155,6 +156,7 @@ namespace LeopotamGroup.Gui.Widgets {
 
         protected override void Awake () {
             base.Awake ();
+
             // Fix copy&paste mesh sharing.
             _meshFilter = GetComponent<MeshFilter> ();
             _meshFilter.sharedMesh = null;
@@ -207,7 +209,8 @@ namespace LeopotamGroup.Gui.Widgets {
                     _meshRenderer.sharedMaterial = Panel.GetFontMaterial (Font);
 
                     if ((changes & GuiDirtyType.Geometry) != GuiDirtyType.None) {
-                        GuiTextTools.FillText (_meshFilter.sharedMesh, Width, Height, Text, Color, Alignment, Font, FontSize, LineHeight, _effect, _effectValue, _effectColor);
+                        GuiTextTools.FillText (_meshFilter.sharedMesh, Width, Height, Text, Color, Alignment, Font, FontSize, LineHeight,
+                                               _effect, _effectValue, _effectColor);
                     }
                 }
             }

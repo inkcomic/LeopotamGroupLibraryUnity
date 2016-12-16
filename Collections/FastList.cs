@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections;
+using System;
 
 namespace LeopotamGroup.Collections {
     /// <summary>
@@ -27,7 +28,7 @@ namespace LeopotamGroup.Collections {
         /// Get / set item at specified index.
         /// </summary>
         /// <param name="index">Index.</param>
-        public T this [int index] {
+        public T this[int index] {
             get {
                 if (index < _count) {
                     return _items[index];
@@ -37,6 +38,7 @@ namespace LeopotamGroup.Collections {
             set {
                 if (index < _count) {
                     _items[index] = value;
+
                     return;
                 }
                 throw new ArgumentOutOfRangeException ();
@@ -53,11 +55,10 @@ namespace LeopotamGroup.Collections {
 
         int _capacity;
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public FastList () : this (InitCapacity) {
-        }
+        ///<summary>
+        ///Default constructor.
+        ///</summary>
+        public FastList () : this (InitCapacity) { }
 
         /// <summary>
         /// Constructor with capacity initialization.
@@ -83,6 +84,7 @@ namespace LeopotamGroup.Collections {
                     _capacity = InitCapacity;
                 }
                 var items = new T[_capacity];
+
                 Array.Copy (_items, items, _count);
                 _items = items;
             }
@@ -99,8 +101,10 @@ namespace LeopotamGroup.Collections {
                 throw new  ArgumentNullException ("data");
             }
             var casted = data as ICollection<T>;
+
             if (casted != null) {
                 var amount = casted.Count;
+
                 if (amount > 0) {
                     Reserve (amount, false, false);
                     casted.CopyTo (_items, _count);
@@ -109,7 +113,7 @@ namespace LeopotamGroup.Collections {
             } else {
                 using (var it = data.GetEnumerator ()) {
                     while (it.MoveNext ()) {
-                        Add (it.Current); 
+                        Add (it.Current);
                     }
                 }
             }
@@ -130,25 +134,27 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Clear collection without release memory for performance optimization. Similar as Clear(true) call for reference T-type.
+        /// Clear collection without release memory for performance optimization. Similar as Clear(true) call for
+        // reference T-type.
         /// </summary>
         public void Clear () {
             if (_isNullable) {
                 for (var i = _count - 1; i >= 0; i--) {
-                    _items[i] = default(T);
+                    _items[i] = default (T);
                 }
             }
             _count = 0;
         }
 
         /// <summary>
-        /// Clear collection without release memory for performance optimization. 
+        /// Clear collection without release memory for performance optimization.
         /// </summary>
-        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
+        // optimization).</param>
         public void Clear (bool forceSetDefaultValues) {
             if (forceSetDefaultValues) {
                 for (var i = _count - 1; i >= 0; i--) {
-                    _items[i] = default(T);
+                    _items[i] = default (T);
                 }
             }
             _count = 0;
@@ -176,7 +182,8 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="amount">Amount of new items.</param>
         /// <param name="clearCollection">Is collection should be cleared before.</param>
-        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
+        // optimization).</param>
         public void FillWithEmpty (int amount, bool clearCollection = false, bool forceSetDefaultValues = true) {
             if (amount <= 0) {
                 return;
@@ -229,6 +236,7 @@ namespace LeopotamGroup.Collections {
         /// <param name="count">Actual count of items.</param>
         public T[] GetData (out int count) {
             count = _count;
+
             return _items;
         }
 
@@ -250,10 +258,13 @@ namespace LeopotamGroup.Collections {
         /// <param name="item">Item to remove.</param>
         public bool Remove (T item) {
             int id = Array.IndexOf (_items, item);
+
             if (id != -1) {
                 RemoveAt (id);
+
                 return true;
             }
+
             return false;
         }
 
@@ -272,15 +283,18 @@ namespace LeopotamGroup.Collections {
         /// Try to remove last item in collection.
         /// </summary>
         /// <returns><c>true</c>, if last was removed, <c>false</c> otherwise.</returns>
-        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
+        // optimization).</param>
         public bool RemoveLast (bool forceSetDefaultValues = true) {
             if (_count > 0) {
                 _count--;
                 if (forceSetDefaultValues) {
-                    _items[_count] = default(T);
+                    _items[_count] = default (T);
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -288,14 +302,17 @@ namespace LeopotamGroup.Collections {
         /// Reserve the specified amount of items, absolute or relative.
         /// </summary>
         /// <param name="amount">Amount.</param>
-        /// <param name="totalAmount">Is amount value means - total items amount at collection or relative otherwise.</param>
-        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for optimization).</param>
+        /// <param name="totalAmount">Is amount value means - total items amount at collection or relative
+        // otherwise.</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
+        // optimization).</param>
         public void Reserve (int amount, bool totalAmount = false, bool forceSetDefaultValues = true) {
             if (amount <= 0) {
                 return;
             }
             var start = totalAmount ? 0 : _count;
             var newCount = start + amount;
+
             if (newCount > _capacity) {
                 if (_capacity <= 0) {
                     _capacity = InitCapacity;
@@ -304,12 +321,13 @@ namespace LeopotamGroup.Collections {
                     _capacity <<= 1;
                 }
                 var items = new T[_capacity];
+
                 Array.Copy (_items, items, _count);
                 _items = items;
             }
             if (forceSetDefaultValues) {
                 for (var i = _count; i < newCount; i++) {
-                    _items[i] = default(T);
+                    _items[i] = default (T);
                 }
             }
         }
@@ -320,6 +338,7 @@ namespace LeopotamGroup.Collections {
         public void Reverse () {
             if (_count > 0) {
                 T temp;
+
                 for (int i = 0, iMax = _count >> 1; i < iMax; i++) {
                     temp = _items[i];
                     _items[i] = _items[_count - i - 1];
@@ -333,9 +352,11 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         public T[] ToArray () {
             var target = new T[_count];
+
             if (_count > 0) {
                 Array.Copy (_items, target, _count);
             }
+
             return target;
         }
     }

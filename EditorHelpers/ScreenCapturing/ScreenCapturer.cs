@@ -1,16 +1,17 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 #if UNITY_EDITOR
 
-using System;
-using System.Collections;
+using LeopotamGroup.Math;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Reflection;
-using LeopotamGroup.Math;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,8 +21,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
     /// </summary>
     [ExecuteInEditMode]
     sealed class ScreenCapturer : MonoBehaviour {
-        static readonly List<Vector2i> _resList = new List<Vector2i>
-        {
+        static readonly List<Vector2i> _resList = new List<Vector2i> {
             new Vector2i (800, 480),
             new Vector2i (960, 640),
             new Vector2i (1024, 768),
@@ -125,12 +125,12 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
 
                 var sizesType = typeof (Editor).Assembly.GetType ("UnityEditor.GameViewSizes");
                 _gvsCurrentGroup = sizesType.GetProperty ("currentGroup", BindingFlags.Instance | BindingFlags.Public);
-                var singleType = typeof (ScriptableSingleton<>).MakeGenericType (sizesType);
+                var singleType = typeof (ScriptableSingleton<> ).MakeGenericType (sizesType);
                 var instanceProp = singleType.GetProperty ("instance");
                 _gvsInstance = instanceProp.GetValue (null, null);
 
                 var gvsType = typeof (Editor).Assembly.GetType ("UnityEditor.GameViewSize");
-                _gvsCtor = gvsType.GetConstructor (new [] { typeof (int), typeof (int), typeof (int), typeof (string) });
+                _gvsCtor = gvsType.GetConstructor (new[] { typeof (int), typeof (int), typeof (int), typeof (string) });
             }
 
             static object GetCurrentGroup () {
@@ -149,7 +149,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
             public static int AddCustomPreset (int width, int height, string text) {
                 var grp = GetCurrentGroup ();
                 var newSize = _gvsCtor.Invoke (new object[] { 1, width, height, text });
-                _gvgAddCustomSize.Invoke (grp, new [] { newSize });
+                _gvgAddCustomSize.Invoke (grp, new[] { newSize });
                 return (int) _gvgGetTotalCount.Invoke (grp, null) - 1;
             }
 

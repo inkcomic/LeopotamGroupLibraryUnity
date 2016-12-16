@@ -1,11 +1,12 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,8 +31,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             Textures = 2048,
         }
 
-        static readonly Dictionary<int, List<string>> _paths = new Dictionary<int, List<string>>
-        {
+        static readonly Dictionary<int, List<string>> _paths = new Dictionary<int, List<string>> {
             { (int) Options.Scripts, new List<string> { "Editor" } },
             { (int) Options.Textures, new List<string> { "AppIcon", "UI" } }
         };
@@ -120,7 +120,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void GenerateItem (string rootFolder, int item, string cvsFileName) {
             var fullPath = (((int) RootOnlyOptions) & item) != 0 ?
-                Application.dataPath : Path.Combine (Application.dataPath, rootFolder);
+                           Application.dataPath : Path.Combine (Application.dataPath, rootFolder);
 
             fullPath = Path.Combine (fullPath, ((Options) item).ToString ());
             if (!Directory.Exists (fullPath)) {
@@ -160,7 +160,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     if ((int) (options & item) != 0) {
                         GenerateItem (rootFolder, (int) item, cvsFileName);
                     }
-                } 
+                }
                 AssetDatabase.Refresh ();
                 return null;
             } catch (Exception ex) {

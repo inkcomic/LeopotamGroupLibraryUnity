@@ -1,7 +1,8 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
 using System;
 using UnityEngine;
@@ -137,7 +138,8 @@ namespace LeopotamGroup.Math {
         /// <param name="lhs">First vector.</param>
         /// <param name="rhs">Second vector.</param>
         public static Vector4i Min (Vector4i lhs, Vector4i rhs) {
-            return new Vector4i (lhs.x < rhs.x ? lhs.x : rhs.x, lhs.x < rhs.x ? lhs.y : rhs.y, lhs.z < rhs.z ? lhs.z : rhs.z, lhs.w < rhs.w ? lhs.w : rhs.w);
+            return new Vector4i (lhs.x < rhs.x ? lhs.x : rhs.x, lhs.x < rhs.x ? lhs.y : rhs.y,
+                                 lhs.z < rhs.z ? lhs.z : rhs.z, lhs.w < rhs.w ? lhs.w : rhs.w);
         }
 
         /// <summary>
@@ -146,7 +148,8 @@ namespace LeopotamGroup.Math {
         /// <param name="lhs">First vector.</param>
         /// <param name="rhs">Second vector.</param>
         public static Vector4i Max (Vector4i lhs, Vector4i rhs) {
-            return new Vector4i (lhs.x > rhs.x ? lhs.x : rhs.x, lhs.x > rhs.x ? lhs.y : rhs.y, lhs.z > rhs.z ? lhs.z : rhs.z, lhs.w > rhs.w ? lhs.w : rhs.w);
+            return new Vector4i (lhs.x > rhs.x ? lhs.x : rhs.x, lhs.x > rhs.x ? lhs.y : rhs.y,
+                                 lhs.z > rhs.z ? lhs.z : rhs.z, lhs.w > rhs.w ? lhs.w : rhs.w);
         }
 
         /// <summary>
@@ -156,7 +159,8 @@ namespace LeopotamGroup.Math {
         /// <param name="min">Min value.</param>
         /// <param name="max">Max value.</param>
         public static Vector4i Clamp (Vector4i value, Vector4i min, Vector4i max) {
-            return new Vector4i (Mathf.Clamp (value.x, min.x, max.x), Mathf.Clamp (value.y, min.y, max.y), Mathf.Clamp (value.z, min.z, max.z), Mathf.Clamp (value.w, min.w, max.w));
+            return new Vector4i (Mathf.Clamp (value.x, min.x, max.x), Mathf.Clamp (value.y, min.y, max.y),
+                                 Mathf.Clamp (value.z, min.z, max.z), Mathf.Clamp (value.w, min.w, max.w));
         }
 
         public static bool operator == (Vector4i lhs, Vector4i rhs) {
@@ -184,7 +188,8 @@ namespace LeopotamGroup.Math {
         }
 
         public static Vector4i operator * (Vector4i lhs, float rhs) {
-            return new Vector4i (Mathf.RoundToInt (lhs.x * rhs), Mathf.RoundToInt (lhs.y * rhs), Mathf.RoundToInt (lhs.z * rhs), Mathf.RoundToInt (lhs.w * rhs));
+            return new Vector4i (Mathf.RoundToInt (lhs.x * rhs), Mathf.RoundToInt (lhs.y * rhs),
+                                 Mathf.RoundToInt (lhs.z * rhs), Mathf.RoundToInt (lhs.w * rhs));
         }
 
         public static Vector4i operator * (Vector4i lhs, Vector4i rhs) {

@@ -1,15 +1,15 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
-using System.Collections;
+using LeopotamGroup.Math;
 using System.Collections.Generic;
+using System.Collections;
 using System.Reflection;
 using System.Text;
-using LeopotamGroup.Common;
-using LeopotamGroup.Math;
+using System;
 
 namespace LeopotamGroup.Serialization {
     /// <summary>
@@ -56,8 +56,7 @@ namespace LeopotamGroup.Serialization {
 
         readonly StringBuilder _sb = new StringBuilder (1024);
 
-        readonly HashSet<Type> _numericTypes = new HashSet<Type>
-        {
+        readonly HashSet<Type> _numericTypes = new HashSet<Type> {
             typeof (byte), typeof (sbyte), typeof (short), typeof (ushort), typeof (int), typeof (uint),
             typeof (long), typeof (ulong), typeof (float), typeof (double)
         };
@@ -73,6 +72,7 @@ namespace LeopotamGroup.Serialization {
             if (obj == null) {
                 return;
             }
+
             // string
             var asStr = obj as string;
             if (asStr != null) {
@@ -105,6 +105,7 @@ namespace LeopotamGroup.Serialization {
                 _sb.Append (Convert.ChangeType (obj, typeof (int)));
                 return;
             }
+
             // array
             var list = obj as IList;
             if (list != null) {
@@ -120,6 +121,7 @@ namespace LeopotamGroup.Serialization {
                 _sb.Append ("]");
                 return;
             }
+
             // dict
             var dict = obj as IDictionary;
             if (dict != null) {
@@ -289,22 +291,22 @@ namespace LeopotamGroup.Serialization {
 
             object ParseByToken (JsonToken token) {
                 switch (token) {
-                    case JsonToken.String:
-                        return ParseString ();
-                    case JsonToken.Number:
-                        return ParseNumber ();
-                    case JsonToken.CurlyOpen:
-                        return ParseObject ();
-                    case JsonToken.SquaredOpen:
-                        return ParseArray ();
-                    case JsonToken.True:
-                        return true;
-                    case JsonToken.False:
-                        return false;
-                    case JsonToken.Null:
-                        return null;
-                    default:
-                        return null;
+                case JsonToken.String:
+                    return ParseString ();
+                case JsonToken.Number:
+                    return ParseNumber ();
+                case JsonToken.CurlyOpen:
+                    return ParseObject ();
+                case JsonToken.SquaredOpen:
+                    return ParseArray ();
+                case JsonToken.True:
+                    return true;
+                case JsonToken.False:
+                    return false;
+                case JsonToken.Null:
+                    return null;
+                default:
+                    return null;
                 }
             }
 
@@ -320,40 +322,42 @@ namespace LeopotamGroup.Serialization {
                         dictTypes = objType.GetGenericArguments ();
                     }
                 }
+
                 // {
                 GetNextChar ();
                 while (true) {
                     switch (PeekNextToken ()) {
-                        case JsonToken.None:
-                            return null;
-                        case JsonToken.Comma:
-                            continue;
-                        case JsonToken.CurlyClose:
-                            return v;
-                        default:
-                            // key :
-                            var name = ParseString ();
-                            if (name == null || PeekNextToken () != JsonToken.Colon) {
-                                throw new Exception ("Invalid object format");
-                            }
-                            GetNextChar ();
+                    case JsonToken.None:
+                        return null;
+                    case JsonToken.Comma:
+                        continue;
+                    case JsonToken.CurlyClose:
+                        return v;
+                    default:
 
-                            // value
-                            if (objType != null) {
-                                _type = dict != null ? dictTypes[1] : TypesCache.Instance.GetWantedType (objType, name);
-                            }
-                            var v1 = ParseValue ();
-                            if (objType != null) {
-                                if (v1 != null) {
-                                    if (dict != null) {
-                                        dict.Add (Convert.ChangeType (name, dictTypes[0], MathExtensions.UnifiedNumberFormat), v1);
-                                    } else {
-                                        TypesCache.Instance.SetValue (objType, name, v, v1);
-                                    }
+                        // key :
+                        var name = ParseString ();
+                        if (name == null || PeekNextToken () != JsonToken.Colon) {
+                            throw new Exception ("Invalid object format");
+                        }
+                        GetNextChar ();
+
+                        // value
+                        if (objType != null) {
+                            _type = dict != null ? dictTypes[1] : TypesCache.Instance.GetWantedType (objType, name);
+                        }
+                        var v1 = ParseValue ();
+                        if (objType != null) {
+                            if (v1 != null) {
+                                if (dict != null) {
+                                    dict.Add (Convert.ChangeType (name, dictTypes[0], MathExtensions.UnifiedNumberFormat), v1);
+                                } else {
+                                    TypesCache.Instance.SetValue (objType, name, v, v1);
                                 }
                             }
-                            _type = objType;
-                            break;
+                        }
+                        _type = objType;
+                        break;
                     }
                 }
             }
@@ -369,25 +373,26 @@ namespace LeopotamGroup.Serialization {
                     _type = itemType;
                     list = GetArrayItem ();
                 }
+
                 // [
                 GetNextChar ();
                 var parsing = true;
                 while (parsing) {
                     switch (PeekNextToken ()) {
-                        case JsonToken.None:
-                            return null;
-                        case JsonToken.Comma:
-                            continue;
-                        case JsonToken.SquaredClose:
-                            parsing = false;
-                            break;
-                        default:
-                            var v1 = ParseByToken (PeekNextToken ());
-                            if (arrType != null) {
-                                list.Add (Convert.ChangeType (v1, itemType, MathExtensions.UnifiedNumberFormat));
-                                _type = itemType;
-                            }
-                            break;
+                    case JsonToken.None:
+                        return null;
+                    case JsonToken.Comma:
+                        continue;
+                    case JsonToken.SquaredClose:
+                        parsing = false;
+                        break;
+                    default:
+                        var v1 = ParseByToken (PeekNextToken ());
+                        if (arrType != null) {
+                            list.Add (Convert.ChangeType (v1, itemType, MathExtensions.UnifiedNumberFormat));
+                            _type = itemType;
+                        }
+                        break;
                     }
                 }
                 object v = null;
@@ -412,6 +417,7 @@ namespace LeopotamGroup.Serialization {
             string ParseString () {
                 _stringBuf.Length = 0;
                 char c;
+
                 // "
                 GetNextChar ();
                 bool parsing = true;
@@ -421,46 +427,46 @@ namespace LeopotamGroup.Serialization {
                     }
                     c = GetNextChar ();
                     switch (c) {
+                    case '"':
+                        parsing = false;
+                        break;
+                    case '\\':
+                        if (JsonPeek () == -1) {
+                            throw new Exception ("Invalid string format");
+                        }
+                        c = GetNextChar ();
+                        switch (c) {
                         case '"':
-                            parsing = false;
-                            break;
                         case '\\':
-                            if (JsonPeek () == -1) {
-                                throw new Exception ("Invalid string format");
-                            }
-                            c = GetNextChar ();
-                            switch (c) {
-                                case '"':
-                                case '\\':
-                                case '/':
-                                    _stringBuf.Append (c);
-                                    break;
-                                case 'b':
-                                    _stringBuf.Append ('\b');
-                                    break;
-                                case 'f':
-                                    _stringBuf.Append ('\f');
-                                    break;
-                                case 'n':
-                                    _stringBuf.Append ('\n');
-                                    break;
-                                case 'r':
-                                    _stringBuf.Append ('\r');
-                                    break;
-                                case 't':
-                                    _stringBuf.Append ('\t');
-                                    break;
-                                case 'u':
-                                    for (int i = 0; i < 4; i++) {
-                                        _hexBuf[i] = GetNextChar ();
-                                    }
-                                    _stringBuf.Append ((char) Convert.ToInt32 (new string (_hexBuf), 16));
-                                    break;
-                            }
-                            break;
-                        default:
+                        case '/':
                             _stringBuf.Append (c);
                             break;
+                        case 'b':
+                            _stringBuf.Append ('\b');
+                            break;
+                        case 'f':
+                            _stringBuf.Append ('\f');
+                            break;
+                        case 'n':
+                            _stringBuf.Append ('\n');
+                            break;
+                        case 'r':
+                            _stringBuf.Append ('\r');
+                            break;
+                        case 't':
+                            _stringBuf.Append ('\t');
+                            break;
+                        case 'u':
+                            for (int i = 0; i < 4; i++) {
+                                _hexBuf[i] = GetNextChar ();
+                            }
+                            _stringBuf.Append ((char) Convert.ToInt32 (new string (_hexBuf), 16));
+                            break;
+                        }
+                        break;
+                    default:
+                        _stringBuf.Append (c);
+                        break;
                     }
                 }
                 return _stringBuf.ToString ();
@@ -519,43 +525,43 @@ namespace LeopotamGroup.Serialization {
                     return JsonToken.None;
                 }
                 switch ((char) JsonPeek ()) {
-                    case '{':
-                        return JsonToken.CurlyOpen;
-                    case '}':
-                        GetNextChar ();
-                        return JsonToken.CurlyClose;
-                    case '[':
-                        return JsonToken.SquaredOpen;
-                    case ']':
-                        GetNextChar ();
-                        return JsonToken.SquaredClose;
-                    case ',':
-                        GetNextChar ();
-                        return JsonToken.Comma;
-                    case '"':
-                        return JsonToken.String;
-                    case ':':
-                        return JsonToken.Colon;
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                    case '-':
-                        return JsonToken.Number;
+                case '{':
+                    return JsonToken.CurlyOpen;
+                case '}':
+                    GetNextChar ();
+                    return JsonToken.CurlyClose;
+                case '[':
+                    return JsonToken.SquaredOpen;
+                case ']':
+                    GetNextChar ();
+                    return JsonToken.SquaredClose;
+                case ',':
+                    GetNextChar ();
+                    return JsonToken.Comma;
+                case '"':
+                    return JsonToken.String;
+                case ':':
+                    return JsonToken.Colon;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '-':
+                    return JsonToken.Number;
                 }
                 switch (GetNextWord ()) {
-                    case "false":
-                        return JsonToken.False;
-                    case "true":
-                        return JsonToken.True;
-                    case "null":
-                        return JsonToken.Null;
+                case "false":
+                    return JsonToken.False;
+                case "true":
+                    return JsonToken.True;
+                case "null":
+                    return JsonToken.Null;
                 }
                 throw new Exception ("Invalid json");
             }

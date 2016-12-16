@@ -1,10 +1,11 @@
-﻿//-------------------------------------------------------
+﻿
+// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
-//-------------------------------------------------------
+// -------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace LeopotamGroup.Events {
@@ -18,12 +19,13 @@ namespace LeopotamGroup.Events {
 
         readonly HashSet<Type> _eventsInCall = new HashSet<Type> ();
 
-        readonly Dictionary<Type, List<object>> _eventSubscribersInCall = new Dictionary<Type, List<object>> ();
+        readonly Dictionary<Type, List<object> > _eventSubscribersInCall = new Dictionary<Type, List<object> > ();
 
         /// <summary>
         /// Subscribe callback to be raised on specific event.
         /// </summary>
-        /// <param name="eventAction">Callback. Should returns state - is event interrupted / should not be processed by next callbacks or not.</param>
+        /// <param name="eventAction">Callback. Should returns state - is event interrupted / should not be processed by
+        // next callbacks or not.</param>
         /// <param name="insertAsFirst">Is callback should be raised first in sequence.</param>
         public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) {
             if (eventAction == null) {
@@ -32,10 +34,10 @@ namespace LeopotamGroup.Events {
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (!_events.ContainsKey (eventType)) {
-                    _events[eventType] = new List<Func<T, bool>> ();
+                    _events[eventType] = new List<Func<T, bool> > ();
                     _eventSubscribersInCall[eventType] = new List<object> ();
                 }
-                var list = _events[eventType] as List<Func<T, bool>>;
+                var list = _events[eventType] as List<Func<T, bool> >;
                 if (list == null) {
                     Debug.LogError ("Cant subscribe to event: " + eventType.Name);
                     return;
@@ -62,7 +64,7 @@ namespace LeopotamGroup.Events {
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
-                    var list = _events[eventType] as List<Func<T, bool>>;
+                    var list = _events[eventType] as List<Func<T, bool> >;
                     if (list != null) {
                         var id = list.IndexOf (eventAction);
                         if (id != -1) {
@@ -86,7 +88,7 @@ namespace LeopotamGroup.Events {
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
                     if (keepEvent) {
-                        (_events[eventType] as List<Func<T, bool>>).Clear ();
+                        (_events[eventType] as List<Func<T, bool> >).Clear ();
                     } else {
                         _events.Remove (eventType);
                         _eventSubscribersInCall.Remove (eventType);
@@ -111,14 +113,15 @@ namespace LeopotamGroup.Events {
         /// <param name="eventMessage">Event message.</param>
         public void Publish<T> (T eventMessage) {
             var eventType = typeof (T);
-            List<Func<T, bool>> list = null;
+            List<Func<T, bool> > list = null;
             lock (_syncObj) {
                 if (_eventsInCall.Contains (eventType)) {
                     Debug.LogError ("Already in calling of " + eventType.Name);
                     return;
                 }
                 if (_events.ContainsKey (eventType)) {
-                    list = _events[eventType] as List<Func<T, bool>>;
+                    list = _events[eventType] as List<Func<T, bool> >;
+
                     // kept for no new GC alloc, but empty.
                     if (list.Count == 0) {
                         list = null;
@@ -137,7 +140,7 @@ namespace LeopotamGroup.Events {
                 }
                 try {
                     for (i = 0; i < iMax; i++) {
-                        if ((cacheList[i] as Func<T, bool>) (eventMessage)) {
+                        if ((cacheList[i] as Func<T, bool>)(eventMessage)) {
                             // Event was interrupted / processed, we can exit.
                             return;
                         }
