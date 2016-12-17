@@ -81,7 +81,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (_allDescs.Count > 0) {
                 try {
                     ProjectPrefs.SetString (StorageKey, Singleton.Get<JsonSerialization> ().Serialize (_allDescs));
-                } catch {
+                } catch (Exception ex) {
+                    Debug.LogWarning ("FolderIconEditor.SaveInfo: " + ex.Message);
                 }
             } else {
                 ProjectPrefs.DeleteKey (StorageKey);
@@ -94,6 +95,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 var icon = GetCustomIcon (guid);
                 if (icon != null) {
                     if (rect.width > rect.height) {
+                        // dirty fix for unity 5.5.
+                        rect.x += 3;
+
                         rect.width = rect.height;
                     } else {
                         rect.height = rect.width;
@@ -184,8 +188,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         void OnLostFocus () {
-            SaveInfo ();
             Close ();
+        }
+
+        void OnDisable () {
+            SaveInfo ();
         }
     }
 }
