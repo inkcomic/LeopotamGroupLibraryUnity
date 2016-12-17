@@ -134,15 +134,14 @@ namespace LeopotamGroup.Common {
                 return (T) retVal;
             }
 
-#if UNITY_EDITOR
-            if (!Application.isPlaying) {
-                throw new UnityException (
-                          string.Format ("UnitySingleton<{0}> can be used only at PLAY mode", type.Name));
-            }
-#endif
-
             // special case for unity components.
             if (type.IsSubclassOf (typeof (Component))) {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) {
+                    throw new UnityException (
+                              string.Format ("Singleton<{0}> can be used only at PLAY mode", type.Name));
+                }
+#endif
                 new GameObject (
 #if UNITY_EDITOR
                     "_SINGLETON_" + type.Name
