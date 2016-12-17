@@ -18,8 +18,6 @@ namespace LeopotamGroup.Serialization {
 
         readonly List<string> _tokens = new List<string> (8);
 
-        static readonly CsvSerialization _instance = new CsvSerialization ();
-
         void ParseLine (string data) {
             _tokens.Clear ();
 
@@ -59,7 +57,7 @@ namespace LeopotamGroup.Serialization {
                     }
                     if (headerLen == -1) {
                         headerLen = _tokens.Count;
-                        if (headerLen < 2) {
+                        if (headerLen < 1) {
 #if UNITY_EDITOR
                             Debug.LogWarning ("Invalid csv header.");
 #endif
@@ -78,18 +76,6 @@ namespace LeopotamGroup.Serialization {
                 }
             }
             return list;
-        }
-
-        /// <summary>
-        /// Deserialize csv data from raw string source with singleton csv deserializator.
-        /// </summary>
-        /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as
-        // Value.</returns>
-        /// <param name="data">Raw text data.</param>
-        /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
-        public static Dictionary<string, string[]> DeserializeStatic (
-            string data, Dictionary<string, string[]> list = null) {
-            return _instance.Deserialize (data, list);
         }
     }
 }

@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
+using LeopotamGroup.Common;
 using LeopotamGroup.EditorHelpers;
 using LeopotamGroup.Serialization;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         void Load () {
             try {
-                _paths = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (
+                _paths = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, string>> (
                     ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
                 if (_paths == null) {
                     throw new Exception ();
@@ -52,7 +53,7 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         void Save () {
             if (_paths != null) {
-                ProjectPrefs.SetString (ProjectPrefsKey, JsonSerialization.SerializeStatic (_paths));
+                ProjectPrefs.SetString (ProjectPrefsKey, Singleton.Get<JsonSerialization> ().Serialize (_paths));
             }
         }
 

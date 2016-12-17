@@ -67,8 +67,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void LoadInfo () {
             try {
-                _allDescs =
-                    JsonSerialization.DeserializeStatic<Dictionary<string, FolderIconDesc>> (ProjectPrefs.GetString (StorageKey, "{}"));
+                _allDescs = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, FolderIconDesc>> (
+                    ProjectPrefs.GetString (StorageKey, "{}"));
                 if (_allDescs == null) {
                     throw new Exception ();
                 }
@@ -80,7 +80,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         static void SaveInfo () {
             if (_allDescs.Count > 0) {
                 try {
-                    ProjectPrefs.SetString (StorageKey, JsonSerialization.SerializeStatic (_allDescs));
+                    ProjectPrefs.SetString (StorageKey, Singleton.Get<JsonSerialization> ().Serialize (_allDescs));
                 } catch {
                 }
             } else {

@@ -50,8 +50,6 @@ namespace LeopotamGroup.Serialization {
     /// Json serialization.
     /// </summary>
     public partial class JsonSerialization {
-        static readonly JsonSerialization _instance = new JsonSerialization ();
-
         Reader _reader;
 
         readonly StringBuilder _sb = new StringBuilder (1024);
@@ -214,25 +212,6 @@ namespace LeopotamGroup.Serialization {
             _reader.SetType (typeof (T));
             _reader.SetJson (json);
             return (T) _reader.ParseValue ();
-        }
-
-        /// <summary>
-        /// Serialize specified object to json-data with singleton json serializator.
-        /// </summary>
-        /// <returns>Json data string.</returns>
-        /// <param name="obj">Object to serialize.</param>
-        public static string SerializeStatic (object obj) {
-            return _instance.Serialize (obj);
-        }
-
-        /// <summary>
-        /// Deserialize json to instance of strong-typed class with singleton json serializator.
-        /// </summary>
-        /// <returns>Deserialized instance.</returns>
-        /// <param name="json">Json data.</param>
-        /// <typeparam name="T">Type of instance for deserialization.</typeparam>
-        public static T DeserializeStatic<T> (string json) {
-            return _instance.Deserialize<T> (json);
         }
 
         class Reader {

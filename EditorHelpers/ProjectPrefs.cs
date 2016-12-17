@@ -6,6 +6,7 @@
 
 #if UNITY_EDITOR
 
+using LeopotamGroup.Common;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace LeopotamGroup.EditorHelpers {
             }
             if (_data == null) {
                 try {
-                    _data = JsonSerialization.DeserializeStatic<Dictionary<string, string>> (File.ReadAllText (_storeFile));
+                    _data = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, string>> (File.ReadAllText (_storeFile));
                     if (_data == null) {
                         throw new UnityException ();
                     }
@@ -44,7 +45,7 @@ namespace LeopotamGroup.EditorHelpers {
         static void SaveData () {
             try {
                 if (_data.Count > 0) {
-                    File.WriteAllText (_storeFile, JsonSerialization.SerializeStatic (_data));
+                    File.WriteAllText (_storeFile, Singleton.Get<JsonSerialization> ().Serialize (_data));
                 } else {
                     if (File.Exists (_storeFile)) {
                         File.Delete (_storeFile);
