@@ -97,7 +97,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     if (rect.width > rect.height) {
                         // dirty fix for unity 5.5.
                         rect.x += 3;
-
                         rect.width = rect.height;
                     } else {
                         rect.height = rect.width;

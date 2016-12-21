@@ -11,7 +11,7 @@ using UnityEditor;
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     static class ShaderTemplateGenerator {
         const string ShaderTemplate =
-            "Shader \"Custom/Unlit<<TYPE>>\"{\tProperties{\t\t_MainTex(\"Texture\", 2D)=\"white\" <<>>\n\t}\n\n\tSubShader{" +
+            "Shader \"Custom/Unlit<<TYPE>>\"{\tProperties{\t\t_MainTex(\"Texture\",2D)=\"white\" <<>>\n\t}\n\n\tSubShader{" +
             "\t\tTags <<\"RenderType\"=\"<<TYPE>>\" \"Queue\"=\"<<QUEUE>>\" \"IgnoreProjector\"=\"True\" " +
             "\"ForceNoShadowCasting\"=\"True\">>\n\t\tLOD 100\n\n<<SHADERFLAGS>>\t\tCGINCLUDE\n\t\t#include \"UnityCG.cginc\"\n\n" +
             "\t\tsampler2D _MainTex;\t\tfloat4 _MainTex_ST;\n\t\tstruct v2f{\t\t\tfloat4 pos:SV_POSITION;" +
