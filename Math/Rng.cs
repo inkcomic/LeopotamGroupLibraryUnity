@@ -21,8 +21,6 @@ namespace LeopotamGroup.Math {
 
         const ulong LowerMask = 0x7fffffffUL;
 
-        static readonly Rng _instance = new Rng ();
-
         readonly ulong[] _mt = new ulong[N];
 
         readonly ulong[] _mag01 = { 0x0UL, MatrixA };
@@ -127,53 +125,6 @@ namespace LeopotamGroup.Math {
                 max = t;
             }
             return min + GetFloat (includeMax) * (max - min);
-        }
-
-        /// <summary>
-        /// Set new seed for singleton rng.
-        /// </summary>
-        /// <returns>The seed static.</returns>
-        /// <param name="seed">Seed.</param>
-        public static void SetSeedStatic (long seed) {
-            _instance.SetSeed (seed);
-        }
-
-        /// <summary>
-        /// Get int32 random number from range [0, n) from singleton rng.
-        /// </summary>
-        /// <returns>Random int32.</returns>
-        /// <param name="n">.</param>
-        public static int GetInt32Static (int n) {
-            return _instance.GetInt32 (n);
-        }
-
-        /// <summary>
-        /// Get int32 random number from range [min, max) from singleton rng.
-        /// </summary>
-        /// <returns>Random int32 value.</returns>
-        /// <param name="min">Min value.</param>
-        /// <param name="max">Max value (excluded).</param>
-        public static int GetInt32Static (int min, int max) {
-            return _instance.GetInt32 (min, max);
-        }
-
-        /// <summary>
-        /// Get float random number from range [0, 1) or [0, 1] for includeOne=true from singleton rng.
-        /// </summary>
-        /// <param name="includeOne">Include 1 value for searching.</param>
-        public static float GetFloatStatic (bool includeOne = true) {
-            return _instance.GetFloat (includeOne);
-        }
-
-        /// <summary>
-        /// Get float random number from range [min, max) or [min, max] for includeMax=true from singleton rng.
-        /// </summary>
-        /// <returns>The float.</returns>
-        /// <param name="min">Min value.</param>
-        /// <param name="max">Max value.</param>
-        /// <param name="includeMax">Include max value for searching.</param>
-        public static float GetFloatStatic (float min, float max, bool includeMax = true) {
-            return _instance.GetFloat (min, max, includeMax);
         }
     }
 }
