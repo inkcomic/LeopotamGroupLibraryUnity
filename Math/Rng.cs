@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using UnityEngine;
-
 namespace LeopotamGroup.Math {
     /// <summary>
     /// Rng generator, mersenne twister based.
@@ -30,7 +28,7 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Default initialization.
         /// </summary>
-        public Rng () : this ((long) (Time.realtimeSinceStartup * 100000)) {
+        public Rng () : this ((long) (System.Environment.TickCount)) {
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace LeopotamGroup.Math {
         /// </summary>
         /// <returns>Random int32 value.</returns>
         /// <param name="max">Max value (excluded).</param>
-        public int GetInt32 (int max) {
+        public int GetInt (int max) {
             return (int) (GetRandomUInt32 () * (max / 4294967296.0));
         }
 
@@ -94,13 +92,11 @@ namespace LeopotamGroup.Math {
         /// <returns>Random int32 value.</returns>
         /// <param name="min">Min value.</param>
         /// <param name="max">Max value (excluded).</param>
-        public int GetInt32 (int min, int max) {
+        public int GetInt (int min, int max) {
             if (min > max) {
-                var t = min;
-                min = max;
-                max = t;
+                return min;
             }
-            return min + GetInt32 (max - min);
+            return min + GetInt (max - min);
         }
 
         /// <summary>
@@ -120,9 +116,7 @@ namespace LeopotamGroup.Math {
         /// <param name="includeMax">Include max value for searching.</param>
         public float GetFloat (float min, float max, bool includeMax = true) {
             if (min > max) {
-                var t = min;
-                min = max;
-                max = t;
+                return min;
             }
             return min + GetFloat (includeMax) * (max - min);
         }
