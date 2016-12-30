@@ -30,18 +30,16 @@ namespace LeopotamGroup.Collections {
         /// <param name="index">Index.</param>
         public T this[int index] {
             get {
-                if (index < _count) {
-                    return _items[index];
+                if (index >= _count) {
+                    throw new ArgumentOutOfRangeException ();
                 }
-                throw new ArgumentOutOfRangeException ();
+                return _items[index];
             }
             set {
-                if (index < _count) {
-                    _items[index] = value;
-
-                    return;
+                if (index >= _count) {
+                    throw new ArgumentOutOfRangeException ();
                 }
-                throw new ArgumentOutOfRangeException ();
+                _items[index] = value;
             }
         }
 
@@ -98,7 +96,7 @@ namespace LeopotamGroup.Collections {
         /// <param name="data">Data.</param>
         public void AddRange (IEnumerable<T> data) {
             if (data == null) {
-                throw new  ArgumentNullException ("data");
+                throw new ArgumentNullException ("data");
             }
             var casted = data as ICollection<T>;
 
@@ -126,7 +124,7 @@ namespace LeopotamGroup.Collections {
         /// <param name="count">Count.</param>
         public void AssignData (T[] data, int count) {
             if (data == null) {
-                throw new  ArgumentNullException ("data");
+                throw new ArgumentNullException ("data");
             }
             _items = data;
             _count = count >= 0 ? count : 0;
