@@ -131,7 +131,7 @@ Simple tweening.
 Examples moved to [separate repository](https://github.com/Leopotam/LeopotamGroupLibraryUnity.Examples/)
 
 ## LICENSE
-Copyright (c) 2012-2016 Leopotam <leopotam@gmail.com>
+Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
