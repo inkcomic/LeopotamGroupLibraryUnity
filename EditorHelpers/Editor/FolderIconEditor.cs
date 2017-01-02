@@ -133,9 +133,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         static void OpenUI () {
             var path = AssetDatabase.GetAssetPath (Selection.activeObject);
             if (!string.IsNullOrEmpty (path) && AssetDatabase.IsValidFolder (path)) {
-                var win = GetWindow<FolderIconEditor> ();
+                var win = GetWindow<FolderIconEditor> (true);
                 win.Init (path);
-                win.ShowUtility ();
             } else {
                 EditorUtility.DisplayDialog (Title, "Select valid folder first", "Close");
             }
@@ -152,6 +151,10 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             _folderPath = folderPath;
             _folderGuid = AssetDatabase.AssetPathToGUID (_folderPath);
             _folderDesc = GetCustomIcon (_folderGuid) ?? new FolderIconDesc ();
+        }
+
+        void OnEnable () {
+            titleContent.text = Title;
         }
 
         void OnGUI () {

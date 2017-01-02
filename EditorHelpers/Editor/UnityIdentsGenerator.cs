@@ -69,7 +69,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         [MenuItem ("Window/LeopotamGroupLibrary/UnityIdents generator...")]
         static void InitGeneration () {
-            GetWindow<UnityIdentsGenerator> ();
+            GetWindow<UnityIdentsGenerator> (true);
         }
 
         void OnEnable () {

@@ -58,7 +58,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         [MenuItem ("Window/LeopotamGroupLibrary/Project folders generator...")]
         static void InitGeneration () {
-            var win = GetWindow<ProjectFoldersGenerator> ();
+            var win = GetWindow<ProjectFoldersGenerator> (true);
             win.Reset ();
         }
 

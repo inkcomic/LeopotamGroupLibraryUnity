@@ -5,23 +5,30 @@
 // -------------------------------------------------------
 
 using LeopotamGroup.Common;
-using LeopotamGroup.EditorHelpers;
 using LeopotamGroup.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Text;
 using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace LeopotamGroup.Localization.UnityEditors {
-    sealed class LocalizationUpdater : EditorWindow {
-        const string Title = "Locale updater";
+namespace LeopotamGroup.EditorHelpers.UnityEditors {
+    /// <summary>
+    /// Downloader from google docs sheets.
+    /// </summary>
+    sealed class GoogleDocsCsvDownloader : EditorWindow {
+        const string Title = "CSV downloader";
 
-        const string ProjectPrefsKey = "lg.localization.auto-update";
+        const string ProjectPrefsKey = "lg.external-csv.update";
 
         const string UrlDefault = "http://localhost";
+
+        const string ResDefault = "NewCsv.csv";
+
+        static readonly Regex _csvMultilineRegex = new Regex ("\"([^\"]|\"\"|\\n)*\"");
 
         Dictionary<string, string> _paths;
 
@@ -29,9 +36,11 @@ namespace LeopotamGroup.Localization.UnityEditors {
 
         string _newUrl;
 
-        [MenuItem ("Window/LeopotamGroupLibrary/Update CSV-data from (for ex. localization)...")]
+        string _newRes;
+
+        [MenuItem ("Window/LeopotamGroupLibrary/Download external CSV-data...")]
         static void OpenEditorWindow () {
-            GetWindow<LocalizationUpdater> ();
+            GetWindow<GoogleDocsCsvDownloader> (true);
         }
 
         void OnEnable () {
@@ -65,43 +74,55 @@ namespace LeopotamGroup.Localization.UnityEditors {
             if (_paths == null) {
                 Load ();
             }
+
+            if (string.IsNullOrEmpty (_newUrl)) {
+                _newUrl = UrlDefault;
+            }
+            if (string.IsNullOrEmpty (_newRes)) {
+                _newRes = ResDefault;
+            }
+
             if (_paths.Count > 0) {
-                GUILayout.BeginScrollView (_scrollPos);
-                var removed = false;
+                EditorGUILayout.LabelField ("List of csv resources", EditorStyles.boldLabel);
+                GUILayout.BeginScrollView (_scrollPos, false, true);
                 foreach (var key in new List<string> (_paths.Keys)) {
-                    GUILayout.BeginHorizontal ();
+                    GUILayout.BeginHorizontal (GUI.skin.textArea);
+                    GUILayout.BeginVertical ();
                     EditorGUILayout.LabelField ("Url:", key);
-                    if (GUILayout.Button ("Remove")) {
+                    _paths[key] = EditorGUILayout.TextField ("Resources file:", _paths[key]).Trim ();
+                    GUILayout.EndVertical ();
+                    if (GUILayout.Button ("Remove", GUILayout.Width (80f), GUILayout.Height (32f))) {
                         _paths.Remove (key);
-                        removed = true;
                     }
                     GUILayout.EndHorizontal ();
-                    if (!removed) {
-                        _paths[key] = EditorGUILayout.TextField ("Resources file:", _paths[key]).Trim ();
-                    } else {
-                        removed = false;
-                    }
                 }
                 GUILayout.EndScrollView ();
             }
 
-            GUILayout.BeginHorizontal ();
-            if (string.IsNullOrEmpty (_newUrl)) {
-                _newUrl = UrlDefault;
-            }
-            _newUrl = EditorGUILayout.TextField ("New url:", _newUrl).Trim ();
+            GUILayout.Space (4f);
+            GUILayout.BeginHorizontal (GUI.skin.box);
+            GUILayout.BeginVertical ();
+            EditorGUILayout.LabelField ("New external csv", EditorStyles.boldLabel);
+            _newUrl = EditorGUILayout.TextField ("Url path:", _newUrl).Trim ();
+            _newRes = EditorGUILayout.TextField ("Res path:", _newRes).Trim ();
+            GUILayout.EndVertical ();
             GUI.enabled = !_paths.ContainsKey (_newUrl);
-            if (GUILayout.Button ("Add")) {
+            if (GUILayout.Button ("Add", GUILayout.Width (80f), GUILayout.Height (52f))) {
                 _paths.Add (_newUrl, string.Empty);
                 _newUrl = UrlDefault;
+                _newRes = ResDefault;
             }
             GUI.enabled = true;
             GUILayout.EndHorizontal ();
+            EditorGUILayout.EndFadeGroup ();
+            GUILayout.Space (4f);
 
-            if (GUILayout.Button ("Process")) {
+            GUI.enabled = _paths.Count > 0;
+            if (GUILayout.Button ("Update data from external urls", GUILayout.Height (30f))) {
                 var res = Process (_paths);
                 EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }
+            GUI.enabled = true;
         }
 
         public static string Process (Dictionary<string, string> paths) {
@@ -125,6 +146,12 @@ namespace LeopotamGroup.Localization.UnityEditors {
                             if (!Directory.Exists (folder)) {
                                 Directory.CreateDirectory (folder);
                             }
+
+                            // Fix for multiline string.
+                            data = _csvMultilineRegex.Replace (data, m => {
+                                return m.Value.Replace ("\n", "\\n");
+                            });
+
                             File.WriteAllText (path, data, Encoding.UTF8);
                         }
                     }
