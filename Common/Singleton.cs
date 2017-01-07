@@ -134,6 +134,18 @@ namespace LeopotamGroup.Common {
                 return (T) retVal;
             }
 
+            // special case for unity scriptable objects
+            if (type.IsSubclassOf (typeof (ScriptableObject))) {
+                var list = Resources.FindObjectsOfTypeAll (type);
+                if (list == null || list.Length == 0) {
+                    throw new UnityException (
+                              string.Format ("Singleton<{0}> can be used only with created asset of this type at resources", type.Name));
+                }
+                var obj = list[0] as T;
+                _instancesPool[type] = obj;
+                return obj;
+            }
+
             // special case for unity components.
             if (type.IsSubclassOf (typeof (Component))) {
 #if UNITY_EDITOR
