@@ -22,16 +22,6 @@ namespace LeopotamGroup.Math {
         /// </summary>
         public Vector2i Max;
 
-        /// <summary>
-        /// Size of bounds. Warning - bounds should be validated before.
-        /// </summary>
-        public Vector2i Size { get { return new Vector2i (Max.x - Min.x, Max.y - Min.y); } }
-
-        /// <summary>
-        /// Center of bounds. Warning - bounds should be validated before.
-        /// </summary>
-        public Vector2i Center { get { return new Vector2i ((Min.x + Max.x) / 2, (Min.y + Max.y) / 2); } }
-
         public Bounds2i (Vector2i min, Vector2i max) {
             Min = min;
             Max = max;
