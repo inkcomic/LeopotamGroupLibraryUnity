@@ -30,15 +30,19 @@ namespace LeopotamGroup.Collections {
         /// <param name="index">Index.</param>
         public T this[int index] {
             get {
+#if UNITY_EDITOR
                 if (index >= _count) {
                     throw new ArgumentOutOfRangeException ();
                 }
+#endif
                 return _items[index];
             }
             set {
+#if UNITY_EDITOR
                 if (index >= _count) {
                     throw new ArgumentOutOfRangeException ();
                 }
+#endif
                 _items[index] = value;
             }
         }
