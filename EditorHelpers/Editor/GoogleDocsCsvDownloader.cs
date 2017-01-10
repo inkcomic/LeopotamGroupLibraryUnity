@@ -61,8 +61,10 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         void Save () {
-            if (_paths != null) {
+            if (_paths != null && _paths.Count > 0) {
                 ProjectPrefs.SetString (ProjectPrefsKey, Singleton.Get<JsonSerialization> ().Serialize (_paths));
+            } else {
+                ProjectPrefs.DeleteKey (ProjectPrefsKey);
             }
         }
 
