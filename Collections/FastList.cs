@@ -30,26 +30,22 @@ namespace LeopotamGroup.Collections {
         /// <param name="index">Index.</param>
         public T this[int index] {
             get {
-#if UNITY_EDITOR
                 if (index >= _count) {
                     throw new ArgumentOutOfRangeException ();
                 }
-#endif
                 return _items[index];
             }
             set {
-#if UNITY_EDITOR
                 if (index >= _count) {
                     throw new ArgumentOutOfRangeException ();
                 }
-#endif
                 _items[index] = value;
             }
         }
 
-        const int InitCapacity = 4;
+        const int InitCapacity = 8;
 
-        readonly bool _isNullable;
+        bool _isNullable;
 
         T[] _items;
 
@@ -57,20 +53,31 @@ namespace LeopotamGroup.Collections {
 
         int _capacity;
 
+        EqualityComparer<T> _comparer;
+
+        bool _useObjectCastComparer;
+
         ///<summary>
-        ///Default constructor.
+        /// Default constructor.
         ///</summary>
-        public FastList () : this (InitCapacity) { }
+        public FastList () : this (null) { }
+
+        /// <summary>
+        /// Constructor with comparer initialization.
+        /// </summary>
+        /// <param name="comparer">Comparer. If null - EqualityComparer<T>.Default comparer will be used.</param>
+        public FastList (EqualityComparer<T> comparer) : this (InitCapacity, comparer) { }
 
         /// <summary>
         /// Constructor with capacity initialization.
         /// </summary>
         /// <param name="capacity">Capacity on start.</param>
-        public FastList (int capacity) {
+        public FastList (int capacity, EqualityComparer<T> comparer = null) {
             var type = typeof (T);
             _isNullable = !type.IsValueType || (Nullable.GetUnderlyingType (type) != null);
             _capacity = capacity > InitCapacity ? capacity : InitCapacity;
             _count = 0;
+            _comparer = comparer;
             _items = new T[_capacity];
         }
 
@@ -136,25 +143,19 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Clear collection without release memory for performance optimization. Similar as Clear(true) call for
-        // reference T-type.
+        /// Clear collection without release memory for performance optimization.
         /// </summary>
         public void Clear () {
-            if (_isNullable) {
-                for (var i = _count - 1; i >= 0; i--) {
-                    _items[i] = default (T);
-                }
-            }
-            _count = 0;
+            Clear (false);
         }
 
         /// <summary>
         /// Clear collection without release memory for performance optimization.
         /// </summary>
-        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
-        // optimization).</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values.
+        /// Ignored (set to true) for reference types.</param>
         public void Clear (bool forceSetDefaultValues) {
-            if (forceSetDefaultValues) {
+            if (_isNullable || forceSetDefaultValues) {
                 for (var i = _count - 1; i >= 0; i--) {
                     _items[i] = default (T);
                 }
@@ -167,7 +168,25 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="item">Item to check.</param>
         public bool Contains (T item) {
-            return Array.IndexOf<T> (_items, item) != -1;
+            var i = _count - 1;
+            if (_useObjectCastComparer && _isNullable) {
+                for (; i >= 0; i--) {
+                    if ((object) _items[i] == (object) item) {
+                        break;
+                    }
+                }
+            } else {
+                if (_comparer != null) {
+                    for (; i >= 0; i--) {
+                        if (_comparer.Equals (_items[i], item)) {
+                            break;
+                        }
+                    }
+                } else {
+                    i = Array.IndexOf<T> (_items, item, 0, _count);
+                }
+            }
+            return i != -1;
         }
 
         /// <summary>
@@ -213,7 +232,7 @@ namespace LeopotamGroup.Collections {
         /// <param name="index">Index.</param>
         /// <param name="item">Item.</param>
         public void Insert (int index, T item) {
-            throw new NotImplementedException ();
+            throw new NotSupportedException ();
         }
 
         /// <summary>
@@ -243,15 +262,15 @@ namespace LeopotamGroup.Collections {
         }
 
         /// <summary>
-        /// Not implemented.
+        /// Never ever - use for loop for iterations!
         /// </summary>
         /// <returns>The enumerator.</returns>
         public IEnumerator<T> GetEnumerator () {
-            throw new NotImplementedException ();
+            throw new NotSupportedException ();
         }
 
         IEnumerator IEnumerable.GetEnumerator () {
-            throw new NotImplementedException ();
+            throw new NotSupportedException ();
         }
 
         /// <summary>
@@ -360,6 +379,15 @@ namespace LeopotamGroup.Collections {
             }
 
             return target;
+        }
+
+        /// <summary>
+        /// Set usage state of special (fastest) inlined comparer for nullable types in Contains method.
+        /// Useful for MonoBehaviour-inherited classes.
+        /// </summary>
+        /// <param name="state">New state of usage.</param>
+        public void UseCastToObjectComparer (bool state) {
+            _useObjectCastComparer = state;
         }
     }
 }

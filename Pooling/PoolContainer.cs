@@ -4,7 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using System.Collections.Generic;
+using LeopotamGroup.Collections;
 using UnityEngine;
 
 namespace LeopotamGroup.Pooling {
@@ -18,7 +18,7 @@ namespace LeopotamGroup.Pooling {
         [SerializeField]
         Transform _itemsRoot;
 
-        readonly Stack<IPoolObject> _store = new Stack<IPoolObject> (64);
+        FastStack<IPoolObject> _store = new FastStack<IPoolObject> (32);
 
         Object _cachedAsset;
 
@@ -39,6 +39,8 @@ namespace LeopotamGroup.Pooling {
             }
 
             _cachedScale = go.transform.localScale;
+
+            _store.UseCastToObjectComparer (true);
 
             return true;
         }
@@ -91,7 +93,7 @@ namespace LeopotamGroup.Pooling {
         public void Recycle (IPoolObject obj) {
             if ((object) obj != null) {
 #if UNITY_EDITOR
-                if (obj.PoolContainer != this) {
+                if ((object) obj.PoolContainer != (object) this) {
                     Debug.LogWarning ("Invalid obj to recycle", (Object) obj);
                     return;
                 }
