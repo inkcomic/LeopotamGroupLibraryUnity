@@ -17,8 +17,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
     [CanEditMultipleObjects]
     [CustomEditor (typeof (UnityEngine.Object), true, isFallback = true)]
     sealed class DefaultComponentInspector : Editor {
-        const float ExpandButtonWidth = 22f;
-
         static Dictionary<string, ReorderableListProperty> _reorderableLists;
 
         void OnEnable () {
@@ -39,24 +37,18 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             var savedColor = GUI.color;
             var savedEnabled = GUI.enabled;
             var property = serializedObject.GetIterator ();
-            var isDirty = false;
             var isValid = property.NextVisible (true);
             if (isValid) {
                 do {
                     GUI.color = savedColor;
                     GUI.enabled = savedEnabled;
-                    isDirty |= ProcessProperty (property);
+                    DrawProperty (property);
                 } while (property.NextVisible (false));
             }
             serializedObject.ApplyModifiedProperties ();
-
-            if (isDirty) {
-                EditorUtility.SetDirty (target);
-                Repaint ();
-            }
         }
 
-        bool ProcessProperty (SerializedProperty property) {
+        void DrawProperty (SerializedProperty property) {
             if (property.name.Equals ("m_Script") &&
                 property.type.Equals ("PPtr<MonoScript>") &&
                 property.propertyType == SerializedPropertyType.ObjectReference &&
@@ -64,26 +56,29 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 GUI.enabled = false;
             }
             if (property.isArray && property.propertyType != SerializedPropertyType.String) {
-                return ProcessArray (property);
+                DrawArray (property);
+            } else {
+                EditorGUILayout.PropertyField (property, true);
             }
-            EditorGUILayout.PropertyField (property, true);
-            return false;
         }
 
-        bool ProcessArray (SerializedProperty property) {
-            if (!property.isExpanded) {
-                var isExpanding = false;
-                EditorGUILayout.BeginHorizontal ();
-                if (GUILayout.Button ("\u25bc", GUILayout.Width (ExpandButtonWidth))) {
-                    property.isExpanded = !property.isExpanded;
-                    isExpanding = true;
-                }
-                EditorGUILayout.LabelField (property.displayName, EditorStyles.boldLabel);
-                EditorGUILayout.EndHorizontal ();
-                return isExpanding;
+        void DrawArray (SerializedProperty property) {
+            if (EditorGUILayout.Foldout (property.isExpanded, property.displayName, true) != property.isExpanded) {
+                property.isExpanded = !property.isExpanded;
             }
-            GetReorderableList (property).List.DoLayoutList ();
-            return !property.isExpanded;
+            if (property.isExpanded) {
+                GetReorderableList (property).List.DoLayoutList ();
+            }
+        }
+
+        public static void DrawReorderableList (ReorderableListProperty listProperty) {
+            var prop = listProperty.Property;
+            if (EditorGUILayout.Foldout (prop.isExpanded, prop.displayName, true) != prop.isExpanded) {
+                prop.isExpanded = !prop.isExpanded;
+            }
+            if (prop.isExpanded) {
+                listProperty.List.DoLayoutList ();
+            }
         }
 
         ReorderableListProperty GetReorderableList (SerializedProperty property) {
@@ -97,7 +92,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             return retVal;
         }
 
-        class ReorderableListProperty : IDisposable {
+        public class ReorderableListProperty : IDisposable {
             public ReorderableList List { get; private set; }
 
             public SerializedProperty Property {
@@ -106,23 +101,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             }
 
             public ReorderableListProperty (SerializedProperty property) {
-                List = new ReorderableList (property.serializedObject, property, true, true, true, true);
-                List.drawHeaderCallback += OnDrawHeader;
+                List = new ReorderableList (property.serializedObject, property, true, false, true, true);
+                List.headerHeight = 0f;
                 List.onCanRemoveCallback += OnCanRemove;
                 List.drawElementCallback += OnDrawElement;
                 List.elementHeightCallback += OnElementHeight;
-            }
-
-            void OnDrawHeader (Rect rect) {
-                var oldWidth = rect.width;
-                rect.width = ExpandButtonWidth;
-                rect.x -= 4;
-                if (GUI.Button (rect, "\u25B2")) {
-                    Property.isExpanded = !Property.isExpanded;
-                }
-                rect.width = oldWidth - ExpandButtonWidth - 4;
-                rect.x += ExpandButtonWidth + 4;
-                EditorGUI.LabelField (rect, Property.displayName, EditorStyles.boldLabel);
             }
 
             bool OnCanRemove (ReorderableList list) {
@@ -141,11 +124,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
                 rect.height = EditorGUI.GetPropertyHeight (Property.GetArrayElementAtIndex (index), GUIContent.none, true);
                 EditorGUI.PropertyField (rect, Property.GetArrayElementAtIndex (index), GUIContent.none, true);
-                List.elementHeight = rect.height + 4f;
             }
 
             public void Dispose () {
-                List.drawHeaderCallback -= OnDrawHeader;
                 List.onCanRemoveCallback -= OnCanRemove;
                 List.drawElementCallback -= OnDrawElement;
                 List.elementHeightCallback -= OnElementHeight;
