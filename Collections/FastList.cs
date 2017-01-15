@@ -168,25 +168,7 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="item">Item to check.</param>
         public bool Contains (T item) {
-            var i = _count - 1;
-            if (_useObjectCastComparer && _isNullable) {
-                for (; i >= 0; i--) {
-                    if ((object) _items[i] == (object) item) {
-                        break;
-                    }
-                }
-            } else {
-                if (_comparer != null) {
-                    for (; i >= 0; i--) {
-                        if (_comparer.Equals (_items[i], item)) {
-                            break;
-                        }
-                    }
-                } else {
-                    i = Array.IndexOf<T> (_items, item, 0, _count);
-                }
-            }
-            return i != -1;
+            return IndexOf (item) != -1;
         }
 
         /// <summary>
@@ -223,7 +205,25 @@ namespace LeopotamGroup.Collections {
         /// <returns>Found index or -1.</returns>
         /// <param name="item">Item to check.</param>
         public int IndexOf (T item) {
-            return Array.IndexOf<T> (_items, item);
+            int i;
+            if (_useObjectCastComparer && _isNullable) {
+                for (i = _count - 1; i >= 0; i--) {
+                    if ((object) _items[i] == (object) item) {
+                        break;
+                    }
+                }
+            } else {
+                if (_comparer != null) {
+                    for (i = _count - 1; i >= 0; i--) {
+                        if (_comparer.Equals (_items[i], item)) {
+                            break;
+                        }
+                    }
+                } else {
+                    i = Array.IndexOf<T> (_items, item, 0, _count);
+                }
+            }
+            return i;
         }
 
         /// <summary>
