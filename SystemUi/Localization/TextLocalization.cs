@@ -1,14 +1,14 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using LeopotamGroup.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 
 // ReSharper disable RedundantCast.0
-#pragma warning disable 649
 
 namespace LeopotamGroup.SystemUi.Localization {
     /// <summary>
@@ -17,7 +17,7 @@ namespace LeopotamGroup.SystemUi.Localization {
     [RequireComponent (typeof (Text))]
     public sealed class TextLocalization : MonoBehaviour {
         [SerializeField]
-        string _token;
+        string _token = null;
 
         Text _text;
 

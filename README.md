@@ -36,8 +36,8 @@ Common helpers, uses by other subsystems.
 
 * EditorHelpers
 
-Special helpers: show fps, debug-log output with automatic removing on build,
-screen capturing of current platform for multiple aspects, etc.
+Special helpers: show fps, screen capturing of current platform for multiple
+aspects, csv import (for ex, Google Docs), etc.
 
 ----------------------------------------------------------------------------
 
@@ -48,27 +48,21 @@ parallel, selector, condition and custom).
 
 ----------------------------------------------------------------------------
 
-* FX
+* Fx
 
 Visual / audial effect helpers: sound / music manipulations, screen fading.
 
 ----------------------------------------------------------------------------
 
-* Gui
-
-Mobile gui. Oriented to be fat free, fast, no or low gc allocation.
-
-----------------------------------------------------------------------------
-
 * Localization
 
-Localization support with external csv import (for ex, Google Docs).
+Localization support.
 
 ----------------------------------------------------------------------------
 
 * Math
 
-Additional types, 'mersenne twister'-based RNG.
+Additional types, 'mersenne twister'-based RNG, fast xor-shift RNG, etc.
 
 ----------------------------------------------------------------------------
 
@@ -109,7 +103,7 @@ Editor helpers for optimized shaders generation.
 
 ----------------------------------------------------------------------------
 
-* SystemUI
+* SystemUi
 
 Helpers / performance replacements for new gui system (unity 4.6+).
 
@@ -130,21 +124,10 @@ Simple tweening.
 
 Examples moved to [separate repository](https://github.com/Leopotam/LeopotamGroupLibraryUnity.Examples/)
 
-## LICENSE
-Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
 ----------------------------------------------------------------------------
-### The software is double licensed:
-* under the terms of the [Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-* under commercial license, email to author for details
+## LICENSE
+
+The software released under the terms of the MIT license. Enjoy.
 
 ----------------------------------------------------------------------------

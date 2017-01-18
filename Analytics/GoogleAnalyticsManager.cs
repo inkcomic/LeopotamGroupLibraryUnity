@@ -1,7 +1,8 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using System;
 using System.Collections;
@@ -12,15 +13,13 @@ using LeopotamGroup.Common;
 using LeopotamGroup.Localization;
 using UnityEngine;
 
-#pragma warning disable 649
-
 namespace LeopotamGroup.Analytics {
     /// <summary>
     /// Simple GoogleAnalytics manager. Supports tracking of events, screens.
     /// </summary>
     sealed class GoogleAnalyticsManager : UnitySingletonBase {
         [SerializeField]
-        string _trackerId;
+        string _trackerId = null;
 
         /// <summary>
         /// Is TrackerID filled ans manager ready to send data.

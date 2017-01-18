@@ -1,12 +1,11 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using LeopotamGroup.Common;
 using UnityEngine;
-
-#pragma warning disable 649
 
 namespace LeopotamGroup.Fx {
     /// <summary>
@@ -14,7 +13,7 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public sealed class SoundOnEnable : MonoBehaviour {
         [SerializeField]
-        AudioClip _sound;
+        AudioClip _sound = null;
 
         [SerializeField]
         SoundFxChannel _channel = SoundFxChannel.First;
@@ -23,7 +22,7 @@ namespace LeopotamGroup.Fx {
         /// Should new FX force interrupts FX at channel or not.
         /// </summary>
         [SerializeField]
-        bool _isInterrupt;
+        bool _isInterrupt = false;
 
         void OnEnable () {
             Singleton.Get<SoundManager> ().PlayFx (_sound, _channel, _isInterrupt);

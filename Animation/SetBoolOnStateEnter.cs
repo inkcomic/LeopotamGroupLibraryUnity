@@ -1,11 +1,10 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using UnityEngine;
-
-#pragma warning disable 649
 
 namespace LeopotamGroup.Animation {
     /// <summary>
@@ -13,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetBoolOnStateEnter : StateMachineBehaviour {
         [SerializeField]
-        string _boolName;
+        string _boolName = null;
 
         [SerializeField]
-        bool _boolValue;
+        bool _boolValue = false;
 
         int _fieldHash = -1;
 

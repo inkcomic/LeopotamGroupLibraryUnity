@@ -1,11 +1,10 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using UnityEngine;
-
-#pragma warning disable 649
 
 namespace LeopotamGroup.Animation {
     /// <summary>
@@ -13,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetTriggerOnStateExit : StateMachineBehaviour {
         [SerializeField]
-        string _triggerName;
+        string _triggerName = null;
 
         [SerializeField]
-        bool _triggerValue;
+        bool _triggerValue = false;
 
         int _fieldHash = -1;
 

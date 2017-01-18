@@ -1,17 +1,16 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using System.Collections.Generic;
 using UnityEngine;
 
-#pragma warning disable 649
-
 namespace LeopotamGroup.SystemUi.Atlases {
     public sealed class SpriteAtlas : MonoBehaviour {
         [SerializeField]
-        string _name;
+        string _name = null;
 
         [SerializeField]
         Sprite[] _sprites;

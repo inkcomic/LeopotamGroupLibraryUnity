@@ -1,13 +1,12 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using System.Collections;
 using LeopotamGroup.Common;
 using UnityEngine;
-
-#pragma warning disable 649
 
 namespace LeopotamGroup.Fx {
     /// <summary>
@@ -15,7 +14,7 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public sealed class MusicOnStart : MonoBehaviour {
         [SerializeField]
-        string _music;
+        string _music = null;
 
         [SerializeField]
         bool _isLooped = true;

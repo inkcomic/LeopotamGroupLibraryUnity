@@ -1,13 +1,12 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using System.Collections;
 using LeopotamGroup.Common;
 using UnityEngine;
-
-#pragma warning disable 649
 
 namespace LeopotamGroup.Fx {
     /// <summary>
@@ -15,7 +14,7 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public sealed class SoundOnStart : MonoBehaviour {
         [SerializeField]
-        AudioClip _sound;
+        AudioClip _sound = null;
 
         [SerializeField]
         SoundFxChannel _channel = SoundFxChannel.First;

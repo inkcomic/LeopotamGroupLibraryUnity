@@ -1,11 +1,10 @@
-﻿// -------------------------------------------------------
-// LeopotamGroupLibrary for unity3d
+﻿// ----------------------------------------------------------------------------
+// The MIT License
+// LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
-// -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 using UnityEngine;
-
-#pragma warning disable 649
 
 namespace LeopotamGroup.Animation {
     /// <summary>
@@ -13,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetFloatOnStateEnter : StateMachineBehaviour {
         [SerializeField]
-        string _floatName;
+        string _floatName = null;
 
         [SerializeField]
-        float _floatValue;
+        float _floatValue = 0f;
 
         int _fieldHash = -1;
 
