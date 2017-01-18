@@ -1,15 +1,17 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using LeopotamGroup.Localization;
-using LeopotamGroup.SystemUI.Atlases;
-using UnityEngine.UI;
+using LeopotamGroup.SystemUi.Atlases;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace LeopotamGroup.SystemUI.Localization {
+// ReSharper disable RedundantCast.0
+#pragma warning disable 649
+
+namespace LeopotamGroup.SystemUi.Localization {
     /// <summary>
     /// Localization helper for System UI Sprite.
     /// </summary>

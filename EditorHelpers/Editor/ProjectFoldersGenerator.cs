@@ -1,12 +1,11 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,20 +17,31 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         [Flags]
         public enum Options {
             Animations = 1,
+
             Fonts = 2,
+
             Models = 4,
+
             Plugins = 8,
+
             Prefabs = 16,
+
             Resources = 32,
+
             Scenes = 64,
+
             Scripts = 128,
+
             Shaders = 256,
+
             Sounds = 512,
+
             StreamingAssets = 1024,
+
             Textures = 2048,
         }
 
-        static readonly Dictionary<int, List<string>> _paths = new Dictionary<int, List<string>> {
+        static readonly Dictionary<int, List<string>> DefinedPaths = new Dictionary<int, List<string>> {
             { (int) Options.Scripts, new List<string> { "Editor" } },
             { (int) Options.Textures, new List<string> { "AppIcon", "UI" } }
         };
@@ -77,6 +87,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             _cvsFileName = DefaultCvsFileName;
         }
 
+        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_optionNames == null) {
                 _optionNames = Enum.GetNames (typeof (Options));
@@ -120,16 +131,17 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void GenerateItem (string rootFolder, int item, string cvsFileName) {
             var fullPath = (((int) RootOnlyOptions) & item) != 0 ?
-                           Application.dataPath : Path.Combine (Application.dataPath, rootFolder);
+                Application.dataPath :
+                Path.Combine (Application.dataPath, rootFolder);
 
             fullPath = Path.Combine (fullPath, ((Options) item).ToString ());
             if (!Directory.Exists (fullPath)) {
                 Directory.CreateDirectory (fullPath);
             }
 
-            if (_paths.ContainsKey (item)) {
+            if (DefinedPaths.ContainsKey (item)) {
                 string path;
-                foreach (var subFolder in _paths[item]) {
+                foreach (var subFolder in DefinedPaths[item]) {
                     path = Path.Combine (fullPath, subFolder);
                     if (!Directory.Exists (path)) {
                         Directory.CreateDirectory (path);

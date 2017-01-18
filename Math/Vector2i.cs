@@ -1,11 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System;
 using UnityEngine;
+
+// ReSharper disable InconsistentNaming
 
 namespace LeopotamGroup.Math {
     /// <summary>

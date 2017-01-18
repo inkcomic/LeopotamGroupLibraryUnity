@@ -1,11 +1,10 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace LeopotamGroup.Events {
     /// <summary>
@@ -13,7 +12,9 @@ namespace LeopotamGroup.Events {
     /// </summary>
     public enum BehaviourTreeResult {
         Success,
+
         Fail,
+
         Pending
     }
 
@@ -31,7 +32,7 @@ namespace LeopotamGroup.Events {
     /// Behaviour tree abstract container base.
     /// </summary>
     public abstract class BehaviourTreeContainerBase : BehaviourTreeNodeBase {
-        protected readonly List<BehaviourTreeNodeBase> _children = new List<BehaviourTreeNodeBase> ();
+        protected readonly List<BehaviourTreeNodeBase> Children = new List<BehaviourTreeNodeBase> ();
 
         /// <summary>
         /// Helper for add new BehaviourTreeAction node.
@@ -39,7 +40,7 @@ namespace LeopotamGroup.Events {
         /// <param name="bt">Bt.</param>
         /// <param name="cb">Cb.</param>
         public BehaviourTreeContainerBase Then<T> (
-            BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) where T : class, new() {
+            BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> cb) where T : class, new () {
             Then (new BehaviourTreeAction<T> (bt, cb));
             return this;
         }
@@ -86,7 +87,7 @@ namespace LeopotamGroup.Events {
         /// <param name="bt">Bt.</param>
         /// <param name="condition">Condition.</param>
         public BehaviourTreeCondition<T> When<T> (
-            BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition) where T : class, new() {
+            BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition) where T : class, new () {
             var node = new BehaviourTreeCondition<T> (bt, condition);
             AddChild (node);
             return node;
@@ -96,7 +97,7 @@ namespace LeopotamGroup.Events {
         /// Helper for add new BehaviourTreeCondition node.
         /// </summary>
         /// <param name="condition">Condition.</param>
-        public BehaviourTreeCondition<T> When<T> (BehaviourTreeNodeBase condition) where T : class, new() {
+        public BehaviourTreeCondition<T> When<T> (BehaviourTreeNodeBase condition) where T : class, new () {
             var node = new BehaviourTreeCondition<T> (condition);
             AddChild (node);
             return node;
@@ -109,7 +110,7 @@ namespace LeopotamGroup.Events {
         /// <param name="node">Node.</param>
         public BehaviourTreeContainerBase AddChild (BehaviourTreeNodeBase node) {
             if (node != null) {
-                _children.Add (node);
+                Children.Add (node);
             }
             return this;
         }
@@ -118,25 +119,25 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Behaviour tree action base node.
     /// </summary>
-    public abstract class BehaviourTreeActionBase<T> : BehaviourTreeNodeBase where T : class, new() {
-        protected readonly BehaviourTree<T> _bt;
+    public abstract class BehaviourTreeActionBase<T> : BehaviourTreeNodeBase where T : class, new () {
+        protected readonly BehaviourTree<T> Tree;
 
         /// <summary>
         /// Initialize new instance of BehaviourTreeAction node.
         /// </summary>
         /// <param name="bt">BehaviourTree instance.</param>
-        public BehaviourTreeActionBase (BehaviourTree<T> bt) {
+        protected BehaviourTreeActionBase (BehaviourTree<T> bt) {
             if (bt == null) {
                 throw new ArgumentNullException ();
             }
-            _bt = bt;
+            Tree = bt;
         }
     }
 
     /// <summary>
     /// Behaviour tree action.
     /// </summary>
-    public sealed class BehaviourTreeAction<T> : BehaviourTreeActionBase<T> where T : class, new() {
+    public sealed class BehaviourTreeAction<T> : BehaviourTreeActionBase<T> where T : class, new () {
         readonly Func<BehaviourTree<T>, BehaviourTreeResult> _cb;
 
         /// <summary>
@@ -155,7 +156,7 @@ namespace LeopotamGroup.Events {
         /// Process node logic.
         /// </summary>
         public override BehaviourTreeResult Process () {
-            return _cb (_bt);
+            return _cb (Tree);
         }
     }
 
@@ -169,9 +170,9 @@ namespace LeopotamGroup.Events {
         /// Process node logic.
         /// </summary>
         public override BehaviourTreeResult Process () {
-            BehaviourTreeResult res = BehaviourTreeResult.Success;
-            for (int i = _currentChild, iMax = _children.Count; i < iMax; i++, _currentChild++) {
-                res = _children[i].Process ();
+            var res = BehaviourTreeResult.Success;
+            for (int i = _currentChild, iMax = Children.Count; i < iMax; i++, _currentChild++) {
+                res = Children[i].Process ();
                 if (res != BehaviourTreeResult.Success) {
                     break;
                 }
@@ -191,9 +192,9 @@ namespace LeopotamGroup.Events {
         /// Process node logic.
         /// </summary>
         public override BehaviourTreeResult Process () {
-            bool isPending = false;
-            for (int i = 0, iMax = _children.Count; i < iMax; i++) {
-                if (_children[i].Process () == BehaviourTreeResult.Pending) {
+            var isPending = false;
+            for (int i = 0, iMax = Children.Count; i < iMax; i++) {
+                if (Children[i].Process () == BehaviourTreeResult.Pending) {
                     isPending = true;
                 }
             }
@@ -211,9 +212,9 @@ namespace LeopotamGroup.Events {
         /// Process node logic.
         /// </summary>
         public override BehaviourTreeResult Process () {
-            BehaviourTreeResult res = BehaviourTreeResult.Success;
-            for (int i = _currentChild, iMax = _children.Count; i < iMax; i++, _currentChild++) {
-                res = _children[i].Process ();
+            var res = BehaviourTreeResult.Success;
+            for (int i = _currentChild, iMax = Children.Count; i < iMax; i++, _currentChild++) {
+                res = Children[i].Process ();
                 if (res != BehaviourTreeResult.Fail) {
                     break;
                 }
@@ -228,7 +229,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Behaviour tree condition node.
     /// </summary>
-    public sealed class BehaviourTreeCondition<T> : BehaviourTreeNodeBase where T : class, new() {
+    public sealed class BehaviourTreeCondition<T> : BehaviourTreeNodeBase where T : class, new () {
         readonly BehaviourTreeNodeBase _condition;
 
         BehaviourTreeNodeBase _node;
@@ -239,8 +240,7 @@ namespace LeopotamGroup.Events {
         /// <param name="bt">BehaviourTree instance.</param>
         /// <param name="condition">Callback of custom node logic for condition checking.</param>
         public BehaviourTreeCondition (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition)
-            : this (new BehaviourTreeAction<T> (bt, condition)) {
-        }
+            : this (new BehaviourTreeAction<T> (bt, condition)) { }
 
         /// <summary>
         /// Initialize new instance of BehaviourTreeCondition node.

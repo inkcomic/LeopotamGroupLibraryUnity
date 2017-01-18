@@ -1,11 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System;
 using UnityEngine;
+
+// ReSharper disable InconsistentNaming
 
 namespace LeopotamGroup.Math {
     /// <summary>
@@ -85,8 +86,7 @@ namespace LeopotamGroup.Math {
         /// </summary>
         /// <param name="inX">X value.</param>
         /// <param name="inY">Y value.</param>
-        public Vector3i (int inX, int inY) : this (inX, inY, 0) {
-        }
+        public Vector3i (int inX, int inY) : this (inX, inY, 0) { }
 
         /// <summary>
         /// Initialization from Vector2i instance.
@@ -200,7 +200,7 @@ namespace LeopotamGroup.Math {
         /// <param name="max">Max value.</param>
         public static Vector3i Clamp (Vector3i value, Vector3i min, Vector3i max) {
             return new Vector3i (Mathf.Clamp (value.x, min.x, max.x), Mathf.Clamp (value.y, min.y, max.y),
-                                 Mathf.Clamp (value.z, min.z, max.z));
+                Mathf.Clamp (value.z, min.z, max.z));
         }
 
         public static bool operator == (Vector3i lhs, Vector3i rhs) {

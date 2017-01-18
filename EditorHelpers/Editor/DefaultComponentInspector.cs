@@ -1,21 +1,19 @@
-
 // -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System.Collections.Generic;
-using System;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     /// <summary>
-    /// Default inspector for all objects, add drag&drop ordering behaviour for arrays / lists.
+    /// Default inspector for all objects, add drag & drop ordering behaviour for arrays / lists.
     /// </summary>
     [CanEditMultipleObjects]
-    [CustomEditor (typeof (UnityEngine.Object), true, isFallback = true)]
+    [CustomEditor (typeof (Object), true, isFallback = true)]
     sealed class DefaultComponentInspector : Editor {
         static Dictionary<string, ReorderableListProperty> _reorderableLists;
 
@@ -92,8 +90,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             return retVal;
         }
 
-        public class ReorderableListProperty : IDisposable {
-            public ReorderableList List { get; private set; }
+        public class ReorderableListProperty {
+            public ReorderableList List { get; }
 
             public SerializedProperty Property {
                 get { return List.serializedProperty; }
@@ -114,7 +112,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             float OnElementHeight (int id) {
                 return 4f + Mathf.Max (EditorGUIUtility.singleLineHeight,
-                                       EditorGUI.GetPropertyHeight (Property.GetArrayElementAtIndex (id), GUIContent.none, true));
+                    EditorGUI.GetPropertyHeight (Property.GetArrayElementAtIndex (id), GUIContent.none, true));
             }
 
             void OnDrawElement (Rect rect, int index, bool active, bool focused) {
@@ -124,13 +122,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
                 rect.height = EditorGUI.GetPropertyHeight (Property.GetArrayElementAtIndex (index), GUIContent.none, true);
                 EditorGUI.PropertyField (rect, Property.GetArrayElementAtIndex (index), GUIContent.none, true);
-            }
-
-            public void Dispose () {
-                List.onCanRemoveCallback -= OnCanRemove;
-                List.drawElementCallback -= OnDrawElement;
-                List.elementHeightCallback -= OnElementHeight;
-                List = null;
             }
         }
     }

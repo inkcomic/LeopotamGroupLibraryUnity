@@ -1,10 +1,11 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using UnityEngine;
+
+// ReSharper disable RedundantCast
 
 namespace LeopotamGroup.Pooling {
     /// <summary>
@@ -29,7 +30,7 @@ namespace LeopotamGroup.Pooling {
 
         void OnRecycle () {
             var po = GetComponent<IPoolObject> ();
-            if (po != null) {
+            if ((object) po != null) {
                 po.PoolRecycle ();
             } else {
                 gameObject.SetActive (false);

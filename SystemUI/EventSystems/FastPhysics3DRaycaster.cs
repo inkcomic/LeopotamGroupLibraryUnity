@@ -1,15 +1,15 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace LeopotamGroup.SystemUI.EventSystems {
+namespace LeopotamGroup.SystemUi.EventSystems {
 #if UNITY_EDITOR
+
     [AddComponentMenu ("Event/LeopotamGroup/Fast Physics 3D Raycaster")]
 #endif
     [RequireComponent (typeof (Camera))]

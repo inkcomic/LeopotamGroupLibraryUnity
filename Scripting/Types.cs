@@ -1,24 +1,25 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using LeopotamGroup.Math;
 using System.Collections.Generic;
+using LeopotamGroup.Math;
 
 namespace LeopotamGroup.Scripting {
     /// <summary>
-    /// Type of ScriptVM variable.
+    /// Type of ScriptVm variable.
     /// </summary>
     enum ScriptVarType {
         Undefined = 0,
+
         String,
+
         Number
     }
 
     /// <summary>
-    /// ScriptVM variable.
+    /// ScriptVm variable.
     /// </summary>
     struct ScriptVar {
         /// <summary>
@@ -102,7 +103,7 @@ namespace LeopotamGroup.Scripting {
     /// Function desc. Internal class - holder of function parameter names for calling script function from host.
     /// </summary>
     sealed class FunctionDesc {
-        public int PC;
+        public int Pc;
 
         public string[] Params;
     }
@@ -117,12 +118,12 @@ namespace LeopotamGroup.Scripting {
 
         readonly Dictionary<string, HostFunction> _hostFuncs = new Dictionary<string, HostFunction> (128);
 
-        readonly ScriptVM _vm;
+        readonly ScriptVm _vm;
 
         /// <summary>
-        /// Initialization for specified ScriptVM.
+        /// Initialization for specified ScriptVm.
         /// </summary>
-        public Vars (ScriptVM vm) {
+        public Vars (ScriptVm vm) {
             _vm = vm;
         }
 
@@ -183,7 +184,7 @@ namespace LeopotamGroup.Scripting {
         /// <param name="paramList">Parameters list.</param>
         public void RegisterFunction (string funcName, int pc, List<string> paramList) {
             var desc = new FunctionDesc {
-                PC = pc - 1,
+                Pc = pc - 1,
             };
             if (paramList.Count > 0) {
                 desc.Params = paramList.ToArray ();
@@ -234,5 +235,5 @@ namespace LeopotamGroup.Scripting {
         }
     }
 
-    delegate ScriptVar HostFunction (ScriptVM vm);
+    delegate ScriptVar HostFunction (ScriptVm vm);
 }

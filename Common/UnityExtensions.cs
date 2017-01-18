@@ -1,11 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System;
 using UnityEngine;
+
+// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.Common {
     /// <summary>
@@ -31,14 +32,14 @@ namespace LeopotamGroup.Common {
         /// <param name="go">Target GameObject.</param>
         /// <typeparam name="T">Any unity-based component.</typeparam>
         public static T EnsureGetComponent<T> (this GameObject go) where T : Component {
-            if (go != null) {
-                var c = go.GetComponent<T> ();
-                if ((object) c == null) {
-                    c = go.AddComponent<T> ();
-                }
-                return c;
+            if ((object) go == null) {
+                return null;
             }
-            return null;
+            var c = go.GetComponent<T> ();
+            if ((object) c == null) {
+                c = go.AddComponent<T> ();
+            }
+            return c;
         }
 
         /// <summary>
@@ -112,9 +113,9 @@ namespace LeopotamGroup.Common {
         /// <param name="color">Color.</param>
         public static string ToHexString32 (this Color color) {
             var data = ((int) (color.r * 255f) << 24) +
-                       ((int) (color.g * 255f) << 16) +
-                       ((int) (color.b * 255f) << 8) +
-                       (int) (color.a * 255f);
+                    ((int) (color.g * 255f) << 16) +
+                    ((int) (color.b * 255f) << 8) +
+                    (int) (color.a * 255f);
             return data.ToString ("x8");
         }
     }

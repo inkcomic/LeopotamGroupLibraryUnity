@@ -1,10 +1,11 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using UnityEngine;
+
+// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.Tweening {
     /// <summary>
@@ -14,7 +15,7 @@ namespace LeopotamGroup.Tweening {
         /// <summary>
         /// Target transform. If null on start - current transform will be used.
         /// </summary>
-        public Transform Target = null;
+        public Transform Target;
 
         /// <summary>
         /// Start value of scale.
@@ -27,7 +28,7 @@ namespace LeopotamGroup.Tweening {
         public Vector3 EndValue = Vector3.one * 0.97f;
 
         protected override void OnInit () {
-            if (Target == null) {
+            if ((object) Target == null) {
                 Target = transform;
             }
         }

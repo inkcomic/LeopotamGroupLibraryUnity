@@ -1,19 +1,17 @@
-
 // -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Collections;
 using System;
+using System.Collections.Generic;
 
 namespace LeopotamGroup.Collections {
     /// <summary>
     /// Stack class replacement with custom EqualityComparer and fastest comparation with direct cast to "System.Object"
-    // (useful for MonoBehaviour-inherited classes).
+    /// (useful for MonoBehaviour-inherited classes).
     /// </summary>
-    public class FastStack<T> : IEnumerable<T>, IEnumerable {
+    public class FastStack<T> {
         const int InitCapacity = 8;
 
         T[] _items;
@@ -36,27 +34,29 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Constructor with comparer initialization.
         /// </summary>
-        /// <param name="comparer">Comparer. If null - EqualityComparer<T>.Default comparer will be used.</param>
+        /// <param name="comparer">Comparer. If null - default comparer will be used.</param>
         public FastStack (EqualityComparer<T> comparer) : this (InitCapacity, comparer) { }
 
         /// <summary>
         /// Constructor with capacity and comparer initialization.
         /// </summary>
         /// <param name="capacity">Capacity on start.</param>
-        /// <param name="comparer">Comparer. If null - EqualityComparer<T>.Default comparer will be used.</param>
+        /// <param name="comparer">Comparer. If null - default comparer will be used.</param>
         public FastStack (int capacity, EqualityComparer<T> comparer = null) {
             var type = typeof (T);
             _isNullable = !type.IsValueType || (Nullable.GetUnderlyingType (type) != null);
             _capacity = capacity > InitCapacity ? capacity : InitCapacity;
             _count = 0;
-            _comparer = comparer ?? EqualityComparer<T> .Default;
+            _comparer = comparer;
             _items = new T[_capacity];
         }
 
         /// <summary>
         /// Get items count.
         /// </summary>
-        public int Count { get { return _count; } }
+        public int Count {
+            get { return _count; }
+        }
 
         /// <summary>
         /// Clear collection without release memory for performance optimization.
@@ -75,18 +75,22 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="item">Item to check.</param>
         public bool Contains (T item) {
-            var i = _count - 1;
+            int i;
             if (_useObjectCastComparer && _isNullable) {
-                for (; i >= 0; i--) {
+                for (i = _count - 1; i >= 0; i--) {
                     if ((object) _items[i] == (object) item) {
                         break;
                     }
                 }
             } else {
-                for (; i >= 0; i--) {
-                    if (_comparer.Equals (_items[i], item)) {
-                        break;
+                if (_comparer != null) {
+                    for (i = _count - 1; i >= 0; i--) {
+                        if (_comparer.Equals (_items[i], item)) {
+                            break;
+                        }
                     }
+                } else {
+                    i = Array.IndexOf (_items, item, 0, _count);
                 }
             }
             return i != -1;
@@ -99,18 +103,6 @@ namespace LeopotamGroup.Collections {
         /// <param name="arrayIndex">Start index at target array.</param>
         public void CopyTo (T[] array, int arrayIndex) {
             Array.Copy (_items, 0, array, arrayIndex, _count);
-        }
-
-        /// <summary>
-        /// Never ever - use for loop for iterations!
-        /// </summary>
-        /// <returns>The enumerator.</returns>
-        public IEnumerator<T> GetEnumerator () {
-            throw new NotSupportedException ();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator () {
-            throw new NotSupportedException ();
         }
 
         /// <summary>

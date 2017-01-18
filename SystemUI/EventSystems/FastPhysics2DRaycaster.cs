@@ -1,26 +1,28 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace LeopotamGroup.SystemUI.EventSystems {
+// ReSharper disable InconsistentNaming
+
+namespace LeopotamGroup.SystemUi.EventSystems {
 #if UNITY_EDITOR
+
     [AddComponentMenu ("Event/LeopotamGroup/Fast Physics 2D Raycaster")]
 #endif
     [RequireComponent (typeof (Camera))]
     public class FastPhysics2DRaycaster : BaseRaycaster {
         public virtual int depth {
-            get {
-                return (int) eventCamera.depth;
-            }
+            get { return (int) eventCamera.depth; }
         }
 
-        public override Camera eventCamera { get { return _eventCamera; } }
+        public override Camera eventCamera {
+            get { return _eventCamera; }
+        }
 
         public LayerMask eventMask = -1;
 
@@ -42,7 +44,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             var eventPos = eventData.position;
             var ray = _eventCamera.ScreenPointToRay (eventPos);
             var distance = _eventCamera.farClipPlane - _eventCamera.nearClipPlane;
-            if (Physics2D.GetRayIntersectionNonAlloc (ray, _hitsCache, distance, (int) eventMask) > 0) {
+            if (Physics2D.GetRayIntersectionNonAlloc (ray, _hitsCache, distance, eventMask) > 0) {
                 var hitInfo = _hitsCache[0];
                 _result.gameObject = hitInfo.collider.gameObject;
                 _result.module = this;

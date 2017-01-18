@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -9,9 +8,9 @@ namespace LeopotamGroup.Math {
     /// Rng generator, XorShift based.
     /// </summary>
     public sealed class RngFast {
-        const double InvMaxIntExOne = 1.0 / ((double) int.MaxValue + 1.0);
+        const double InvMaxIntExOne = 1.0 / (int.MaxValue + 1.0);
 
-        const double InvIntMax = 1.0 / (double) int.MaxValue;
+        const double InvIntMax = 1.0 / int.MaxValue;
 
         uint _x;
 
@@ -24,8 +23,7 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Default initialization.
         /// </summary>
-        public RngFast () : this (System.Environment.TickCount) {
-        }
+        public RngFast () : this (System.Environment.TickCount) { }
 
         /// <summary>
         /// Initialization with custom seed.
@@ -73,7 +71,7 @@ namespace LeopotamGroup.Math {
             _y = _z;
             _z = _w;
             return min + (int) ((InvMaxIntExOne *
-                                 (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8))))) * (max - min));
+                (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8))))) * (max - min));
         }
 
         /// <summary>
@@ -86,7 +84,7 @@ namespace LeopotamGroup.Math {
             _y = _z;
             _z = _w;
             return (float) ((includeOne ? InvIntMax : InvMaxIntExOne) *
-                            (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))));
+                (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))));
         }
 
         /// <summary>
@@ -105,7 +103,7 @@ namespace LeopotamGroup.Math {
             _y = _z;
             _z = _w;
             return min + (float) ((includeMax ? InvIntMax : InvMaxIntExOne) *
-                                  (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))) * (max - min));
+                (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))) * (max - min));
         }
     }
 }

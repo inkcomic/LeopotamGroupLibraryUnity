@@ -1,11 +1,10 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LeopotamGroup.Events {
@@ -25,7 +24,7 @@ namespace LeopotamGroup.Events {
         /// Subscribe callback to be raised on specific event.
         /// </summary>
         /// <param name="eventAction">Callback. Should returns state - is event interrupted / should not be processed by
-        // next callbacks or not.</param>
+        /// next callbacks or not.</param>
         /// <param name="insertAsFirst">Is callback should be raised first in sequence.</param>
         public void Subscribe<T> (Func<T, bool> eventAction, bool insertAsFirst = false) {
             if (eventAction == null) {
@@ -39,7 +38,9 @@ namespace LeopotamGroup.Events {
                 }
                 var list = _events[eventType] as List<Func<T, bool>>;
                 if (list == null) {
+#if UNITY_EDITOR
                     Debug.LogError ("Cant subscribe to event: " + eventType.Name);
+#endif
                     return;
                 }
                 if (!list.Contains (eventAction)) {
@@ -88,7 +89,7 @@ namespace LeopotamGroup.Events {
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
                     if (keepEvent) {
-                        (_events[eventType] as List<Func<T, bool>> ).Clear ();
+                        ((List<Func<T, bool>>) _events[eventType]).Clear ();
                     } else {
                         _events.Remove (eventType);
                         _eventSubscribersInCall.Remove (eventType);
@@ -120,7 +121,7 @@ namespace LeopotamGroup.Events {
                     return;
                 }
                 if (_events.ContainsKey (eventType)) {
-                    list = _events[eventType] as List<Func<T, bool>>;
+                    list = (List<Func<T, bool>>) _events[eventType];
 
                     // kept for no new GC alloc, but empty.
                     if (list.Count == 0) {
@@ -140,7 +141,7 @@ namespace LeopotamGroup.Events {
                 }
                 try {
                     for (i = 0; i < iMax; i++) {
-                        if ((cacheList[i] as Func<T, bool> )(eventMessage)) {
+                        if (((Func<T, bool>) cacheList[i]) (eventMessage)) {
                             // Event was interrupted / processed, we can exit.
                             return;
                         }

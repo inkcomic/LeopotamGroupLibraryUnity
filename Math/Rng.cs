@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -28,8 +27,7 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Default initialization.
         /// </summary>
-        public Rng () : this ((long) (System.Environment.TickCount)) {
-        }
+        public Rng () : this (System.Environment.TickCount) { }
 
         /// <summary>
         /// Initialization with custom seed.

@@ -1,13 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
-using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 namespace LeopotamGroup.Tutorials {
@@ -35,14 +34,13 @@ namespace LeopotamGroup.Tutorials {
         void LoadData () {
             try {
                 _sceneMasks =
-                    Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
+                        Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
             } catch {
-//                Debug.LogWarning (ex);
                 _sceneMasks = null;
             }
 
             if (_sceneMasks == null) {
-                _sceneMasks = new Dictionary<string, int> ();
+                _sceneMasks = new Dictionary<string, int> (8);
             }
         }
 

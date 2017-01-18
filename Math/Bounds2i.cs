@@ -1,4 +1,3 @@
-
 // -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -7,6 +6,7 @@
 using System;
 
 namespace LeopotamGroup.Math {
+    // ReSharper disable once InconsistentNaming
     /// <summary>
     /// Axis-aligned 2d bounding box with integer coords.
     /// </summary>

@@ -1,18 +1,17 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 #if UNITY_EDITOR
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Math;
-using LeopotamGroup.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System;
+using LeopotamGroup.Common;
+using LeopotamGroup.Math;
+using LeopotamGroup.Serialization;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers {
@@ -30,15 +29,17 @@ namespace LeopotamGroup.EditorHelpers {
             if (_storeFile == null) {
                 _storeFile = string.Format (StorePath, Application.dataPath);
             }
-            if (_data == null) {
-                try {
-                    _data = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, string>> (File.ReadAllText (_storeFile));
-                    if (_data == null) {
-                        throw new UnityException ();
-                    }
-                } catch {
-                    _data = new Dictionary<string, string> ();
+            if (_data != null) {
+                return;
+            }
+            try {
+                var content = File.ReadAllText (_storeFile);
+                _data = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, string>> (content);
+                if (_data == null) {
+                    throw new UnityException ();
                 }
+            } catch {
+                _data = new Dictionary<string, string> ();
             }
         }
 

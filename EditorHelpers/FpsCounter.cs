@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -14,11 +13,11 @@ namespace LeopotamGroup.EditorHelpers {
     sealed class FpsCounter : UnitySingletonBase {
         const int UpdateFrequency = 2;
 
-        const float _invUpdatesPerSecond = 1 / (float) UpdateFrequency;
+        const float InvUpdatesPerSecond = 1 / (float) UpdateFrequency;
 
         const float BaseFontSize = 16 / 768f;
 
-        readonly byte[] FontData = {
+        byte[] _fontData = {
             0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, // 0-4
             1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, // 5-9
 
@@ -58,11 +57,11 @@ namespace LeopotamGroup.EditorHelpers {
             _tex.hideFlags = HideFlags.DontSave;
             _tex.filterMode = FilterMode.Point;
             _tex.wrapMode = TextureWrapMode.Clamp;
-            var pixels = new Color32[FontData.Length];
+            var pixels = new Color32[_fontData.Length];
             var pix0 = new Color32 (0, 0, 0, 0);
             var pix1 = new Color32 (255, 255, 255, 255);
-            for (var i = FontData.Length - 1; i >= 0; i--) {
-                pixels[i] = FontData[i] > 0 ? pix1 : pix0;
+            for (var i = _fontData.Length - 1; i >= 0; i--) {
+                pixels[i] = _fontData[i] > 0 ? pix1 : pix0;
             }
             _tex.SetPixels32 (pixels);
             _tex.Apply (false, true);
@@ -112,20 +111,20 @@ namespace LeopotamGroup.EditorHelpers {
                     count++;
                 }
 
-                int charID;
+                int charId;
                 for (var i = count - 1; i >= 0; i--) {
-                    charID = v1 % 10;
+                    charId = v1 % 10;
 
-                    GL.TexCoord2 (charID * 0.1f, 1f);
+                    GL.TexCoord2 (charId * 0.1f, 1f);
                     GL.Vertex3 (_xOffset, _yOffset - _fontSize, 0f);
 
-                    GL.TexCoord2 (charID * 0.1f, 0f);
+                    GL.TexCoord2 (charId * 0.1f, 0f);
                     GL.Vertex3 (_xOffset, _yOffset, 0f);
 
-                    GL.TexCoord2 ((charID + 1) * 0.1f, 0f);
+                    GL.TexCoord2 ((charId + 1) * 0.1f, 0f);
                     GL.Vertex3 (_xOffset + _fontSize, _yOffset, 0f);
 
-                    GL.TexCoord2 ((charID + 1) * 0.1f, 1f);
+                    GL.TexCoord2 ((charId + 1) * 0.1f, 1f);
                     GL.Vertex3 (_xOffset + _fontSize, _yOffset - _fontSize, 0f);
 
                     _xOffset += _fontSize + 1;
@@ -140,7 +139,7 @@ namespace LeopotamGroup.EditorHelpers {
         void LateUpdate () {
             _cameraIndex = 0;
             var currTime = Time.realtimeSinceStartup;
-            if ((currTime - _lastTime) > _invUpdatesPerSecond) {
+            if ((currTime - _lastTime) > InvUpdatesPerSecond) {
                 CurrentFps = _frameCount * UpdateFrequency;
                 _frameCount = 1;
                 _lastTime = currTime;

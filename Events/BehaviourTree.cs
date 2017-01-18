@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -8,7 +7,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Behaviour tree.
     /// </summary>
-    public sealed class BehaviourTree<T> where T : class, new() {
+    public sealed class BehaviourTree<T> where T : class, new () {
         readonly BehaviourTreeSequence _root;
 
         readonly T _store;

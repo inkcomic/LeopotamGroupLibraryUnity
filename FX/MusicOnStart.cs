@@ -1,14 +1,15 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using LeopotamGroup.Common;
 using System.Collections;
+using LeopotamGroup.Common;
 using UnityEngine;
 
-namespace LeopotamGroup.FX {
+#pragma warning disable 649
+
+namespace LeopotamGroup.Fx {
     /// <summary>
     /// Setup music parameters on start.
     /// </summary>

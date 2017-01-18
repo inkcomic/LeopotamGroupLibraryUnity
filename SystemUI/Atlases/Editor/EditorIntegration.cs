@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -9,7 +8,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace LeopotamGroup.SystemUI.Atlases.UnityEditors {
+namespace LeopotamGroup.SystemUi.Atlases.UnityEditors {
     static class EditorIntegration {
         const string Title = "SpriteAtlas packer";
 
@@ -28,7 +27,7 @@ namespace LeopotamGroup.SystemUI.Atlases.UnityEditors {
             asset.AddComponent<SpriteAtlas> ();
             PrefabUtility.CreatePrefab (
                 AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.prefab", path, "SpriteAtlas")), asset);
-            UnityEngine.Object.DestroyImmediate (asset);
+            Object.DestroyImmediate (asset);
             AssetDatabase.Refresh ();
         }
 
@@ -41,7 +40,7 @@ namespace LeopotamGroup.SystemUI.Atlases.UnityEditors {
             TextureImporter importer;
             for (int i = sprites.Length - 1; i >= 0; i--) {
                 assetPath = AssetDatabase.GUIDToAssetPath (sprites[i]);
-                importer = AssetImporter.GetAtPath (AssetDatabase.GUIDToAssetPath (sprites[i])) as TextureImporter;
+                importer = (TextureImporter) AssetImporter.GetAtPath (AssetDatabase.GUIDToAssetPath (sprites[i]));
                 tag = importer.spritePackingTag;
                 if (!string.IsNullOrEmpty (tag)) {
                     if (!spriteList.ContainsKey (tag)) {
@@ -62,11 +61,7 @@ namespace LeopotamGroup.SystemUI.Atlases.UnityEditors {
                 if (asset != null) {
                     tag = asset.GetName ();
                     if (!string.IsNullOrEmpty (tag)) {
-                        if (spriteList.ContainsKey (tag)) {
-                            asset.SetSprites (spriteList[tag]);
-                        } else {
-                            asset.SetSprites (null);
-                        }
+                        asset.SetSprites (spriteList.ContainsKey (tag) ? spriteList[tag] : null);
                         EditorUtility.SetDirty (asset);
                     } else {
                         Debug.LogWarningFormat ("SpriteAtlas.Name at \"{0}\" is empty - skipped", path);

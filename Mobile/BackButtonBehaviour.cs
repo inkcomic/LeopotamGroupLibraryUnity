@@ -1,11 +1,10 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using UnityEngine.Events;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace LeopotamGroup.Mobile {
     /// <summary>

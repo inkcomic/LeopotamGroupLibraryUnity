@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -19,11 +18,11 @@ namespace LeopotamGroup.Math {
             NumberDecimalSeparator = "."
         };
 
-        static readonly StringBuilder _floatToStrBuf = new StringBuilder (64);
+        static StringBuilder _floatToStrBuf = new StringBuilder (64);
 
-        static readonly string[] _shortNumberOrders = { "", "k", "M", "G", "T", "P", "E" };
+        static string[] _shortNumberOrders = { "", "k", "M", "G", "T", "P", "E" };
 
-        static readonly float InvLog1k = 1 / (float) System.Math.Log (1000);
+        static float _invLog1K = 1 / (float) System.Math.Log (1000);
 
         /// <summary>
         /// Convert number to string with "kilo-million-billion" suffix with rounding.
@@ -48,7 +47,7 @@ namespace LeopotamGroup.Math {
                 sign = 1;
             }
 
-            var i = data > 0 ? (int) (System.Math.Floor (System.Math.Log (data) * InvLog1k)) : 0;
+            var i = data > 0 ? (int) (System.Math.Floor (System.Math.Log (data) * _invLog1K)) : 0;
             if (i >= _shortNumberOrders.Length) {
                 i = _shortNumberOrders.Length - 1;
             }
@@ -114,23 +113,24 @@ namespace LeopotamGroup.Math {
         /// <param name="data">Data.</param>
         public static string ToStringFast (this float data) {
             lock (_floatToStrBuf) {
-                const int prec_mul = 100000;
+                const int precMul = 100000;
                 _floatToStrBuf.Length = 0;
                 var isNeg = data < 0f;
                 if (isNeg) {
                     data = -data;
                 }
                 var v0 = (uint) data;
-                var diff = (data - v0) * prec_mul;
+                var diff = (data - v0) * precMul;
                 var v1 = (uint) diff;
                 diff -= v1;
                 if (diff > 0.5f) {
                     v1++;
-                    if (v1 >= prec_mul) {
+                    if (v1 >= precMul) {
                         v1 = 0;
                         v0++;
                     }
                 } else {
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
                     if (diff == 0.5f && (v1 == 0 || (v1 & 1) != 0)) {
                         v1++;
                     }

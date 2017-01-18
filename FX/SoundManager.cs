@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -7,13 +6,15 @@
 using LeopotamGroup.Common;
 using UnityEngine;
 
-namespace LeopotamGroup.FX {
+namespace LeopotamGroup.Fx {
     /// <summary>
     /// SoundManager channel for playing FX.
     /// </summary>
-    public enum SoundFXChannel {
+    public enum SoundFxChannel {
         First = 0,
+
         Second = 1,
+
         Third = 2
     }
 
@@ -56,8 +57,7 @@ namespace LeopotamGroup.FX {
             DontDestroyOnLoad (gameObject);
 
             _music = gameObject.AddComponent<AudioSource> ();
-            _fxes = new[]
-            {
+            _fxes = new[] {
                 gameObject.AddComponent<AudioSource> (),
                 gameObject.AddComponent<AudioSource> (),
                 gameObject.AddComponent<AudioSource> ()
@@ -99,13 +99,13 @@ namespace LeopotamGroup.FX {
         /// <param name="clip">AudioClip object.</param>
         /// <param name="channel">Channel for playing.</param>
         /// <param name="forceInterrupt">Force interrupt previous FX at chanel.</param>
-        public void PlayFX (AudioClip clip, SoundFXChannel channel = SoundFXChannel.First, bool forceInterrupt = false) {
+        public void PlayFx (AudioClip clip, SoundFxChannel channel = SoundFxChannel.First, bool forceInterrupt = false) {
             var fx = _fxes[(int) channel];
             if (!forceInterrupt && fx.isPlaying) {
                 return;
             }
 
-            StopFX (channel);
+            StopFx (channel);
 
             fx.clip = clip;
 
@@ -118,7 +118,7 @@ namespace LeopotamGroup.FX {
         /// Stop playing FX at channel.
         /// </summary>
         /// <param name="channel">Channel.</param>
-        public void StopFX (SoundFXChannel channel) {
+        public void StopFx (SoundFxChannel channel) {
             var fx = _fxes[(int) channel];
             if (fx.isPlaying) {
                 fx.Stop ();

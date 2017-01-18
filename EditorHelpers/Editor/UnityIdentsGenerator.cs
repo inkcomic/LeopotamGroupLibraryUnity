@@ -1,13 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -20,10 +19,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         [Flags]
         public enum Options {
             Layers = 1,
+
             Tags = 2,
+
             Scenes = 4,
+
             Animators = 8,
+
             Axes = 16,
+
             Shaders = 32
         }
 
@@ -42,8 +46,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const Options DefaultOptions = (Options) (-1);
 
         const string CodeTemplate =
-            "// Auto generated code, dont change it manually!\n\n" +
-            "using UnityEngine;\n\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\n\t}}\n}}";
+                "// Auto generated code, dont change it manually!\n\n" +
+                "using UnityEngine;\n\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\n\t}}\n}}";
 
         const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");";
 
@@ -79,6 +83,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             _options = (Options) ProjectPrefs.GetInt (OptionsKey, (int) DefaultOptions);
         }
 
+        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_optionNames == null) {
                 _optionNames = Enum.GetNames (typeof (Options));
@@ -172,7 +177,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 foreach (var guid in AssetDatabase.FindAssets ("t:shader")) {
                     var assetPath = AssetDatabase.GUIDToAssetPath (guid);
                     var shader = AssetDatabase.LoadAssetAtPath<Shader> (assetPath);
-                    if (shader.name.IndexOf ("Hidden") != 0) {
+                    if (shader.name.IndexOf ("Hidden", StringComparison.Ordinal) != 0) {
                         for (int i = 0, iMax = ShaderUtil.GetPropertyCount (shader); i < iMax; i++) {
                             if (!ShaderUtil.IsShaderPropertyHidden (shader, i)) {
                                 var name = ShaderUtil.GetPropertyName (shader, i);
@@ -216,6 +221,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         /// <returns>Error message or null on success.</returns>
         /// <param name="fileName">Filename.</param>
         /// <param name="nsName">Namespace.</param>
+        /// <param name="options">Options for generation.</param>
         public static string Generate (string fileName, string nsName, Options options) {
             if (string.IsNullOrEmpty (fileName) || string.IsNullOrEmpty (nsName)) {
                 return "invalid parameters";

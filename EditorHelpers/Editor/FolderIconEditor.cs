@@ -1,15 +1,16 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
-using System.Collections.Generic;
-using System;
 using UnityEditor;
 using UnityEngine;
+
+// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     sealed class FolderIconEditor : EditorWindow {
@@ -22,6 +23,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     if (!_validColor.HasValue) {
                         _validColor = HexColor.ToColor24 ();
                     }
+
+                    // ReSharper disable once PossibleInvalidOperationException
                     return _validColor.Value;
                 }
                 set {
@@ -30,6 +33,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 }
             }
 
+            // ReSharper disable once MemberCanBePrivate.Local
             [JsonName ("c")]
             public string HexColor = "ffffff";
 
@@ -67,8 +71,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void LoadInfo () {
             try {
-                _allDescs = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, FolderIconDesc>> (
-                    ProjectPrefs.GetString (StorageKey, "{}"));
+                _allDescs = Singleton.Get<JsonSerialization> ()
+                        .Deserialize<Dictionary<string, FolderIconDesc>> (
+                            ProjectPrefs.GetString (StorageKey, "{}"));
                 if (_allDescs == null) {
                     throw new Exception ();
                 }
@@ -130,7 +135,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         [MenuItem ("Assets/LeopotamGroup/FolderIcons/Open editor...", false, 1)]
-        static void OpenUI () {
+        static void OpenUi () {
             var path = AssetDatabase.GetAssetPath (Selection.activeObject);
             if (!string.IsNullOrEmpty (path) && AssetDatabase.IsValidFolder (path)) {
                 var win = GetWindow<FolderIconEditor> (true);
@@ -141,7 +146,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         [MenuItem ("Assets/LeopotamGroup/FolderIcons/Reset all settings", false, 100)]
-        static void ClearAllUI () {
+        static void ClearAllUi () {
             _allDescs.Clear ();
             SaveInfo ();
             EditorUtility.DisplayDialog (Title, "Successfully reset", "Close");
@@ -157,6 +162,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             titleContent.text = Title;
         }
 
+        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_folderDesc == null) {
                 Close ();

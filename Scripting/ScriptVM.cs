@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -10,7 +9,7 @@ namespace LeopotamGroup.Scripting {
     /// <summary>
     /// Script engine VM. Internal class.
     /// </summary>
-    sealed class ScriptVM {
+    sealed class ScriptVm {
         readonly Scanner _scanner;
 
         readonly Parser _parser;
@@ -25,7 +24,7 @@ namespace LeopotamGroup.Scripting {
         /// <summary>
         /// Default initialization.
         /// </summary>
-        public ScriptVM () {
+        public ScriptVm () {
             InFunctionCall = false;
             _scanner = new Scanner ();
             _parser = new Parser (this, _scanner);
@@ -70,8 +69,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public string CallFunction (string funcName, out ScriptVar result,
-                                    ScriptVar? param1 = null, ScriptVar? param2 = null,
-                                    ScriptVar? param3 = null, ScriptVar? param4 = null) {
+            ScriptVar? param1 = null, ScriptVar? param2 = null,
+            ScriptVar? param3 = null, ScriptVar? param4 = null) {
             var undef = new ScriptVar ();
             if (InFunctionCall) {
                 result = undef;
@@ -83,23 +82,28 @@ namespace LeopotamGroup.Scripting {
             }
             InFunctionCall = true;
             var func = _parser.Vars.GetFunction (funcName);
-            _scanner.PC = func.PC;
+            _scanner.PC = func.Pc;
             _parser.Vars.ResetVars ();
             var id = 0;
             var max = func.Params != null ? func.Params.Length : 0;
             if (param1 != null && id < max) {
+                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param1.Value);
             }
             if (param2 != null && id < max) {
+                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param2.Value);
             }
             if (param3 != null && id < max) {
+                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param3.Value);
             }
             if (param4 != null && id < max) {
+                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param4.Value);
             }
             for (; id < max; id++) {
+                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id], undef);
             }
             var err = _parser.CallFunction ();
@@ -137,7 +141,7 @@ namespace LeopotamGroup.Scripting {
         /// </summary>
         /// <returns>Requested parameter or ScriptVar.Undefined.</returns>
         /// <param name="id">Number of parameter.</param>
-        public ScriptVar GetParamByID (int id) {
+        public ScriptVar GetParamById (int id) {
             return id >= 0 && id < GetParamsCount () ? _parser.CallParams[_parser.CallParamsOffset + id] : new ScriptVar ();
         }
 

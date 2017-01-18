@@ -1,17 +1,16 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Text;
-using System;
+using System.Text.RegularExpressions;
+using LeopotamGroup.Common;
+using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,7 +27,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string ResDefault = "NewCsv.csv";
 
-        static readonly Regex _csvMultilineRegex = new Regex ("\"([^\"]|\"\"|\\n)*\"");
+        static readonly Regex CsvMultilineRegex = new Regex ("\"([^\"]|\"\"|\\n)*\"");
 
         Dictionary<string, string> _paths;
 
@@ -50,8 +49,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         void Load () {
             try {
-                _paths = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, string>> (
-                    ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
+                _paths = Singleton.Get<JsonSerialization> ()
+                        .Deserialize<Dictionary<string, string>> (
+                            ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
                 if (_paths == null) {
                     throw new Exception ();
                 }
@@ -72,6 +72,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             Save ();
         }
 
+        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_paths == null) {
                 Load ();
@@ -132,9 +133,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 return "No data";
             }
             try {
-                ServicePointManager.ServerCertificateValidationCallback = delegate {
-                    return true;
-                };
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
                 using (var www = new WebClient ()) {
                     www.Encoding = Encoding.UTF8;
@@ -150,9 +149,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                             }
 
                             // Fix for multiline string.
-                            data = _csvMultilineRegex.Replace (data, m => {
-                                return m.Value.Replace ("\n", "\\n");
-                            });
+                            data = CsvMultilineRegex.Replace (data, m => m.Value.Replace ("\n", "\\n"));
 
                             File.WriteAllText (path, data, Encoding.UTF8);
                         }
@@ -164,9 +161,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 AssetDatabase.Refresh ();
                 return ex.ToString ();
             } finally {
-                ServicePointManager.ServerCertificateValidationCallback = delegate {
-                    return false;
-                };
+                ServicePointManager.ServerCertificateValidationCallback = null;
             }
         }
     }

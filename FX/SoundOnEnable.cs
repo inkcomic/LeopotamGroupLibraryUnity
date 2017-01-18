@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -7,7 +6,9 @@
 using LeopotamGroup.Common;
 using UnityEngine;
 
-namespace LeopotamGroup.FX {
+#pragma warning disable 649
+
+namespace LeopotamGroup.Fx {
     /// <summary>
     /// Setup FX parameters on enable.
     /// </summary>
@@ -16,7 +17,7 @@ namespace LeopotamGroup.FX {
         AudioClip _sound;
 
         [SerializeField]
-        SoundFXChannel _channel = SoundFXChannel.First;
+        SoundFxChannel _channel = SoundFxChannel.First;
 
         /// <summary>
         /// Should new FX force interrupts FX at channel or not.
@@ -25,7 +26,7 @@ namespace LeopotamGroup.FX {
         bool _isInterrupt;
 
         void OnEnable () {
-            Singleton.Get<SoundManager> ().PlayFX (_sound, _channel, _isInterrupt);
+            Singleton.Get<SoundManager> ().PlayFx (_sound, _channel, _isInterrupt);
         }
     }
 }

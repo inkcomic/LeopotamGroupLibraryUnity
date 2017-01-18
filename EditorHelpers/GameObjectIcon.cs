@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -7,41 +6,65 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers {
     public enum GameObjectLabelIconType {
         Gray = 0,
+
         Blue,
+
         Teal,
+
         Green,
+
         Yellow,
+
         Orange,
+
         Red,
+
         Purple
     }
 
     public enum GameObjectImageIconType {
         CircleGray = 0,
+
         CircleBlue,
+
         CircleTeal,
+
         CircleGreen,
+
         CircleYellow,
+
         CircleOrange,
+
         CircleRed,
+
         CirclePurple,
+
         DiamondGray,
+
         DiamondBlue,
+
         DiamondTeal,
+
         DiamondGreen,
+
         DiamondYellow,
+
         DiamondOrange,
+
         DiamondRed,
+
         DiamondPurple
     }
 
     public static class GameObjectIcon {
 #if UNITY_EDITOR
+
         static List<Texture2D> _icons;
 
         const int IconTypeCount = 3;
@@ -56,14 +79,13 @@ namespace LeopotamGroup.EditorHelpers {
 
         const string ImageIconLargeSuffix = "_pix16_gizmo";
 
-        static readonly MethodInfo _setIcon;
+        static MethodInfo _setIcon;
 
-        static readonly object[] _setIconArgs;
+        static object[] _setIconArgs;
 
         static GameObjectIcon () {
             _setIconArgs = new object[2];
-            _setIcon = typeof (UnityEditor.EditorGUIUtility).GetMethod (
-                SetIconMethodName, BindingFlags.Static | BindingFlags.NonPublic);
+            _setIcon = typeof (EditorGUIUtility).GetMethod (SetIconMethodName, BindingFlags.Static | BindingFlags.NonPublic);
             _icons = new List<Texture2D> ();
             FillIcons (_icons, LabelIconMask, string.Empty, 8);
             FillIcons (_icons, ImageIconMask, ImageIconSmallSuffix, 16);
@@ -73,8 +95,8 @@ namespace LeopotamGroup.EditorHelpers {
         static void FillIcons (IList<Texture2D> dict, string baseName, string suffix, int count) {
             GUIContent content;
             for (var i = 0; i < count; i++) {
-                content = UnityEditor.EditorGUIUtility.IconContent (baseName + i + suffix);
-                _icons.Add (content != null ? content.image as Texture2D : null);
+                content = EditorGUIUtility.IconContent (baseName + i + suffix);
+                dict.Add (content != null ? content.image as Texture2D : null);
             }
         }
 

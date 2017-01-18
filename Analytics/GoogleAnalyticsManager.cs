@@ -1,18 +1,18 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.EditorHelpers;
-using LeopotamGroup.Localization;
-using System.Collections.Generic;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System;
+using LeopotamGroup.Common;
+using LeopotamGroup.Localization;
 using UnityEngine;
+
+#pragma warning disable 649
 
 namespace LeopotamGroup.Analytics {
     /// <summary>
@@ -20,41 +20,46 @@ namespace LeopotamGroup.Analytics {
     /// </summary>
     sealed class GoogleAnalyticsManager : UnitySingletonBase {
         [SerializeField]
-        string _trackerID;
+        string _trackerId;
 
         /// <summary>
         /// Is TrackerID filled ans manager ready to send data.
         /// </summary>
-        public bool IsInited { get { return !string.IsNullOrEmpty (_trackerID); } }
+        public bool IsInited {
+            get { return !string.IsNullOrEmpty (_trackerId); }
+        }
 
         /// <summary>
         /// Get device identifier, replacement for SystemInfo.deviceUniqueIdentifier.
         /// </summary>
         public string DeviceHash {
             get {
-                if (string.IsNullOrEmpty (_deviceHash)) {
-                    _deviceHash = PlayerPrefs.GetString (DeviceHashKey, null);
-                    if (string.IsNullOrEmpty (_deviceHash)) {
-                        // Dont care about floating point regional format for double.
-                        var userData = string.Format ("{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}",
-                                                      SystemInfo.graphicsDeviceVendor, SystemInfo.graphicsDeviceVersion,
-                                                      SystemInfo.deviceModel,
-                                                      SystemInfo.deviceName, SystemInfo.operatingSystem,
-                                                      SystemInfo.processorCount,
-                                                      SystemInfo.systemMemorySize, Application.systemLanguage,
-                                                      (DateTime.UtcNow -
-                                                       new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
-                        var data = new MD5CryptoServiceProvider ().ComputeHash (Encoding.UTF8.GetBytes (userData));
-                        var sb = new StringBuilder ();
-                        for (var i = 0; i < data.Length; i++) {
-                            sb.Append (data[i].ToString ("x2"));
-                        }
-                        _deviceHash = sb.ToString ();
-                        PlayerPrefs.SetString (DeviceHashKey, _deviceHash);
-
-                        UnityDebug.LogInfo ("[GA] New device hash generated: " + _deviceHash);
-                    }
+                if (!string.IsNullOrEmpty (_deviceHash)) {
+                    return _deviceHash;
                 }
+                _deviceHash = PlayerPrefs.GetString (DeviceHashKey, null);
+                if (!string.IsNullOrEmpty (_deviceHash)) {
+                    return _deviceHash;
+                }
+
+                // Dont care about floating point regional format for double.
+                var userData = string.Format ("{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}",
+                    SystemInfo.graphicsDeviceVendor, SystemInfo.graphicsDeviceVersion,
+                    SystemInfo.deviceModel,
+                    SystemInfo.deviceName, SystemInfo.operatingSystem,
+                    SystemInfo.processorCount,
+                    SystemInfo.systemMemorySize, Application.systemLanguage,
+                    (DateTime.UtcNow - new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+                var data = new MD5CryptoServiceProvider ().ComputeHash (Encoding.UTF8.GetBytes (userData));
+                var sb = new StringBuilder ();
+                for (var i = 0; i < data.Length; i++) {
+                    sb.Append (data[i].ToString ("x2"));
+                }
+                _deviceHash = sb.ToString ();
+                PlayerPrefs.SetString (DeviceHashKey, _deviceHash);
+#if UNITY_EDITOR
+                Debug.Log ("[GA] New device hash generated: " + _deviceHash);
+#endif
                 return _deviceHash;
             }
         }
@@ -78,24 +83,19 @@ namespace LeopotamGroup.Analytics {
 
             // Wait for additional init.
             yield return null;
+
 #if UNITY_EDITOR
-            if (string.IsNullOrEmpty (_trackerID)) {
+            if (string.IsNullOrEmpty (_trackerId)) {
                 Debug.LogWarning ("GA.TrackerID not defined");
             }
 #endif
-            if (!string.IsNullOrEmpty (_trackerID)) {
-                _requestUrl = string.Format (
-                    AnalyticsUrl,
-                    _trackerID,
-                    DeviceHash,
-                    Screen.width, Screen.height,
-                    Application.bundleIdentifier,
-                    Application.version
-                    );
+            if (!string.IsNullOrEmpty (_trackerId)) {
+                _requestUrl = string.Format (AnalyticsUrl, _trackerId, DeviceHash, Screen.width,
+                    Screen.height, Application.bundleIdentifier, Application.version);
             }
 
             string url = null;
-            string data = null;
+            string data;
 
             while (true) {
                 if (_requests.Count > 0) {
@@ -104,12 +104,14 @@ namespace LeopotamGroup.Analytics {
                     // If tracking id defined and url inited.
                     if (!string.IsNullOrEmpty (_requestUrl)) {
                         url = string.Format ("{0}{1}&{2}&ul={3}",
-                                             _requestUrl, UnityEngine.Random.Range (1, 99999), data, Localizer.Language);
+                            _requestUrl, UnityEngine.Random.Range (1, 99999), data, Localizer.Language);
                     }
                 }
 
                 if (url != null) {
-                    UnityDebug.LogInfo ("[GA REQUEST] " + url);
+#if UNITY_EDITOR
+                    Debug.Log ("[GA REQUEST] " + url);
+#endif
 
                     using (var www = new WWW (url)) {
                         yield return www;
@@ -146,10 +148,7 @@ namespace LeopotamGroup.Analytics {
         /// <param name="category">Category name.</param>
         /// <param name="action">Action name.</param>
         public void TrackEvent (string category, string action) {
-            EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}",
-                                           WWW.EscapeURL (category),
-                                           WWW.EscapeURL (action)
-                                           ));
+            EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}", WWW.EscapeURL (category), WWW.EscapeURL (action)));
         }
 
         /// <summary>
@@ -161,11 +160,11 @@ namespace LeopotamGroup.Analytics {
         /// <param name="value">Value.</param>
         public void TrackEvent (string category, string action, string label, string value) {
             EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}&el={2}&ev={3}",
-                                           WWW.EscapeURL (category),
-                                           WWW.EscapeURL (action),
-                                           WWW.EscapeURL (label),
-                                           WWW.EscapeURL (value)
-                                           ));
+                WWW.EscapeURL (category),
+                WWW.EscapeURL (action),
+                WWW.EscapeURL (label),
+                WWW.EscapeURL (value)
+            ));
         }
 
         /// <summary>

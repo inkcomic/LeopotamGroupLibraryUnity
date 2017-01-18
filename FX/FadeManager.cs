@@ -1,14 +1,15 @@
-
 // -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using LeopotamGroup.Common;
 using System;
+using LeopotamGroup.Common;
 using UnityEngine;
 
-namespace LeopotamGroup.FX {
+// ReSharper disable RedundantCast.0
+
+namespace LeopotamGroup.Fx {
     /// <summary>
     /// Fade manager for Camera with tag "MainCamera".
     /// </summary>
@@ -37,7 +38,7 @@ namespace LeopotamGroup.FX {
         int _cameraIndex;
 
         protected override void OnConstruct () {
-            if (_mtrl == null) {
+            if ((object) _mtrl == null) {
                 _mtrl = new Material (Shader.Find ("Hidden/LeopotamGroup/FX/ScreenFade"));
                 _mtrl.hideFlags = HideFlags.DontSave;
             }
@@ -122,7 +123,7 @@ namespace LeopotamGroup.FX {
             _fadeTime = time;
             _callback = onSuccess;
             _time = 0f;
-            enabled = _startValue != _endValue;
+            enabled = Mathf.Abs (_startValue - _endValue) > float.Epsilon;
         }
     }
 }

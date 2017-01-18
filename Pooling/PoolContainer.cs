@@ -1,11 +1,13 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using LeopotamGroup.Collections;
 using UnityEngine;
+
+// ReSharper disable RedundantCast
+// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.Pooling {
     /// <summary>
@@ -71,8 +73,8 @@ namespace LeopotamGroup.Pooling {
                 isNew = false;
             } else {
                 obj = _needToAddPoolObject ?
-                      (Instantiate (_cachedAsset) as GameObject).AddComponent<PoolObject> () :
-                      Instantiate (_cachedAsset) as IPoolObject;
+                    ((GameObject) Instantiate (_cachedAsset)).AddComponent<PoolObject> () :
+                    (IPoolObject) Instantiate (_cachedAsset);
                 obj.PoolContainer = this;
                 var tr = obj.PoolTransform;
                 if ((object) tr != null) {
@@ -119,9 +121,9 @@ namespace LeopotamGroup.Pooling {
                 return null;
             }
             var container =
-                new GameObject (
+                    new GameObject (
 #if UNITY_EDITOR
-                    "_POOL_" + prefabPath
+                        "_POOL_" + prefabPath
 #endif
                     ).AddComponent<PoolContainer> ();
             container._prefabPath = prefabPath;

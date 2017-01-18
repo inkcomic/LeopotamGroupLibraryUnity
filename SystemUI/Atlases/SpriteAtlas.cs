@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -7,7 +6,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LeopotamGroup.SystemUI.Atlases {
+#pragma warning disable 649
+
+namespace LeopotamGroup.SystemUi.Atlases {
     public sealed class SpriteAtlas : MonoBehaviour {
         [SerializeField]
         string _name;

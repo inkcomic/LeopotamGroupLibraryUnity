@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -10,6 +9,5 @@ namespace LeopotamGroup.EditorHelpers {
     /// <summary>
     /// Helper for custom flags selector.
     /// </summary>
-    public sealed class EnumFlagsAttribute : PropertyAttribute {
-    }
+    public sealed class EnumFlagsAttribute : PropertyAttribute { }
 }

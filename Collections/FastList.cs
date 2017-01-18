@@ -1,12 +1,11 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Collections;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace LeopotamGroup.Collections {
     /// <summary>
@@ -17,18 +16,22 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Get items count.
         /// </summary>
-        public int Count { get { return _count; } }
+        public int Count {
+            get { return _count; }
+        }
 
         /// <summary>
         /// Get collection capacity.
         /// </summary>
-        public int Capacity { get { return _capacity; } }
+        public int Capacity {
+            get { return _capacity; }
+        }
 
         /// <summary>
         /// Get / set item at specified index.
         /// </summary>
         /// <param name="index">Index.</param>
-        public T this[int index] {
+        public T this [int index] {
             get {
                 if (index >= _count) {
                     throw new ArgumentOutOfRangeException ();
@@ -65,13 +68,14 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Constructor with comparer initialization.
         /// </summary>
-        /// <param name="comparer">Comparer. If null - EqualityComparer<T>.Default comparer will be used.</param>
+        /// <param name="comparer">Comparer. If null - default comparer will be used.</param>
         public FastList (EqualityComparer<T> comparer) : this (InitCapacity, comparer) { }
 
         /// <summary>
         /// Constructor with capacity initialization.
         /// </summary>
         /// <param name="capacity">Capacity on start.</param>
+        /// <param name="comparer">Comparer. If null - default comparer will be used.</param>
         public FastList (int capacity, EqualityComparer<T> comparer = null) {
             var type = typeof (T);
             _isNullable = !type.IsValueType || (Nullable.GetUnderlyingType (type) != null);
@@ -114,11 +118,12 @@ namespace LeopotamGroup.Collections {
             if (casted != null) {
                 var amount = casted.Count;
 
-                if (amount > 0) {
-                    Reserve (amount, false, false);
-                    casted.CopyTo (_items, _count);
-                    _count += amount;
+                if (amount <= 0) {
+                    return;
                 }
+                Reserve (amount, false, false);
+                casted.CopyTo (_items, _count);
+                _count += amount;
             } else {
                 using (var it = data.GetEnumerator ()) {
                     while (it.MoveNext ()) {
@@ -185,8 +190,8 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="amount">Amount of new items.</param>
         /// <param name="clearCollection">Is collection should be cleared before.</param>
-        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
-        // optimization).</param>
+        /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful
+        /// for optimization).</param>
         public void FillWithEmpty (int amount, bool clearCollection = false, bool forceSetDefaultValues = true) {
             if (amount <= 0) {
                 return;
@@ -220,25 +225,33 @@ namespace LeopotamGroup.Collections {
                         }
                     }
                 } else {
-                    i = Array.IndexOf<T> (_items, item, 0, _count);
+                    i = Array.IndexOf (_items, item, 0, _count);
                 }
             }
             return i;
         }
 
         /// <summary>
-        /// Not implemented.
+        /// Insert new item at specified position of collection.
         /// </summary>
-        /// <param name="index">Index.</param>
-        /// <param name="item">Item.</param>
+        /// <param name="index">Position.</param>
+        /// <param name="item">New item.</param>
         public void Insert (int index, T item) {
-            throw new NotSupportedException ();
+            if (index < 0 || index > _count) {
+                throw new ArgumentOutOfRangeException ();
+            }
+            Reserve (1, false, false);
+            Array.Copy (_items, index, _items, index + 1, _count - index);
+            _items[index] = item;
+            _count++;
         }
 
         /// <summary>
         /// Is collection readonly (for compatibility to IList).
         /// </summary>
-        public bool IsReadOnly { get { return false; } }
+        public bool IsReadOnly {
+            get { return false; }
+        }
 
         /// <summary>
         /// Get internal data, use it on your own risk!
@@ -257,12 +270,11 @@ namespace LeopotamGroup.Collections {
         /// <param name="count">Actual count of items.</param>
         public T[] GetData (out int count) {
             count = _count;
-
             return _items;
         }
 
         /// <summary>
-        /// Never ever - use for loop for iterations!
+        /// Never ever - use for-loop for iterations!
         /// </summary>
         /// <returns>The enumerator.</returns>
         public IEnumerator<T> GetEnumerator () {
@@ -278,15 +290,13 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="item">Item to remove.</param>
         public bool Remove (T item) {
-            int id = Array.IndexOf (_items, item);
-
-            if (id != -1) {
-                RemoveAt (id);
-
-                return true;
+            var id = Array.IndexOf (_items, item);
+            if (id == -1) {
+                return false;
             }
+            RemoveAt (id);
 
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -294,10 +304,11 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="id">Index of item to remove.</param>
         public void RemoveAt (int id) {
-            if (id >= 0 && id < _count) {
-                _count--;
-                Array.Copy (_items, id + 1, _items, id, _count - id);
+            if (id < 0 || id >= _count) {
+                return;
             }
+            _count--;
+            Array.Copy (_items, id + 1, _items, id, _count - id);
         }
 
         /// <summary>
@@ -305,28 +316,27 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <returns><c>true</c>, if last was removed, <c>false</c> otherwise.</returns>
         /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
-        // optimization).</param>
+        /// optimization).</param>
         public bool RemoveLast (bool forceSetDefaultValues = true) {
-            if (_count > 0) {
-                _count--;
-                if (forceSetDefaultValues) {
-                    _items[_count] = default (T);
-                }
-
-                return true;
+            if (_count <= 0) {
+                return false;
+            }
+            _count--;
+            if (forceSetDefaultValues) {
+                _items[_count] = default (T);
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
-        /// Reserve the specified amount of items, absolute or relative.
+        /// Reserve the specified amount of items, absolute or relative. Items amount not changed!
         /// </summary>
         /// <param name="amount">Amount.</param>
         /// <param name="totalAmount">Is amount value means - total items amount at collection or relative
-        // otherwise.</param>
+        /// otherwise.</param>
         /// <param name="forceSetDefaultValues">Is new items should be set to their default values (False useful for
-        // optimization).</param>
+        /// optimization).</param>
         public void Reserve (int amount, bool totalAmount = false, bool forceSetDefaultValues = true) {
             if (amount <= 0) {
                 return;
@@ -357,14 +367,16 @@ namespace LeopotamGroup.Collections {
         /// Reverse items order in collection.
         /// </summary>
         public void Reverse () {
-            if (_count > 0) {
-                T temp;
+            if (_count <= 0) {
+                return;
+            }
 
-                for (int i = 0, iMax = _count >> 1; i < iMax; i++) {
-                    temp = _items[i];
-                    _items[i] = _items[_count - i - 1];
-                    _items[_count - i - 1] = temp;
-                }
+            T temp;
+
+            for (int i = 0, iMax = _count >> 1; i < iMax; i++) {
+                temp = _items[i];
+                _items[i] = _items[_count - i - 1];
+                _items[_count - i - 1] = temp;
             }
         }
 

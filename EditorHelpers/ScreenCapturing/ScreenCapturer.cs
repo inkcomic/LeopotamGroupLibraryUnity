@@ -1,17 +1,16 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 #if UNITY_EDITOR
 
-using LeopotamGroup.Math;
-using System.Collections.Generic;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System;
+using LeopotamGroup.Math;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,7 +20,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
     /// </summary>
     [ExecuteInEditMode]
     sealed class ScreenCapturer : MonoBehaviour {
-        static readonly List<Vector2i> _resList = new List<Vector2i> {
+        static List<Vector2i> _resList = new List<Vector2i> {
             new Vector2i (800, 480),
             new Vector2i (960, 640),
             new Vector2i (1024, 768),
@@ -94,23 +93,23 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
         }
 
         static class GameViewResolution {
-            static readonly EditorWindow _gvWindow;
+            static EditorWindow _gvWindow;
 
-            static readonly PropertyInfo _gvSelectedPreset;
+            static PropertyInfo _gvSelectedPreset;
 
-            static readonly PropertyInfo _gvsCurrentGroup;
+            static PropertyInfo _gvsCurrentGroup;
 
-            static readonly MethodInfo _gvRepaintAll;
+            static MethodInfo _gvRepaintAll;
 
-            static readonly MethodInfo _gvgGetTotalCount;
+            static MethodInfo _gvgGetTotalCount;
 
-            static readonly MethodInfo _gvgAddCustomSize;
+            static MethodInfo _gvgAddCustomSize;
 
-            static readonly MethodInfo _gvgRemoveCustomSize;
+            static MethodInfo _gvgRemoveCustomSize;
 
-            static readonly object _gvsInstance;
+            static object _gvsInstance;
 
-            static readonly ConstructorInfo _gvsCtor;
+            static ConstructorInfo _gvsCtor;
 
             static GameViewResolution () {
                 var gvType = typeof (Editor).Assembly.GetType ("UnityEditor.GameView");
@@ -125,7 +124,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
 
                 var sizesType = typeof (Editor).Assembly.GetType ("UnityEditor.GameViewSizes");
                 _gvsCurrentGroup = sizesType.GetProperty ("currentGroup", BindingFlags.Instance | BindingFlags.Public);
-                var singleType = typeof (ScriptableSingleton<> ).MakeGenericType (sizesType);
+                var singleType = typeof (ScriptableSingleton<>).MakeGenericType (sizesType);
                 var instanceProp = singleType.GetProperty ("instance");
                 _gvsInstance = instanceProp.GetValue (null, null);
 

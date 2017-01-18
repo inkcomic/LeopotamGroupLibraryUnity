@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -14,14 +13,14 @@ namespace LeopotamGroup.Serialization {
     /// Csv serialization. Supports deserialization only.
     /// </summary>
     public sealed class CsvSerialization {
-        static readonly Regex _csvRegex = new Regex ("(?<=^|,)(\"(?:[^\"]|\"\")*\"|[^,]*)");
+        static readonly Regex CsvRegex = new Regex ("(?<=^|,)(\"(?:[^\"]|\"\")*\"|[^,]*)");
 
         readonly List<string> _tokens = new List<string> (8);
 
         void ParseLine (string data) {
             _tokens.Clear ();
 
-            foreach (Match m in _csvRegex.Matches (data)) {
+            foreach (Match m in CsvRegex.Matches (data)) {
                 var part = m.Value.Trim ();
                 if (part.Length > 0) {
                     if (part[0] == '"' && part[part.Length - 1] == '"') {
@@ -37,7 +36,7 @@ namespace LeopotamGroup.Serialization {
         /// Deserialize csv data from raw string source.
         /// </summary>
         /// <returns>Deserialized KeyValue-dictionary as Key from first column and lists of other columns as
-        // Value.</returns>
+        /// Value.</returns>
         /// <param name="data">Raw text data.</param>
         /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
         public Dictionary<string, string[]> Deserialize (

@@ -1,13 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
-using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 namespace LeopotamGroup.Localization {
@@ -24,7 +23,7 @@ namespace LeopotamGroup.Localization {
             set {
                 if (!string.IsNullOrEmpty (value) && _language != value) {
                     SetLanguage (value);
-                    RelocalizeUI ();
+                    RelocalizeUi ();
                 }
             }
         }
@@ -39,15 +38,15 @@ namespace LeopotamGroup.Localization {
 
         const string OnLocalizeMethodName = "OnLocalize";
 
-        static readonly Dictionary<string, string[]> _statics = new Dictionary<string, string[]> (64);
+        static Dictionary<string, string[]> _statics = new Dictionary<string, string[]> (64);
 
-        static readonly Dictionary<string, string[]> _dynamics = new Dictionary<string, string[]> (64);
+        static Dictionary<string, string[]> _dynamics = new Dictionary<string, string[]> (64);
 
         static string[] _header;
 
         static string _language;
 
-        static int _langID;
+        static int _langId;
 
         static Localizer () {
             _header = null;
@@ -59,7 +58,7 @@ namespace LeopotamGroup.Localization {
 
         static void SetLanguage (string lang) {
             _language = lang;
-            _langID = _header != null ? Array.IndexOf (_header, _language) : -1;
+            _langId = _header != null ? Array.IndexOf (_header, _language) : -1;
             PlayerPrefs.SetString (SettingsKey, _language);
         }
 
@@ -88,15 +87,15 @@ namespace LeopotamGroup.Localization {
 
             _header = storage[HeaderToken];
             if (!string.IsNullOrEmpty (_language)) {
-                var langID = Array.IndexOf (_header, _language);
-                if (_langID != -1 && langID != _langID) {
+                var langId = Array.IndexOf (_header, _language);
+                if (_langId != -1 && langId != _langId) {
 #if UNITY_EDITOR
                     Debug.LogWarning ("Invalid languages order in source, skipping.");
 #endif
                     return;
                 }
-                if (_langID == -1) {
-                    _langID = langID;
+                if (_langId == -1) {
+                    _langId = langId;
                 }
             }
         }
@@ -106,11 +105,12 @@ namespace LeopotamGroup.Localization {
         /// </summary>
         /// <param name="token">Localization token.</param>
         public static string Get (string token) {
-            if (_langID == -1) {
+            if (_langId == -1) {
                 return token;
             }
             return _dynamics.ContainsKey (token) ?
-                   _dynamics[token][_langID] : (_statics.ContainsKey (token) ? _statics[token][_langID] : token);
+                _dynamics[token][_langId] :
+                (_statics.ContainsKey (token) ? _statics[token][_langId] : token);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace LeopotamGroup.Localization {
         /// Raise "OnLocalize" message on all active GameObjects.
         /// </summary>
         /// <returns>The user interface.</returns>
-        public static void RelocalizeUI () {
+        public static void RelocalizeUi () {
             UnityExtensions.BroadcastToAll (OnLocalizeMethodName);
         }
     }

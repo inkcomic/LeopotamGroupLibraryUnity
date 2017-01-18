@@ -1,14 +1,17 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
-using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace LeopotamGroup.SystemUI.EventSystems {
+// ReSharper disable InconsistentNaming
+// ReSharper disable RedundantCast.0
+
+namespace LeopotamGroup.SystemUi.EventSystems {
 #if UNITY_EDITOR
+
     [AddComponentMenu ("Event/LeopotamGroup/Fast Input Module")]
 #endif
     [RequireComponent (typeof (EventSystem))]
@@ -67,7 +70,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
         [SerializeField]
         bool _useRightMouseButton = false;
 
-        readonly PointerInputModule.MouseState _mouseState = new PointerInputModule.MouseState ();
+        readonly MouseState _mouseState = new MouseState ();
 
         float _prevActionTime;
 
@@ -183,8 +186,8 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             var similarDir = move.x * _lastMoveVector.x + move.y * _lastMoveVector.y > 0;
             if (!allow) {
                 allow = similarDir && _consecutiveMoveCount == 1 ?
-                        time > (_prevActionTime + _repeatDelay) :
-                        time > (_prevActionTime + 1f / _inputActionsPerSecond);
+                    time > (_prevActionTime + _repeatDelay) :
+                    time > (_prevActionTime + 1f / _inputActionsPerSecond);
             }
             if (allow) {
                 var axisEventData = GetAxisEventData (move.x, move.y, 0.6f);
@@ -200,7 +203,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             return false;
         }
 
-        protected override PointerInputModule.MouseState GetMousePointerEventData (int id) {
+        protected override MouseState GetMousePointerEventData (int id) {
             PointerEventData pointerEventData;
             var pointerData = GetPointerData (-1, out pointerEventData, true);
             pointerEventData.Reset ();
@@ -217,8 +220,8 @@ namespace LeopotamGroup.SystemUI.EventSystems {
             }
             pointerEventData.scrollDelta = Input.mouseScrollDelta;
             pointerEventData.button = PointerEventData.InputButton.Left;
-            base.eventSystem.RaycastAll (pointerEventData, m_RaycastResultCache);
-            RaycastResult pointerCurrentRaycast = BaseInputModule.FindFirstRaycast (m_RaycastResultCache);
+            eventSystem.RaycastAll (pointerEventData, m_RaycastResultCache);
+            var pointerCurrentRaycast = FindFirstRaycast (m_RaycastResultCache);
             pointerEventData.pointerCurrentRaycast = pointerCurrentRaycast;
             m_RaycastResultCache.Clear ();
 
@@ -264,7 +267,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
 
             if (leftButtonData.buttonData.scrollDelta.sqrMagnitude > float.Epsilon) {
                 var scrollHandler =
-                    ExecuteEvents.GetEventHandler<IScrollHandler> (leftButtonData.buttonData.pointerCurrentRaycast.gameObject);
+                        ExecuteEvents.GetEventHandler<IScrollHandler> (leftButtonData.buttonData.pointerCurrentRaycast.gameObject);
                 ExecuteEvents.ExecuteHierarchy (scrollHandler, leftButtonData.buttonData, ExecuteEvents.scrollHandler);
             }
         }
@@ -312,7 +315,7 @@ namespace LeopotamGroup.SystemUI.EventSystems {
                         pointerEvent.clickCount = 1;
                     }
 
-//                    pointerEvent.clickTime = time;
+                    //                    pointerEvent.clickTime = time;
                 } else {
                     pointerEvent.clickCount = 1;
                 }

@@ -1,5 +1,4 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
@@ -46,12 +45,14 @@ namespace LeopotamGroup.Tweening {
         /// Gets tweened value at current time.
         /// </summary>
         /// <value>The value.</value>
-        public float Value { get { return Curve.Evaluate (CurrentTime); } }
+        public float Value {
+            get { return Curve.Evaluate (CurrentTime); }
+        }
 
         /// <summary>
         /// Internal state of tween count.
         /// </summary>
-        protected int _tweenCount;
+        protected int ActualTweenCount;
 
         /// <summary>
         /// Helper for initialization of tweeners from code.
@@ -83,14 +84,13 @@ namespace LeopotamGroup.Tweening {
         /// <summary>
         /// Will be raised on reset tweener to start values.
         /// </summary>
-        protected virtual void OnReset () {
-        }
+        protected virtual void OnReset () { }
 
         /// <summary>
         /// Reset tweener state to start value.
         /// </summary>
         public void Reset () {
-            _tweenCount = TweenCount;
+            ActualTweenCount = TweenCount;
             CurrentTime = 0f;
             CurrentTimeRaw = 0f;
             OnReset ();
@@ -115,14 +115,14 @@ namespace LeopotamGroup.Tweening {
             CurrentTime += deltaTime;
 
             if (CurrentTime > 1f) {
-                _tweenCount--;
-                if (_tweenCount == 0) {
+                ActualTweenCount--;
+                if (ActualTweenCount == 0) {
                     enabled = false;
                     return;
                 }
                 CurrentTime %= 1f;
-                if (_tweenCount < 0) {
-                    _tweenCount = 0;
+                if (ActualTweenCount < 0) {
+                    ActualTweenCount = 0;
                 }
             }
 

@@ -1,11 +1,12 @@
-﻿
-// -------------------------------------------------------
+﻿// -------------------------------------------------------
 // LeopotamGroupLibrary for unity3d
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // -------------------------------------------------------
 
 using System.Runtime.InteropServices;
 using UnityEngine;
+
+// ReSharper disable InconsistentNaming
 
 namespace LeopotamGroup.Math {
     /// <summary>
@@ -37,35 +38,35 @@ namespace LeopotamGroup.Math {
         /// </summary>
         public const float Deg2Rad = PI / 180f;
 
-        const int _sinCosIndexMask = ~(-1 << 12);
+        const int SinCosIndexMask = ~(-1 << 12);
 
-        static readonly float[] _sinCache;
+        static float[] _sinCache;
 
-        static readonly float[] _cosCache;
+        static float[] _cosCache;
 
-        const float _sinCosIndexFactor = SinCosCacheSize / PI_2;
+        const float SinCosIndexFactor = SinCosCacheSize / PI_2;
 
-        const int SinCosCacheSize = _sinCosIndexMask + 1;
+        const int SinCosCacheSize = SinCosIndexMask + 1;
 
         const int Atan2Size = 1024;
 
         const int Atan2NegSize = -Atan2Size;
 
-        static readonly float[] _atan2CachePPY = new float[Atan2Size + 1];
+        static float[] _atan2CachePPY = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CachePPX = new float[Atan2Size + 1];
+        static float[] _atan2CachePPX = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CachePNY = new float[Atan2Size + 1];
+        static float[] _atan2CachePNY = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CachePNX = new float[Atan2Size + 1];
+        static float[] _atan2CachePNX = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CacheNPY = new float[Atan2Size + 1];
+        static float[] _atan2CacheNPY = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CacheNPX = new float[Atan2Size + 1];
+        static float[] _atan2CacheNPX = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CacheNNY = new float[Atan2Size + 1];
+        static float[] _atan2CacheNNY = new float[Atan2Size + 1];
 
-        static readonly float[] _atan2CacheNNX = new float[Atan2Size + 1];
+        static float[] _atan2CacheNNX = new float[Atan2Size + 1];
 
         [StructLayout (LayoutKind.Explicit)]
         struct FloatInt {
@@ -82,14 +83,14 @@ namespace LeopotamGroup.Math {
             _cosCache = new float[SinCosCacheSize];
             int i;
             for (i = 0; i < SinCosCacheSize; i++) {
-                _sinCache[i] = (float) System.Math.Sin ((i + 0.5f) / (float) SinCosCacheSize * PI_2);
-                _cosCache[i] = (float) System.Math.Cos ((i + 0.5f) / (float) SinCosCacheSize * PI_2);
+                _sinCache[i] = (float) System.Math.Sin ((i + 0.5f) / SinCosCacheSize * PI_2);
+                _cosCache[i] = (float) System.Math.Cos ((i + 0.5f) / SinCosCacheSize * PI_2);
             }
 
             var factor = SinCosCacheSize / 360f;
             for (i = 0; i < 360; i += 90) {
-                _sinCache[(int) (i * factor) & _sinCosIndexMask] = (float) System.Math.Sin (i * PI / 180f);
-                _cosCache[(int) (i * factor) & _sinCosIndexMask] = (float) System.Math.Cos (i * PI / 180f);
+                _sinCache[(int) (i * factor) & SinCosIndexMask] = (float) System.Math.Sin (i * PI / 180f);
+                _cosCache[(int) (i * factor) & SinCosIndexMask] = (float) System.Math.Cos (i * PI / 180f);
             }
 
             // Atan2
@@ -139,7 +140,7 @@ namespace LeopotamGroup.Math {
         /// </summary>
         /// <param name="v">Angle in radians.</param>
         public static float Sin (float v) {
-            return _sinCache[(int) (v * _sinCosIndexFactor) & _sinCosIndexMask];
+            return _sinCache[(int) (v * SinCosIndexFactor) & SinCosIndexMask];
         }
 
         /// <summary>
@@ -147,7 +148,7 @@ namespace LeopotamGroup.Math {
         /// </summary>
         /// <param name="v">Angle in radians.</param>
         public static float Cos (float v) {
-            return _cosCache[(int) (v * _sinCosIndexFactor) & _sinCosIndexMask];
+            return _cosCache[(int) (v * SinCosIndexFactor) & SinCosIndexMask];
         }
 
         /// <summary>
