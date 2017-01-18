@@ -66,7 +66,7 @@ public readonly List<ScriptVar> CallParams = new List<ScriptVar>(8);
 //----------------------------------------------------------------------------------------------------------------------
 
 
-	public Parser(ScriptVM vm, Scanner scanner) {
+	public Parser(ScriptVm vm, Scanner scanner) {
 		_scanner = scanner;
 		Vars = new Vars(vm);
 	}
