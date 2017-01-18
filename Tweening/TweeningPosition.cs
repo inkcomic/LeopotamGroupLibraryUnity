@@ -28,7 +28,7 @@ namespace LeopotamGroup.Tweening {
         public Vector3 EndValue = Vector3.zero;
 
         protected override void OnInit () {
-            if ((object) Target == null) {
+            if (Target == null) {
                 Target = transform;
             }
         }
