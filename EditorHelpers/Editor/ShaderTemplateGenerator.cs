@@ -61,7 +61,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (GUILayout.Button ("Create")) {
                 EditorUtility.DisplayDialog (Title, Create (_shaderType, TargetPath, _shaderName) ?? "Success", "Close");
             }
-            Debug.Log (position.size);
         }
 
         static string GetAssetPath () {
