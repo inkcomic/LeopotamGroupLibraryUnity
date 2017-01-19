@@ -35,7 +35,7 @@ namespace LeopotamGroup.Serialization {
         /// Get json-data based name for field.
         /// </summary>
         /// <value>The name.</value>
-        public string Name { get; }
+        public string Name { get; private set; }
     }
 
     /// <summary>

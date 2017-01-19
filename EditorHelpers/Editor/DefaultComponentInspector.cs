@@ -92,7 +92,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
 
         public class ReorderableListProperty {
-            public ReorderableList List { get; }
+            public ReorderableList List { get; private set; }
 
             public SerializedProperty Property {
                 get { return List.serializedProperty; }
