@@ -11,8 +11,6 @@ using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     sealed class ShaderTemplateGenerator : EditorWindow {
-        public string TargetPath;
-
         const string ShaderTemplate =
                 "Shader \"Custom/<<NAME>>\"{\tProperties{\t\t_MainTex(\"Texture\",2D)=\"white\" <<>>\n\t}\n\n\tSubShader{" +
                 "\t\tTags <<\"RenderType\"=\"<<TYPE>>\" \"Queue\"=\"<<QUEUE>>\" \"IgnoreProjector\"=\"True\" " +
@@ -25,43 +23,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string ShaderAlphaBlendTags = "\t\tCull Off\n\t\tZWrite Off\n\t\tBlend SrcAlpha OneMinusSrcAlpha\n\n";
 
-        const string Title = "Shaders generator";
-
-        static readonly Vector2 EditorMinSize = new Vector2 (270f, 65f);
-
         static readonly string TabReplacement = new string (' ', 4);
-
-        ShaderType _shaderType;
-
-        string _shaderName;
-
-        [MenuItem ("Assets/LeopotamGroup/Shaders generator...")]
-        static void OpenUi () {
-            GetWindow<ShaderTemplateGenerator> (true).TargetPath = GetAssetPath ();
-        }
-
-        void OnEnable () {
-            titleContent.text = Title;
-            minSize = EditorMinSize;
-        }
-
-        void OnLostFocus () {
-            Close ();
-        }
-
-        // ReSharper disable once InconsistentNaming
-        void OnGUI () {
-            if (string.IsNullOrEmpty (TargetPath)) {
-                EditorUtility.DisplayDialog (Title, "Target folder not inited", "Close");
-                OnLostFocus ();
-                return;
-            }
-            _shaderType = (ShaderType) EditorGUILayout.EnumPopup ("Shader type", _shaderType);
-            _shaderName = EditorGUILayout.TextField ("Optional shader name", _shaderName);
-            if (GUILayout.Button ("Create")) {
-                EditorUtility.DisplayDialog (Title, Create (_shaderType, TargetPath, _shaderName) ?? "Success", "Close");
-            }
-        }
 
         static string GetAssetPath () {
             var path = AssetDatabase.GetAssetPath (Selection.activeObject);
@@ -93,12 +55,27 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             return template;
         }
 
-        public static string Create (ShaderType shaderType, string path, string shaderName = null) {
-            if (string.IsNullOrEmpty (path)) {
-                return "Invalid path";
-            }
-            if (shaderName != null) {
-                shaderName = shaderName.Trim ();
+        static Texture2D GetIcon () {
+            return EditorGUIUtility.IconContent ("Shader Icon").image as Texture2D;
+        }
+
+        [MenuItem ("Assets/LeopotamGroup/Shaders/Create unlit opaque shader")]
+        static void CreateUnlitOpaqueShader () {
+            EditorUtils.CreateAndRenameAsset (
+                string.Format ("{0}/UnlitOpaque.shader", GetAssetPath ()),
+                GetIcon (), name => Create (ShaderType.Opaque, name));
+        }
+
+        [MenuItem ("Assets/LeopotamGroup/Shaders/Create unlit transparent shader")]
+        static void CreateUnlitTransparentShader () {
+            EditorUtils.CreateAndRenameAsset (
+                string.Format ("{0}/UnlitTransparent.shader", GetAssetPath ()),
+                GetIcon (), name => Create (ShaderType.Opaque, name));
+        }
+
+        public static string Create (ShaderType shaderType, string fileName) {
+            if (string.IsNullOrEmpty (fileName)) {
+                return "Invalid filename";
             }
 
             string renderType;
@@ -109,25 +86,21 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     renderType = "Opaque";
                     renderQueue = "Geometry";
                     isAlphaBlend = false;
-                    if (string.IsNullOrEmpty (shaderName)) {
-                        shaderName = "UnlitOpaque";
-                    }
                     break;
                 case ShaderType.Transparent:
                     renderType = "Transparent";
                     renderQueue = "Transparent";
                     isAlphaBlend = true;
-                    if (string.IsNullOrEmpty (shaderName)) {
-                        shaderName = "UnlitTransparent";
-                    }
                     break;
                 default:
                     return "Unsupported shader type";
             }
 
+            var shaderName = Path.GetFileNameWithoutExtension (fileName);
+
             try {
                 File.WriteAllText (
-                    AssetDatabase.GenerateUniqueAssetPath (string.Format ("{0}/{1}.shader", path, shaderName)),
+                    AssetDatabase.GenerateUniqueAssetPath (fileName),
                     GetShaderCode (ShaderTemplate, shaderName, renderType, renderQueue, isAlphaBlend));
             } catch (Exception ex) {
                 return ex.Message;
