@@ -80,7 +80,7 @@ namespace LeopotamGroup.SystemUi.DataBinding {
                         prop = type.GetField (token);
                     }
                     if (prop == null) {
-                        Debug.LogWarningFormat ("Cant get member \"{0}\" of source type");
+                        Debug.LogWarningFormat ("[DataBinding] Cant get member \"{0}\" of source type", token);
                     }
                     _sourceTypeFields[token] = prop;
                 }
@@ -101,6 +101,11 @@ namespace LeopotamGroup.SystemUi.DataBinding {
             _source = source;
             if (_source != null) {
                 _source.OnDataChanged += OnDataChanged;
+                foreach (var pair in _subscribers) {
+                    OnDataChanged (pair.Key);
+                }
+            } else {
+                _subscribers.Clear ();
             }
         }
     }

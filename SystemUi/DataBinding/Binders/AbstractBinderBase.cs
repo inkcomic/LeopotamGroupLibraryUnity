@@ -87,8 +87,8 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
         }
 
         void Unsubscribe () {
-            if (Singleton.IsTypeRegistered<DataStorage> ()) {
-                if (!string.IsNullOrEmpty (_token)) {
+            if (!string.IsNullOrEmpty (_token)) {
+                if (Singleton.IsTypeRegistered<DataStorage> ()) {
                     Singleton.Get<DataStorage> ().Unsubscribe (_token, this);
                 }
             }
