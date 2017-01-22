@@ -4,11 +4,11 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Collections;
-using LeopotamGroup.Common;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using LeopotamGroup.Collections;
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding {
@@ -17,7 +17,24 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
         Dictionary<string, MemberInfo> _sourceTypeFields = new Dictionary<string, MemberInfo> (128);
 
-        IDataSource _source = null;
+        IDataSource _source;
+
+        void OnDataChanged (string tokenName) {
+            if (string.IsNullOrEmpty (tokenName)) {
+                return;
+            }
+            FastList<IDataBinder> list;
+            if (_subscribers.TryGetValue (tokenName, out list)) {
+                int count;
+                var items = list.GetData (out count);
+                if (count > 0) {
+                    var data = GetData (tokenName);
+                    for (var i = count - 1; i >= 0; i--) {
+                        items[i].OnDataChanged (tokenName, data);
+                    }
+                }
+            }
+        }
 
         public void Subscribe (string token, IDataBinder binder) {
 #if UNITY_EDITOR
@@ -59,12 +76,15 @@ namespace LeopotamGroup.SystemUi.DataBinding {
                 if (!_sourceTypeFields.TryGetValue (token, out prop)) {
                     var type = _source.GetType ();
                     prop = type.GetProperty (token);
-                    if (prop == null || !(prop as PropertyInfo).CanRead) {
+                    if (prop == null || !((PropertyInfo) prop).CanRead) {
                         prop = type.GetField (token);
                     }
+#if UNITY_EDITOR
                     if (prop == null) {
-                        Debug.LogWarningFormat ("Cant get member \"{0}\" of source type");
+                        Debug.LogWarningFormat (
+                            "[DataBinding] Cant get readable member \"{0}\" of source type \"{1}\"", token, type.Name);
                     }
+#endif
                     _sourceTypeFields[token] = prop;
                 }
                 if (prop != null) {
@@ -78,30 +98,17 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
         public void SetDataSource (IDataSource source) {
             if (_source != null) {
-                _source.OnDataChanged -= OnSourceChanged;
+                _source.OnDataChanged -= OnDataChanged;
                 _sourceTypeFields.Clear ();
             }
             _source = source;
             if (_source != null) {
-                _source.OnDataChanged += OnSourceChanged;
-            }
-        }
-
-        void OnSourceChanged (string propName) {
-            Publish (propName, GetData (propName));
-        }
-
-        public void Publish (string tokenName, object tokenValue) {
-            if (string.IsNullOrEmpty (tokenName)) {
-                return;
-            }
-            FastList<IDataBinder> list;
-            if (_subscribers.TryGetValue (tokenName, out list)) {
-                int count;
-                var items = list.GetData (out count);
-                for (var i = count - 1; i >= 0; i--) {
-                    items[i].OnDataChanged (tokenName, tokenValue);
+                _source.OnDataChanged += OnDataChanged;
+                foreach (var pair in _subscribers) {
+                    OnDataChanged (pair.Key);
                 }
+            } else {
+                _subscribers.Clear ();
             }
         }
     }

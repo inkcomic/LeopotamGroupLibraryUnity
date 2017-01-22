@@ -10,15 +10,15 @@ using UnityEngine.UI;
 // ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
-    [RequireComponent (typeof (Text))]
-    public sealed class DataBindText : AbstractBinderBase {
-        Text _target;
+    [RequireComponent (typeof (Toggle))]
+    public sealed class DataBindToggle : AbstractBinderBase {
+        Toggle _target;
 
         public override void OnDataChanged (string token, object data) {
             if ((object) _target == null) {
-                _target = GetComponent<Text> ();
+                _target = GetComponent<Toggle> ();
             }
-            _target.text = GetValueAsString (data);
+            _target.isOn = GetValueAsBool (data);
         }
     }
 }

@@ -7,9 +7,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// ReSharper disable RedundantCast.0
+
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     [RequireComponent (typeof (Image))]
-    public sealed class DataBindImage : SingleTokenBinderBase {
+    public sealed class DataBindImage : AbstractBinderBase {
         Image _target;
 
         public override void OnDataChanged (string token, object data) {
