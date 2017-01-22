@@ -8,15 +8,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
-    [RequireComponent (typeof (Text))]
-    public sealed class DataBindText : AbstractBinderBase {
-        Text _target;
+    [RequireComponent (typeof (RawImage))]
+    public sealed class DataBindRawImage : AbstractBinderBase {
+        RawImage _target;
 
         public override void OnDataChanged (string token, object data) {
             if ((object) _target == null) {
-                _target = GetComponent<Text> ();
+                _target = GetComponent<RawImage> ();
             }
-            _target.text = GetValueAsString (data);
+            _target.texture = data as Texture;
         }
     }
 }

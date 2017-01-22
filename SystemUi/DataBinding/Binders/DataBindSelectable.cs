@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     [RequireComponent (typeof (Selectable))]
-    public sealed class DataBindSelectable : SingleTokenBinderBase {
+    public sealed class DataBindSelectable : AbstractBinderBase {
         Selectable _target;
 
         public override void OnDataChanged (string token, object data) {

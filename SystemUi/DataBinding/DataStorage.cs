@@ -19,6 +19,23 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
         IDataSource _source = null;
 
+        void OnDataChanged (string tokenName) {
+            if (string.IsNullOrEmpty (tokenName)) {
+                return;
+            }
+            FastList<IDataBinder> list;
+            if (_subscribers.TryGetValue (tokenName, out list)) {
+                int count;
+                var items = list.GetData (out count);
+                if (count > 0) {
+                    var data = GetData (tokenName);
+                    for (var i = count - 1; i >= 0; i--) {
+                        items[i].OnDataChanged (tokenName, data);
+                    }
+                }
+            }
+        }
+
         public void Subscribe (string token, IDataBinder binder) {
 #if UNITY_EDITOR
             if (string.IsNullOrEmpty (token)) {
@@ -78,30 +95,12 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
         public void SetDataSource (IDataSource source) {
             if (_source != null) {
-                _source.OnDataChanged -= OnSourceChanged;
+                _source.OnDataChanged -= OnDataChanged;
                 _sourceTypeFields.Clear ();
             }
             _source = source;
             if (_source != null) {
-                _source.OnDataChanged += OnSourceChanged;
-            }
-        }
-
-        void OnSourceChanged (string propName) {
-            Publish (propName, GetData (propName));
-        }
-
-        public void Publish (string tokenName, object tokenValue) {
-            if (string.IsNullOrEmpty (tokenName)) {
-                return;
-            }
-            FastList<IDataBinder> list;
-            if (_subscribers.TryGetValue (tokenName, out list)) {
-                int count;
-                var items = list.GetData (out count);
-                for (var i = count - 1; i >= 0; i--) {
-                    items[i].OnDataChanged (tokenName, tokenValue);
-                }
+                _source.OnDataChanged += OnDataChanged;
             }
         }
     }

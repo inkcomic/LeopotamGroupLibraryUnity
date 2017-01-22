@@ -7,15 +7,17 @@
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
-    public sealed class DataBindEnable : SingleTokenBinderBase {
+    public sealed class DataBindEnable : AbstractBinderBase {
         /// <summary>
         /// Target component for enable / disable. If null - current gameObject will be used.
         /// </summary>
         [SerializeField]
         Behaviour _target = null;
 
+        protected override bool ProcessEventsOnlyWhenEnabled { get { return false; } }
+
         public override void OnDataChanged (string token, object data) {
-            var state = data is bool ? (bool) data : false;
+            var state = GetValueAsBool (data);
             if (_target != null) {
                 _target.enabled = state;
             } else {
