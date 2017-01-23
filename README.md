@@ -105,7 +105,7 @@ Editor helpers for optimized shaders generation.
 
 * SystemUi
 
-Helpers / performance replacements for new gui system (unity 4.6+).
+Helpers / performance replacements for uGui. DataBinding.
 
 ----------------------------------------------------------------------------
 
