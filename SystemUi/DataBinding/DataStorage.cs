@@ -4,11 +4,11 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Collections;
-using LeopotamGroup.Common;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using LeopotamGroup.Collections;
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding {
@@ -17,7 +17,7 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
         Dictionary<string, MemberInfo> _sourceTypeFields = new Dictionary<string, MemberInfo> (128);
 
-        IDataSource _source = null;
+        IDataSource _source;
 
         void OnDataChanged (string tokenName) {
             if (string.IsNullOrEmpty (tokenName)) {
@@ -76,12 +76,15 @@ namespace LeopotamGroup.SystemUi.DataBinding {
                 if (!_sourceTypeFields.TryGetValue (token, out prop)) {
                     var type = _source.GetType ();
                     prop = type.GetProperty (token);
-                    if (prop == null || !(prop as PropertyInfo).CanRead) {
+                    if (prop == null || !((PropertyInfo) prop).CanRead) {
                         prop = type.GetField (token);
                     }
+#if UNITY_EDITOR
                     if (prop == null) {
-                        Debug.LogWarningFormat ("[DataBinding] Cant get member \"{0}\" of source type", token);
+                        Debug.LogWarningFormat (
+                            "[DataBinding] Cant get readable member \"{0}\" of source type \"{1}\"", token, type.Name);
                     }
+#endif
                     _sourceTypeFields[token] = prop;
                 }
                 if (prop != null) {

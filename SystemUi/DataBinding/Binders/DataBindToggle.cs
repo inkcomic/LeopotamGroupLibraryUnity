@@ -7,6 +7,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// ReSharper disable RedundantCast.0
+
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     [RequireComponent (typeof (Toggle))]
     public sealed class DataBindToggle : AbstractBinderBase {

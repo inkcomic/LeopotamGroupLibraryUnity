@@ -7,6 +7,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// ReSharper disable RedundantCast.0
+
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     [RequireComponent (typeof (Selectable))]
     public sealed class DataBindSelectable : AbstractBinderBase {
@@ -16,7 +18,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
             if ((object) _target == null) {
                 _target = GetComponent<Selectable> ();
             }
-            _target.interactable = data is bool ? (bool) data : false;
+            _target.interactable = GetValueAsBool (data);
         }
     }
 }

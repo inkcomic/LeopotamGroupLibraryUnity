@@ -4,8 +4,8 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
 using System;
+using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
@@ -19,7 +19,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
         /// <returns></returns>
         protected virtual bool ProcessEventsOnlyWhenEnabled { get { return true; } }
 
-        bool IsTypeNumeric (Type type) {
+        static bool IsTypeNumeric (Type type) {
             switch (Type.GetTypeCode (type)) {
                 case TypeCode.Byte:
                 case TypeCode.SByte:
