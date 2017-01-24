@@ -10,11 +10,14 @@ using UnityEngine.UI;
 // ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
+    /// <summary>
+    /// Data binding of text value for any Text component.
+    /// </summary>
     [RequireComponent (typeof (Text))]
     public sealed class DataBindText : AbstractBinderBase {
         Text _target;
 
-        public override void OnDataChanged (string token, object data) {
+        public override void OnBindedDataChanged (object data) {
             if ((object) _target == null) {
                 _target = GetComponent<Text> ();
             }

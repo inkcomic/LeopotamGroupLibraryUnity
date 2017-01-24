@@ -10,11 +10,14 @@ using UnityEngine.UI;
 // ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
+    /// <summary>
+    /// Data binding of progress value for any Slider component.
+    /// </summary>
     [RequireComponent (typeof (Slider))]
     public sealed class DataBindSlider : AbstractBinderBase {
         Slider _target;
 
-        public override void OnDataChanged (string token, object data) {
+        public override void OnBindedDataChanged (object data) {
             if ((object) _target == null) {
                 _target = GetComponent<Slider> ();
             }

@@ -4,10 +4,21 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using System;
-
 namespace LeopotamGroup.SystemUi.DataBinding {
+    /// <summary>
+    /// Handler for raise event on binded property changes.
+    /// </summary>
+    /// <param name="data">New value.</param>
+    public delegate void OnBindedDataChangedHandler (IDataSource source, string property);
+
+    /// <summary>
+    /// Interface of user data source.
+    /// </summary>
+    /// <param name="data">New value.</param>
     public interface IDataSource {
-        event Action<string> OnDataChanged;
+        /// <summary>
+        /// Should be raised on each binded property value. IDataSource parameter should be equals to "this". 
+        /// </summary>
+        event OnBindedDataChangedHandler OnBindedDataChanged;
     }
 }

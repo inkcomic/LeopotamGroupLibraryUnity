@@ -9,15 +9,25 @@ using LeopotamGroup.Common;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
+    /// <summary>
+    /// Base class for all binders, provide helpers, automatic subscription in 2 ways.
+    /// </summary>
     public abstract class AbstractBinderBase : MonoBehaviour, IDataBinder {
         [SerializeField]
-        string _token = null;
+        string _source = null;
+
+        [SerializeField]
+        string _property = null;
 
         /// <summary>
         /// Receive events only in enabled state or always.
         /// </summary>
         /// <returns></returns>
         protected virtual bool ProcessEventsOnlyWhenEnabled { get { return true; } }
+
+        public string BindedSource { get { return _source; } }
+
+        public string BindedProperty { get { return _property; } }
 
         static bool IsTypeNumeric (Type type) {
             switch (Type.GetTypeCode (type)) {
@@ -39,6 +49,10 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
             }
         }
 
+        /// <summary>
+        /// Convert object to float value. If cant - zero will be returned.
+        /// </summary>
+        /// <param name="obj">Object to convert.</param>
         protected float GetValueAsNumber (object obj) {
             if (obj != null && IsTypeNumeric (obj.GetType ())) {
                 return Convert.ToSingle (obj);
@@ -46,10 +60,18 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
             return 0f;
         }
 
+        /// <summary>
+        /// Convert object to bool value. If cant - false will be returned.
+        /// </summary>
+        /// <param name="obj">Object to convert.</param>
         protected bool GetValueAsBool (object obj) {
             return System.Math.Abs (GetValueAsNumber (obj)) > 0f;
         }
 
+        /// <summary>
+        /// Convert object to string value.
+        /// </summary>
+        /// <param name="obj">Object to convert.</param>
         protected string GetValueAsString (object obj) {
             return obj != null ? obj.ToString () : null;
         }
@@ -79,21 +101,25 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
         }
 
         void Subscribe () {
-            if (!string.IsNullOrEmpty (_token)) {
+            if (!string.IsNullOrEmpty (_source) && !string.IsNullOrEmpty (_property)) {
                 var storage = Singleton.Get<DataStorage> ();
-                storage.Subscribe (_token, this);
-                OnDataChanged (_token, storage.GetData (_token));
+                storage.Subscribe (this);
+                OnBindedDataChanged (storage.GetData (_source, _property));
             }
         }
 
         void Unsubscribe () {
-            if (!string.IsNullOrEmpty (_token)) {
+            if (!string.IsNullOrEmpty (_source) && !string.IsNullOrEmpty (_property)) {
                 if (Singleton.IsTypeRegistered<DataStorage> ()) {
-                    Singleton.Get<DataStorage> ().Unsubscribe (_token, this);
+                    Singleton.Get<DataStorage> ().Unsubscribe (this);
                 }
             }
         }
 
-        public abstract void OnDataChanged (string token, object data);
+        /// <summary>
+        /// Raise on binded property changes.
+        /// </summary>
+        /// <param name="data">New value.</param>
+        public abstract void OnBindedDataChanged (object data);
     }
 }

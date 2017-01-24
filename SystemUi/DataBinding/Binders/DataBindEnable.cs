@@ -7,6 +7,9 @@
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
+    /// <summary>
+    /// Data binding of enable / disable state for any Component or GameObject.
+    /// </summary>
     public sealed class DataBindEnable : AbstractBinderBase {
         /// <summary>
         /// Target component for enable / disable. If null - current gameObject will be used.
@@ -16,7 +19,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
 
         protected override bool ProcessEventsOnlyWhenEnabled { get { return false; } }
 
-        public override void OnDataChanged (string token, object data) {
+        public override void OnBindedDataChanged (object data) {
             var state = GetValueAsBool (data);
             if (_target != null) {
                 _target.enabled = state;

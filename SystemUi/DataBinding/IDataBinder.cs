@@ -5,7 +5,24 @@
 // ----------------------------------------------------------------------------
 
 namespace LeopotamGroup.SystemUi.DataBinding {
+    /// <summary>
+    /// Data binding events receiver.
+    /// </summary>
     public interface IDataBinder {
-        void OnDataChanged (string token, object data);
+        /// <summary>
+        /// Logical name of binded data source.
+        /// </summary>
+        string BindedSource { get; }
+
+        /// <summary>
+        /// /// Logical name of binded data property.
+        /// </summary>
+        string BindedProperty { get; }
+
+        /// <summary>
+        /// Raise on binded property changes.
+        /// </summary>
+        /// <param name="data">New value.</param>
+        void OnBindedDataChanged (object data);
     }
 }
