@@ -37,7 +37,7 @@ Common helpers, uses by other subsystems.
 * EditorHelpers
 
 Special helpers: show fps, screen capturing of current platform for multiple
-aspects, csv import (for ex, Google Docs), etc.
+aspects, csv import (for ex, Google Docs), unlit shader generation, etc.
 
 ----------------------------------------------------------------------------
 
@@ -97,15 +97,9 @@ structs and nested objects (lists, arrays, structs, etc).
 
 ----------------------------------------------------------------------------
 
-* Shaders
-
-Editor helpers for optimized shaders generation.
-
-----------------------------------------------------------------------------
-
 * SystemUi
 
-Helpers / performance replacements for new gui system (unity 4.6+).
+Helpers / performance replacements for uGui. DataBinding.
 
 ----------------------------------------------------------------------------
 
