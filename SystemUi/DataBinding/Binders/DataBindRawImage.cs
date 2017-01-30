@@ -17,7 +17,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     public sealed class DataBindRawImage : AbstractBinderBase {
         RawImage _target;
 
-        public override void OnBindedDataChanged (object data) {
+        protected override void ProcessBindedData (object data) {
             if ((object) _target == null) {
                 _target = GetComponent<RawImage> ();
             }

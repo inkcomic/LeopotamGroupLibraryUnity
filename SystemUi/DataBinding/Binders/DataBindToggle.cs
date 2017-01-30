@@ -17,7 +17,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     public sealed class DataBindToggle : AbstractBinderBase {
         Toggle _target;
 
-        public override void OnBindedDataChanged (object data) {
+        protected override void ProcessBindedData (object data) {
             if ((object) _target == null) {
                 _target = GetComponent<Toggle> ();
             }

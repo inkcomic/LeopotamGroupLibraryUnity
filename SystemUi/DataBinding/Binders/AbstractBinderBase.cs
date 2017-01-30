@@ -6,6 +6,7 @@
 
 using System;
 using LeopotamGroup.Common;
+using LeopotamGroup.Math;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
@@ -18,6 +19,8 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
 
         [SerializeField]
         string _property = null;
+
+        object _dirtyData;
 
         /// <summary>
         /// Receive events only in enabled state or always.
@@ -72,39 +75,39 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
         /// Convert object to string value.
         /// </summary>
         /// <param name="obj">Object to convert.</param>
-        protected string GetValueAsString (object obj) {
-            return obj != null ? obj.ToString () : null;
+        protected string GetValueAsString (object obj, IFormatProvider customFormatProvider = null) {
+            if (obj == null) {
+                return null;
+            }
+            if (obj is IConvertible) {
+                (obj as IConvertible).ToString (customFormatProvider ?? MathExtensions.UnifiedNumberFormat);
+            }
+            return obj.ToString ();
         }
 
         void Awake () {
-            if (!ProcessEventsOnlyWhenEnabled) {
-                Subscribe ();
-            }
-        }
-
-        void OnEnable () {
-            if (ProcessEventsOnlyWhenEnabled) {
-                Subscribe ();
-            }
-        }
-
-        void OnDisable () {
-            if (ProcessEventsOnlyWhenEnabled) {
-                Unsubscribe ();
-            }
+            Subscribe ();
         }
 
         void OnDestroy () {
-            if (!ProcessEventsOnlyWhenEnabled) {
-                Unsubscribe ();
+            Unsubscribe ();
+        }
+
+        void LateUpdate () {
+            if (ProcessEventsOnlyWhenEnabled) {
+                ProcessBindedData (_dirtyData);
             }
+            enabled = false;
         }
 
         void Subscribe () {
             if (!string.IsNullOrEmpty (_source) && !string.IsNullOrEmpty (_property)) {
                 var storage = Singleton.Get<DataStorage> ();
                 storage.Subscribe (this);
-                OnBindedDataChanged (storage.GetData (_source, _property));
+                enabled = ProcessEventsOnlyWhenEnabled;
+                if (!ProcessEventsOnlyWhenEnabled) {
+                    ProcessBindedData (storage.GetData (_source, _property));
+                }
             }
         }
 
@@ -116,10 +119,19 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
             }
         }
 
+        void IDataBinder.OnBindedDataChanged (object data) {
+            _dirtyData = data;
+            var isDelayedUpdate = ProcessEventsOnlyWhenEnabled;
+            enabled = isDelayedUpdate;
+            if (!isDelayedUpdate) {
+                ProcessBindedData (_dirtyData);
+            }
+        }
+
         /// <summary>
-        /// Raise on binded property changes.
+        /// Raise when binded data should be validate / visualize.
         /// </summary>
         /// <param name="data">New value.</param>
-        public abstract void OnBindedDataChanged (object data);
+        protected abstract void ProcessBindedData (object data);
     }
 }
