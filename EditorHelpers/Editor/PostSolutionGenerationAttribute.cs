@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     /// <summary>
-    /// Post compile attribute. Methods with PostCompile attribute will be executed after C# project recompile.
+    /// Post solution generation attribute. Methods with PostSolutionGeneration attribute will be executed after C# project recompile.
     /// </summary>
     [AttributeUsage (AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class PostSolutionGenerationAttribute : Attribute {
