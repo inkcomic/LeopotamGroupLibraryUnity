@@ -17,7 +17,7 @@ namespace LeopotamGroup.EditorHelpers {
         const float InvUpdatesPerSecond = 1 / (float) UpdateFrequency;
 
         const float BaseFontSize = 16 / 768f;
-
+        /* fixformat ignore:start */
         byte[] _fontData = {
             0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, // 0-4
             1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, // 5-9
@@ -34,6 +34,7 @@ namespace LeopotamGroup.EditorHelpers {
             0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, // 0-4
             1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, // 5-9
         };
+        /* fixformat ignore:end */
 
         int _frameCount;
 

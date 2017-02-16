@@ -17,16 +17,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 try {
                     var content = File.ReadAllText (file);
                     var newContent = Regex.Replace (content, "(\\<TargetFrameworkVersion\\>v)(.+)(\\</TargetFrameworkVersion\\>)", match => {
-                        if (string.CompareOrdinal (match.Groups [2].Value, NewTarget) < 0) {
-                            return match.Groups [1].Value + NewTarget + match.Groups [3].Value;
+                        if (string.CompareOrdinal (match.Groups[2].Value, NewTarget) < 0) {
+                            return match.Groups[1].Value + NewTarget + match.Groups[3].Value;
                         }
                         return match.Value;
                     });
                     if (string.CompareOrdinal (content, newContent) != 0) {
                         File.WriteAllText (file, newContent);
                     }
-                } catch {
-                }
+                } catch { }
             }
         }
     }

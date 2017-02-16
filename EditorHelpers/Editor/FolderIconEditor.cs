@@ -73,8 +73,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         static void LoadInfo () {
             try {
                 _allDescs = Singleton.Get<JsonSerialization> ()
-                        .Deserialize<Dictionary<string, FolderIconDesc>> (
-                            ProjectPrefs.GetString (StorageKey, "{}"));
+                    .Deserialize<Dictionary<string, FolderIconDesc>> (
+                        ProjectPrefs.GetString (StorageKey, "{}"));
                 if (_allDescs == null) {
                     throw new Exception ();
                 }
