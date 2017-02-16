@@ -51,8 +51,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         void Load () {
             try {
                 _paths = Singleton.Get<JsonSerialization> ()
-                        .Deserialize<Dictionary<string, string>> (
-                            ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
+                    .Deserialize<Dictionary<string, string>> (
+                        ProjectPrefs.GetString (ProjectPrefsKey, string.Empty));
                 if (_paths == null) {
                     throw new Exception ();
                 }
@@ -89,11 +89,16 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (_paths.Count > 0) {
                 EditorGUILayout.LabelField ("List of csv resources", EditorStyles.boldLabel);
                 GUILayout.BeginScrollView (_scrollPos, false, true);
+                string newVal;
                 foreach (var key in new List<string> (_paths.Keys)) {
                     GUILayout.BeginHorizontal (GUI.skin.textArea);
                     GUILayout.BeginVertical ();
                     EditorGUILayout.LabelField ("Url:", key);
-                    _paths[key] = EditorGUILayout.TextField ("Resources file:", _paths[key]).Trim ();
+                    newVal = EditorGUILayout.TextField ("Resources file:", _paths[key]).Trim ();
+                    if (string.IsNullOrEmpty (newVal)) {
+                        newVal = ResDefault;
+                    }
+                    _paths[key] = newVal;
                     GUILayout.EndVertical ();
                     if (GUILayout.Button ("Remove", GUILayout.Width (80f), GUILayout.Height (32f))) {
                         _paths.Remove (key);
@@ -112,7 +117,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             GUILayout.EndVertical ();
             GUI.enabled = !_paths.ContainsKey (_newUrl);
             if (GUILayout.Button ("Add", GUILayout.Width (80f), GUILayout.Height (52f))) {
-                _paths.Add (_newUrl, string.Empty);
+                _paths.Add (_newUrl, _newRes);
                 _newUrl = UrlDefault;
                 _newRes = ResDefault;
             }
