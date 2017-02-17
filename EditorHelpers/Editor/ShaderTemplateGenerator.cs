@@ -70,7 +70,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         static void CreateUnlitTransparentShader () {
             EditorUtils.CreateAndRenameAsset (
                 string.Format ("{0}/UnlitTransparent.shader", GetAssetPath ()),
-                GetIcon (), name => Create (ShaderType.Opaque, name));
+                GetIcon (), name => Create (ShaderType.Transparent, name));
         }
 
         public static string Create (ShaderType shaderType, string fileName) {
