@@ -4,7 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-Shader "Hidden/LeopotamGroup/FX/ScreenFade" {
+Shader "Hidden/LeopotamGroup/Fx/ScreenFade" {
 	Properties {
 	}
 

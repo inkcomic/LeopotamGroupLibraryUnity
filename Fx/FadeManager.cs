@@ -8,8 +8,6 @@ using System;
 using LeopotamGroup.Common;
 using UnityEngine;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.Fx {
     /// <summary>
     /// Fade manager for Camera with tag "MainCamera".
@@ -19,6 +17,8 @@ namespace LeopotamGroup.Fx {
         /// Callback for extensions.
         /// </summary>
         public event Action<float> OnRender = delegate { };
+
+        const string ShaderName = "Hidden/LeopotamGroup/Fx/ScreenFade";
 
         Material _mtrl;
 
@@ -40,7 +40,7 @@ namespace LeopotamGroup.Fx {
 
         protected override void OnConstruct () {
             if ((object) _mtrl == null) {
-                _mtrl = new Material (Shader.Find ("Hidden/LeopotamGroup/FX/ScreenFade"));
+                _mtrl = new Material (Shader.Find (ShaderName));
                 _mtrl.hideFlags = HideFlags.DontSave;
             }
 
