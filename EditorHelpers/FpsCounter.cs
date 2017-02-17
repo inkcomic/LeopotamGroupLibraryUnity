@@ -16,6 +16,8 @@ namespace LeopotamGroup.EditorHelpers {
 
         const float InvUpdatesPerSecond = 1 / (float) UpdateFrequency;
 
+        const string ShaderName = "Hidden/LeopotamGroup/EditorHelpers/FpsCounter";
+
         const float BaseFontSize = 16 / 768f;
         /* fixformat ignore:start */
         byte[] _fontData = {
@@ -68,7 +70,7 @@ namespace LeopotamGroup.EditorHelpers {
             _tex.SetPixels32 (pixels);
             _tex.Apply (false, true);
 
-            _mtrl = new Material (Shader.Find ("Unlit/Transparent"));
+            _mtrl = new Material (Shader.Find (ShaderName));
             _mtrl.hideFlags = HideFlags.DontSave;
             _mtrl.mainTexture = _tex;
 #if !UNITY_EDITOR
