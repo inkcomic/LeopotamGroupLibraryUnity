@@ -47,8 +47,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const Options DefaultOptions = (Options) (-1);
 
         const string CodeTemplate =
-                "// Auto generated code, dont change it manually!\n\n" +
-                "using UnityEngine;\n\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\n\t}}\n}}";
+            "// Auto generated code, dont change it manually!\n\n" +
+            "using UnityEngine;\n\nnamespace {0} {{\n\tpublic static partial class {1} {{\n{2}\n\t}}\n}}";
 
         const string LayerName = "{0}public static readonly int Layer{1} = LayerMask.NameToLayer (\"{2}\");";
 
@@ -161,7 +161,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             // axes
             if ((int) (options & Options.Axes) != 0) {
-                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset")[0];
+                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset") [0];
                 var axes = new SerializedObject (inputManager).FindProperty ("m_Axes");
                 for (int i = 0, iMax = axes.arraySize; i < iMax; i++) {
                     var axis = axes.GetArrayElementAtIndex (i).FindPropertyRelative ("m_Name").stringValue;

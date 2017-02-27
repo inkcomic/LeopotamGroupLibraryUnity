@@ -43,7 +43,7 @@ namespace LeopotamGroup.Common {
                 var i = attrs.Length - 1;
                 for (; i >= 0; i--) {
                     if (System.Text.RegularExpressions.Regex.IsMatch (
-                        sceneName, ((UnitySingletonSceneFilterAttribute) attrs[i]).Name)) {
+                            sceneName, ((UnitySingletonSceneFilterAttribute) attrs[i]).Name)) {
                         break;
                     }
                 }

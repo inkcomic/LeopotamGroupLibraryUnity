@@ -19,7 +19,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
 
         protected override bool ProcessEventsOnlyWhenEnabled { get { return false; } }
 
-        public override void OnBindedDataChanged (object data) {
+        protected override void ProcessBindedData (object data) {
             var state = GetValueAsBool (data);
             if (_target != null) {
                 _target.enabled = state;

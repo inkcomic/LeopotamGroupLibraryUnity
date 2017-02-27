@@ -51,7 +51,6 @@ namespace LeopotamGroup.SystemUi.DataBinding {
         }
 
         BindedSourceInfo GetSource (string sourceName, bool createNew = false) {
-            BindedSourceInfo res;
             for (var i = _sourcesCount - 1; i >= 0; i--) {
                 if (string.CompareOrdinal (_sourcesData [i].Name, sourceName) == 0) {
                     return _sourcesData [i];
@@ -60,7 +59,7 @@ namespace LeopotamGroup.SystemUi.DataBinding {
             if (!createNew) {
                 return null;
             }
-            res = new BindedSourceInfo ();
+            var res = new BindedSourceInfo ();
             res.Name = sourceName;
             _sourcesList.Add (res);
             _sourcesData = _sourcesList.GetData (out _sourcesCount);
@@ -142,8 +141,8 @@ namespace LeopotamGroup.SystemUi.DataBinding {
                     }
                     if (propInfo.MemberInfo != null) {
                         return propInfo.MemberInfo is PropertyInfo ?
-                               ((PropertyInfo) propInfo.MemberInfo).GetValue (holder.Source, null) :
-                               ((FieldInfo) propInfo.MemberInfo).GetValue (holder.Source);
+                            ((PropertyInfo) propInfo.MemberInfo).GetValue (holder.Source, null) :
+                            ((FieldInfo) propInfo.MemberInfo).GetValue (holder.Source);
                     }
                 }
             }
