@@ -9,10 +9,11 @@ using System.Text.RegularExpressions;
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     static class PatchTargetFramework {
-        const string NewTarget = "4.0";
+        const string NewTarget = "4.6";
 
         [PostSolutionGeneration]
         static void Process () {
+#if DEV_FW46
             foreach (var file in Directory.GetFiles (Directory.GetCurrentDirectory (), "*.csproj")) {
                 try {
                     var content = File.ReadAllText (file);
@@ -27,6 +28,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     }
                 } catch { }
             }
+#endif
         }
     }
 }
