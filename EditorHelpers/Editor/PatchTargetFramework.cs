@@ -3,7 +3,7 @@
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
-
+#if DEV_FW46
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -13,7 +13,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         [PostSolutionGeneration]
         static void Process () {
-#if DEV_FW46
             foreach (var file in Directory.GetFiles (Directory.GetCurrentDirectory (), "*.csproj")) {
                 try {
                     var content = File.ReadAllText (file);
@@ -28,7 +27,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     }
                 } catch { }
             }
-#endif
         }
     }
 }
+#endif
