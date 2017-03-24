@@ -36,7 +36,7 @@ namespace LeopotamGroup.Pooling {
             get { return transform; }
         }
 
-        public void PoolRecycle () {
+        public virtual void PoolRecycle () {
             if ((object) PoolContainer != null) {
                 PoolContainer.Recycle (this);
             }
