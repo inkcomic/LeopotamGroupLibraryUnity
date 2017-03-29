@@ -7,9 +7,8 @@
 using LeopotamGroup.Localization;
 using LeopotamGroup.SystemUi.Atlases;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.UI;
-
-// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.SystemUi.Localization {
     /// <summary>
@@ -29,6 +28,7 @@ namespace LeopotamGroup.SystemUi.Localization {
             OnLocalize ();
         }
 
+        [Preserve]
         void OnLocalize () {
             if (!string.IsNullOrEmpty (_token) && (object) _atlas != null) {
                 if ((object) _image == null) {

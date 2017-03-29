@@ -3,13 +3,13 @@
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
-
+#if DEV_FW46
 using System.IO;
 using System.Text.RegularExpressions;
 
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     static class PatchTargetFramework {
-        const string NewTarget = "4.0";
+        const string NewTarget = "4.6";
 
         [PostSolutionGeneration]
         static void Process () {
@@ -30,3 +30,4 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         }
     }
 }
+#endif

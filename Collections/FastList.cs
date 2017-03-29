@@ -291,7 +291,7 @@ namespace LeopotamGroup.Collections {
         /// </summary>
         /// <param name="item">Item to remove.</param>
         public bool Remove (T item) {
-            var id = Array.IndexOf (_items, item);
+            var id = IndexOf (item);
             if (id == -1) {
                 return false;
             }

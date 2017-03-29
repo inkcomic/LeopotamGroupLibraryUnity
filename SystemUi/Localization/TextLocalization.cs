@@ -6,9 +6,8 @@
 
 using LeopotamGroup.Localization;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.UI;
-
-// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.SystemUi.Localization {
     /// <summary>
@@ -25,6 +24,7 @@ namespace LeopotamGroup.SystemUi.Localization {
             OnLocalize ();
         }
 
+        [Preserve]
         void OnLocalize () {
             if (!string.IsNullOrEmpty (_token)) {
                 if ((object) _text == null) {

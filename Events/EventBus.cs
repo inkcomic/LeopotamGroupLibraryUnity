@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using LeopotamGroup.Collections;
 using UnityEngine;
 
 namespace LeopotamGroup.Events {
@@ -15,11 +16,16 @@ namespace LeopotamGroup.Events {
     public sealed class EventBus {
         readonly object _syncObj = new object ();
 
-        readonly Dictionary<Type, object> _events = new Dictionary<Type, object> ();
+        readonly Dictionary<Type, object> _events = new Dictionary<Type, object> (32);
 
-        readonly HashSet<Type> _eventsInCall = new HashSet<Type> ();
+        // faster than hashset / dictionary on small amount of items.
+        readonly FastList<Type> _eventsInCall = new FastList<Type> (32);
 
-        readonly Dictionary<Type, List<object>> _eventSubscribersInCall = new Dictionary<Type, List<object>> ();
+        readonly Dictionary<Type, FastList<object>> _eventSpecificListCaches = new Dictionary<Type, FastList<object>> (32);
+
+        public EventBus () {
+            _eventsInCall.UseCastToObjectComparer (true);
+        }
 
         /// <summary>
         /// Subscribe callback to be raised on specific event.
@@ -34,10 +40,10 @@ namespace LeopotamGroup.Events {
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (!_events.ContainsKey (eventType)) {
-                    _events[eventType] = new List<Func<T, bool>> ();
-                    _eventSubscribersInCall[eventType] = new List<object> ();
+                    _events[eventType] = new FastList<Func<T, bool>> (16);
+                    _eventSpecificListCaches[eventType] = new FastList<object> (16);
                 }
-                var list = _events[eventType] as List<Func<T, bool>>;
+                var list = _events[eventType] as FastList<Func<T, bool>>;
                 if (list == null) {
 #if UNITY_EDITOR
                     Debug.LogError ("Cant subscribe to event: " + eventType.Name);
@@ -66,14 +72,14 @@ namespace LeopotamGroup.Events {
             var eventType = typeof (T);
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
-                    var list = _events[eventType] as List<Func<T, bool>>;
+                    var list = _events[eventType] as FastList<Func<T, bool>>;
                     if (list != null) {
                         var id = list.IndexOf (eventAction);
                         if (id != -1) {
                             list.RemoveAt (id);
                             if (list.Count == 0 && !keepEvent) {
                                 _events.Remove (eventType);
-                                _eventSubscribersInCall.Remove (eventType);
+                                _eventSpecificListCaches.Remove (eventType);
                             }
                         }
                     }
@@ -90,10 +96,10 @@ namespace LeopotamGroup.Events {
             lock (_syncObj) {
                 if (_events.ContainsKey (eventType)) {
                     if (keepEvent) {
-                        ((List<Func<T, bool>>) _events[eventType]).Clear ();
+                        ((FastList<Func<T, bool>>) _events[eventType]).Clear ();
                     } else {
                         _events.Remove (eventType);
-                        _eventSubscribersInCall.Remove (eventType);
+                        _eventSpecificListCaches.Remove (eventType);
                     }
                 }
             }
@@ -105,7 +111,7 @@ namespace LeopotamGroup.Events {
         public void UnsubscribeAndClearAllEvents () {
             lock (_syncObj) {
                 _events.Clear ();
-                _eventSubscribersInCall.Clear ();
+                _eventSpecificListCaches.Clear ();
             }
         }
 
@@ -115,14 +121,15 @@ namespace LeopotamGroup.Events {
         /// <param name="eventMessage">Event message.</param>
         public void Publish<T> (T eventMessage) {
             var eventType = typeof (T);
-            List<Func<T, bool>> list = null;
+            FastList<Func<T, bool>> list = null;
             lock (_syncObj) {
                 if (_eventsInCall.Contains (eventType)) {
                     Debug.LogError ("Already in calling of " + eventType.Name);
                     return;
                 }
-                if (_events.ContainsKey (eventType)) {
-                    list = (List<Func<T, bool>>) _events[eventType];
+                object objList;
+                if (_events.TryGetValue (eventType, out objList)) {
+                    list = (FastList<Func<T, bool>>) objList;
 
                     // kept for no new GC alloc, but empty.
                     if (list.Count == 0) {
@@ -134,15 +141,19 @@ namespace LeopotamGroup.Events {
                 }
             }
             if (list != null) {
-                var cacheList = _eventSubscribersInCall[eventType];
+                var cacheList = _eventSpecificListCaches[eventType];
                 int i;
-                var iMax = list.Count;
+                int iMax;
+                var listData = list.GetData (out iMax);
+                cacheList.Reserve (iMax, true, false);
+                var cacheListData = cacheList.GetData ();
+                // we cant use direct copy because cached list dont know T-generic type of event.
                 for (i = 0; i < iMax; i++) {
-                    cacheList.Add (list[i]);
+                    cacheListData[i] = listData[i];
                 }
                 try {
                     for (i = 0; i < iMax; i++) {
-                        if (((Func<T, bool>) cacheList[i]) (eventMessage)) {
+                        if (((Func<T, bool>) cacheListData[i]) (eventMessage)) {
                             // Event was interrupted / processed, we can exit.
                             return;
                         }
