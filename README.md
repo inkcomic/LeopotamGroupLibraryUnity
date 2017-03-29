@@ -103,6 +103,12 @@ Helpers / performance replacements for uGui. DataBinding.
 
 ----------------------------------------------------------------------------
 
+* Threading
+
+Background worker (except WebGl).
+
+----------------------------------------------------------------------------
+
 * Tutorials
 
 Step by step behaviour helpers, useful for creating tutorial or any
