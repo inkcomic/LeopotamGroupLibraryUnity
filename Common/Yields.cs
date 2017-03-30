@@ -31,7 +31,8 @@ namespace LeopotamGroup.Common {
         public static WaitForSeconds WaitForSeconds (float seconds) {
             WaitForSeconds retVal;
             if (!_waitForSeconds.TryGetValue (seconds, out retVal)) {
-                _waitForSeconds[seconds] = new WaitForSeconds (seconds);
+                retVal = new WaitForSeconds (seconds);
+                _waitForSeconds[seconds] = retVal;
             }
             return retVal;
         }
