@@ -4,7 +4,9 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System.Collections;
 using System.Collections.Generic;
+using LeopotamGroup.Collections;
 using UnityEngine;
 
 namespace LeopotamGroup.Common {
@@ -22,19 +24,72 @@ namespace LeopotamGroup.Common {
         /// </summary>
         public static readonly WaitForFixedUpdate WaitForFixedUpdate = new WaitForFixedUpdate ();
 
-        static Dictionary<float, WaitForSeconds> _waitForSeconds = new Dictionary<float, WaitForSeconds> ();
+        static Dictionary<float, FastList<IEnumerator>> _waitForSeconds = new Dictionary<float, FastList<IEnumerator>> (4);
 
         /// <summary>
         /// Get WaitForSeconds yield instruction.
+        /// Important: - you should never cache / reuse received instance, request brand new one for each task instead!
         /// </summary>
-        /// <param name="seconds">Required delay.</param>
-        public static WaitForSeconds WaitForSeconds (float seconds) {
-            WaitForSeconds retVal;
-            if (!_waitForSeconds.TryGetValue (seconds, out retVal)) {
-                retVal = new WaitForSeconds (seconds);
-                _waitForSeconds[seconds] = retVal;
+        /// <param name="seconds">Delay in seconds.</param>
+        public static IEnumerator WaitForSeconds (float seconds) {
+            FastList<IEnumerator> list;
+            if (!_waitForSeconds.TryGetValue (seconds, out list)) {
+                list = new FastList<IEnumerator> (4);
+                _waitForSeconds[seconds] = list;
+            }
+            IEnumerator retVal;
+            if (list.Count > 0) {
+                // Debug.Log ("pooled-instance");
+                retVal = list[list.Count - 1];
+                list.RemoveLast ();
+            } else {
+                // Debug.Log ("new-instance");
+                retVal = new CustomWaitForSeconds (seconds, list);
             }
             return retVal;
+        }
+
+        /// <summary>
+        /// Get WaitForSeconds instance without auto-pooling on end. Can be cached / reused.
+        /// </summary>
+        /// <param name="seconds">Delay in seconds.</param>
+        public static IEnumerator GetWaitForSecondsInstance (float seconds) {
+            return new CustomWaitForSeconds (seconds, null);
+        }
+
+        /// <summary>
+        /// Custom WaitForSeconds implementation for support pooling / reset.
+        /// </summary>
+        sealed class CustomWaitForSeconds : IEnumerator {
+            float _delay;
+
+            IList<IEnumerator> _poolList;
+
+            float _endTime;
+
+            object IEnumerator.Current { get { return null; } }
+
+            bool IEnumerator.MoveNext () {
+                if (Time.time < _endTime) {
+                    return true;
+                }
+                (this as IEnumerator).Reset ();
+                if (_poolList != null) {
+                    // Debug.Log ("recycle");
+                    _poolList.Add (this);
+                }
+                return false;
+            }
+
+            void IEnumerator.Reset () {
+                _endTime = Time.time + _delay;
+            }
+
+            public CustomWaitForSeconds (float seconds, IList<IEnumerator> poolList) {
+                _delay = seconds;
+                _poolList = poolList;
+                (this as IEnumerator).Reset ();
+            }
         }
     }
 }
