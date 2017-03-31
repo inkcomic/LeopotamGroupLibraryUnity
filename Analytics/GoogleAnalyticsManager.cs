@@ -90,7 +90,7 @@ namespace LeopotamGroup.Analytics {
 #endif
             if (!string.IsNullOrEmpty (_trackerId)) {
                 _requestUrl = string.Format (AnalyticsUrl, _trackerId, DeviceHash, Screen.width,
-                    Screen.height, Application.bundleIdentifier, Application.version);
+                    Screen.height, Application.identifier, Application.version);
             }
 
             string url = null;
