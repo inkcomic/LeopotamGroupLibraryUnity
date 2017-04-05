@@ -223,7 +223,7 @@ namespace LeopotamGroup.Serialization {
 
         class Reader {
             static bool IsWordBreak (int c) {
-                return (c >= 0x01 && c <= 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x5e) || (c == 0x60) || (c >= 0x7b);
+				return (c >= 0x01 && c <= 0x2a) || (c == 0x2c) || (c == 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x5e) || (c == 0x60) || (c >= 0x7b);
             }
 
             enum JsonToken {
