@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using LeopotamGroup.Common;
+using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -34,17 +36,26 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string Title = "Unity idents generator";
 
-        const string TargetFileKey = "lg.unity-idents-gen.path";
+        const string SettingsKey = "lg.unity-idents";
 
-        const string NamespaceKey = "lg.unity-idents-gen.ns";
-
-        const string OptionsKey = "lg.unity-idents-gen.options";
-
-        const string DefaultFileName = "Client/Scripts/Common/UnityIdents.cs";
+        const string DefaultFilename = "Client/Scripts/Common/UnityIdents.cs";
 
         const string DefaultNamespace = "Client.Common";
 
+        const string DefaultIgnoredScenes = "";
+
         const Options DefaultOptions = (Options) (-1);
+
+        public class GenerationSettings {
+            [JsonName ("o")]
+            public Options Options = DefaultOptions;
+            [JsonName ("f")]
+            public string Filename = DefaultFilename;
+            [JsonName ("n")]
+            public string Namespace = DefaultNamespace;
+            [JsonName ("is")]
+            public string IgnoredScenes = DefaultIgnoredScenes;
+        }
 
         const string CodeTemplate =
             "// Auto generated code, dont change it manually!\n\n" +
@@ -64,11 +75,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string ShaderName = "{0}public static readonly int Shader{1} = Shader.PropertyToID (\"{2}\");";
 
-        string _fileName;
-
-        string _nsName;
-
-        Options _options;
+        GenerationSettings _settings;
 
         string[] _optionNames;
 
@@ -79,46 +86,49 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         void OnEnable () {
             titleContent.text = Title;
-            _fileName = ProjectPrefs.GetString (TargetFileKey, DefaultFileName);
-            _nsName = ProjectPrefs.GetString (NamespaceKey, DefaultNamespace);
-            _options = (Options) ProjectPrefs.GetInt (OptionsKey, (int) DefaultOptions);
+            _settings = null;
+            try {
+                _settings =
+                    Singleton.Get<JsonSerialization> ().Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
+            } catch { }
+            if (_settings == null) {
+                _settings = new GenerationSettings ();
+            }
         }
 
-        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_optionNames == null) {
                 _optionNames = Enum.GetNames (typeof (Options));
             }
 
-            _fileName = EditorGUILayout.TextField ("Target file", _fileName).Trim ();
-            if (string.IsNullOrEmpty (_fileName)) {
-                _fileName = DefaultFileName;
+            _settings.Filename = EditorGUILayout.TextField ("Target file", _settings.Filename).Trim ();
+            if (string.IsNullOrEmpty (_settings.Filename)) {
+                _settings.Filename = DefaultFilename;
             }
-            _nsName = EditorGUILayout.TextField ("Namespace", _nsName).Trim ();
-            if (string.IsNullOrEmpty (_nsName)) {
-                _nsName = DefaultNamespace;
+            _settings.Namespace = EditorGUILayout.TextField ("Namespace", _settings.Namespace).Trim ();
+            if (string.IsNullOrEmpty (_settings.Namespace)) {
+                _settings.Namespace = DefaultNamespace;
             }
-            _options = (Options) EditorGUILayout.MaskField ("Options", (int) _options, _optionNames);
+            _settings.Options = (Options) EditorGUILayout.MaskField ("Options", (int) _settings.Options, _optionNames);
+
+            _settings.IgnoredScenes = EditorGUILayout.TextField ("Ignore scenes at paths", _settings.IgnoredScenes).Trim ();
 
             if (GUILayout.Button ("Reset settings")) {
-                ProjectPrefs.DeleteKey (TargetFileKey);
-                ProjectPrefs.DeleteKey (NamespaceKey);
-                ProjectPrefs.DeleteKey (OptionsKey);
+                ProjectPrefs.DeleteKey (SettingsKey);
                 OnEnable ();
                 Repaint ();
             }
             if (GUILayout.Button ("Save settings & generate")) {
-                ProjectPrefs.SetString (TargetFileKey, _fileName);
-                ProjectPrefs.SetString (NamespaceKey, _nsName);
-                ProjectPrefs.SetInt (OptionsKey, (int) _options);
-                var res = Generate (_fileName, _nsName, _options);
+                ProjectPrefs.SetString (SettingsKey, Singleton.Get<JsonSerialization> ().Serialize (_settings));
+                var res = Generate (_settings);
                 EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }
         }
 
-        static string GenerateFields (string indent, Options options) {
+        static string GenerateFields (string indent, GenerationSettings settings) {
             var lines = new List<string> (128);
             var uniquesList = new HashSet<string> ();
+            var options = settings.Options;
 
             // layers, layer masks
             if ((int) (options & Options.Layers) != 0) {
@@ -137,9 +147,20 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             // scenes
             if ((int) (options & Options.Scenes) != 0) {
+                var ignoredPaths = string.IsNullOrEmpty (settings.IgnoredScenes) ?
+                    new string[0] : settings.IgnoredScenes.Split (new char[';'], StringSplitOptions.RemoveEmptyEntries);
                 foreach (var scene in EditorBuildSettings.scenes) {
-                    var sceneName = Path.GetFileNameWithoutExtension (scene.path);
-                    lines.Add (string.Format (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName)));
+                    var scenePath = scene.path.Substring (scene.path.IndexOf ('/') + 1);
+                    var i = ignoredPaths.Length - 1;
+                    for (; i >= 0; i--) {
+                        if (scenePath.StartsWith (ignoredPaths[i])) {
+                            break;
+                        }
+                    }
+                    if (i == -1) {
+                        var sceneName = Path.GetFileNameWithoutExtension (scenePath);
+                        lines.Add (string.Format (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName)));
+                    }
                 }
             }
 
@@ -161,7 +182,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             // axes
             if ((int) (options & Options.Axes) != 0) {
-                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset") [0];
+                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset")[0];
                 var axes = new SerializedObject (inputManager).FindProperty ("m_Axes");
                 for (int i = 0, iMax = axes.arraySize; i < iMax; i++) {
                     var axis = axes.GetArrayElementAtIndex (i).FindPropertyRelative ("m_Name").stringValue;
@@ -220,26 +241,21 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         /// Generate class with idents at specified filename and with specified namespace.
         /// </summary>
         /// <returns>Error message or null on success.</returns>
-        /// <param name="fileName">Filename.</param>
-        /// <param name="nsName">Namespace.</param>
-        /// <param name="options">Options for generation.</param>
-        public static string Generate (string fileName, string nsName, Options options) {
-            if (string.IsNullOrEmpty (fileName) || string.IsNullOrEmpty (nsName)) {
+        /// <param name="settings">Generation settins.</param>
+        public static string Generate (GenerationSettings settings) {
+            if (settings == null || string.IsNullOrEmpty (settings.Filename) || string.IsNullOrEmpty (settings.Namespace)) {
                 return "invalid parameters";
             }
-            if ((int) options == 0) {
-                return string.Empty;
-            }
-            var fullFileName = Path.Combine (Application.dataPath, fileName);
-            var className = Path.GetFileNameWithoutExtension (fullFileName);
+            var fullFilename = Path.Combine (Application.dataPath, settings.Filename);
+            var className = Path.GetFileNameWithoutExtension (fullFilename);
             try {
-                var path = Path.GetDirectoryName (fullFileName);
+                var path = Path.GetDirectoryName (fullFilename);
                 if (!Directory.Exists (path)) {
                     Directory.CreateDirectory (path);
                 }
-                var fields = GenerateFields (new string ('\t', 2), options);
-                var content = string.Format (CodeTemplate, nsName, className, fields);
-                File.WriteAllText (fullFileName, content.Replace ("\t", new string (' ', 4)));
+                var fields = GenerateFields (new string ('\t', 2), settings);
+                var content = string.Format (CodeTemplate, settings.Namespace, className, fields);
+                File.WriteAllText (fullFilename, content.Replace ("\t", new string (' ', 4)));
                 AssetDatabase.Refresh ();
                 return null;
             } catch (Exception ex) {
