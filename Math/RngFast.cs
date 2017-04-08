@@ -46,6 +46,34 @@ namespace LeopotamGroup.Math {
         }
 
         /// <summary>
+        /// Get current internal state. Use on your risk!
+        /// </summary>
+        /// <param name="x">Data vector 1.</param>
+        /// <param name="y">Data vector 2.</param>
+        /// <param name="z">Data vector 3.</param>
+        /// <param name="w">Data vector 4.</param>
+        public void GetInternalState (out int x, out int y, out int z, out int w) {
+            x = (int) _x;
+            y = (int) _y;
+            z = (int) _z;
+            w = (int) _w;
+        }
+
+        /// <summary>
+        /// Set current internal state. Use on your risk!
+        /// </summary>
+        /// <param name="x">Data vector 1.</param>
+        /// <param name="y">Data vector 2.</param>
+        /// <param name="z">Data vector 3.</param>
+        /// <param name="w">Data vector 4.</param>
+        public void SetInternalState (int x, int y, int z, int w) {
+            _x = (uint) x;
+            _y = (uint) y;
+            _z = (uint) z;
+            _w = (uint) w;
+        }
+
+        /// <summary>
         /// /// Get int32 random number from range [0, max).
         /// </summary>
         /// <returns>Random int32 value.</returns>
