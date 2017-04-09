@@ -180,7 +180,9 @@ namespace LeopotamGroup.Serialization {
                         if (isComma) {
                             _sb.Append (",");
                         }
+                        _sb.Append ("\"");
                         _sb.Append (prop.Key);
+                        _sb.Append ("\"");
                         _sb.Append (":");
                         SerializeMember (val);
                         isComma = true;
