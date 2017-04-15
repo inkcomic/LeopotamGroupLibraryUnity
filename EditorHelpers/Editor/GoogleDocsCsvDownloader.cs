@@ -96,13 +96,31 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 for (var i = 0; i < _items.Count; i++) {
                     var item = _items[i];
                     GUILayout.BeginHorizontal (GUI.skin.box);
-                    GUI.enabled = false;
                     GUILayout.BeginVertical ();
-                    EditorGUILayout.LabelField ("External Url path:", item.Url);
-                    EditorGUILayout.TextField ("Resource file:", item.ResourceName);
-                    EditorGUILayout.EnumPopup ("Convert to JSON:", item.JsonMode);
-                    GUILayout.EndVertical ();
+
+                    GUILayout.BeginHorizontal ();
+                    EditorGUILayout.LabelField (
+                        "External url path:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
+                    EditorGUILayout.SelectableLabel (
+                        item.Url, EditorStyles.textField, GUILayout.Height (EditorGUIUtility.singleLineHeight));
+                    GUILayout.EndHorizontal ();
+
+                    GUILayout.BeginHorizontal ();
+                    EditorGUILayout.LabelField (
+                        "Local resource path:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
+                    EditorGUILayout.SelectableLabel (
+                        item.Resource, EditorStyles.textField, GUILayout.Height (EditorGUIUtility.singleLineHeight));
+                    GUILayout.EndHorizontal ();
+
+                    GUILayout.BeginHorizontal ();
+                    EditorGUILayout.LabelField (
+                        "Convert to JSON:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
+                    GUI.enabled = false;
+                    EditorGUILayout.EnumPopup (item.JsonMode);
                     GUI.enabled = true;
+                    GUILayout.EndHorizontal ();
+
+                    GUILayout.EndVertical ();
                     if (GUILayout.Button ("Remove", GUILayout.Width (80f), GUILayout.Height (52f))) {
                         _items.Remove (item);
                     }
@@ -122,7 +140,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if (GUILayout.Button ("Add", GUILayout.Width (80f), GUILayout.Height (52f))) {
                 var newItem = new RecordInfo ();
                 newItem.Url = _newUrl;
-                newItem.ResourceName = _newRes;
+                newItem.Resource = _newRes;
                 newItem.JsonMode = _newJson;
                 _items.Add (newItem);
                 _newUrl = UrlDefault;
@@ -204,14 +222,14 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     www.Encoding = Encoding.UTF8;
                     string data;
                     foreach (var item in items) {
-                        if (!string.IsNullOrEmpty (item.Url) && !string.IsNullOrEmpty (item.ResourceName)) {
+                        if (!string.IsNullOrEmpty (item.Url) && !string.IsNullOrEmpty (item.Resource)) {
                             // Dirty hack for url, because standard "publish to web" has huge lag up to 30 minutes.
                             try {
                                 data = www.DownloadString (item.Url.Replace ("?", string.Empty).Replace ("/edit", "/export?format=csv&"));
                             } catch (Exception urlEx) {
                                 throw new Exception (string.Format ("\"{0}\": {1}", item.Url, urlEx.Message));
                             }
-                            var path = string.Format ("{0}/{1}", Application.dataPath, item.ResourceName);
+                            var path = string.Format ("{0}/{1}", Application.dataPath, item.Resource);
                             var folder = Path.GetDirectoryName (path);
                             if (!Directory.Exists (folder)) {
                                 Directory.CreateDirectory (folder);
@@ -250,7 +268,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             public string Url = string.Empty;
 
             [JsonName ("r")]
-            public string ResourceName = string.Empty;
+            public string Resource = string.Empty;
 
             [JsonName ("j")]
             public JsonMode JsonMode = JsonMode.None;
