@@ -140,6 +140,10 @@ namespace LeopotamGroup.Pooling {
             if (string.IsNullOrEmpty (prefabPath)) {
                 return null;
             }
+            if (overridedType != null && !typeof (IPoolObject).IsAssignableFrom (overridedType)) {
+                Debug.LogWarningFormat ("Invalid IPoolObject-type \"{0}\" for prefab \"{1}\"", overridedType, prefabPath);
+                return null;
+            }
             var container =
                 new GameObject (
 #if UNITY_EDITOR
