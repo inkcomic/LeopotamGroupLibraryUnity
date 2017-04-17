@@ -159,14 +159,15 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             GUI.enabled = true;
         }
 
-        static string ConvertToJson (string data, JsonMode jsonMode) {
+        static string ConvertToDictJson (string data) {
             var sb = new StringBuilder (data.Length * 2);
-            var csvLines = Singleton.Get<CsvSerialization> ().Deserialize (data);
-            if (csvLines.Count < 2) {
+            var list = Singleton.Get<CsvSerialization> ().Deserialize (data);
+            if (list.Count < 2) {
                 throw new Exception ("Invalid header data: first line should contains field names, second line - pair of wrapping chars.");
             }
-            sb.Append (jsonMode == JsonMode.Array ? "[" : "{");
-            var it = csvLines.GetEnumerator ();
+
+            sb.Append ("{");
+            var it = list.GetEnumerator ();
 
             // header.
             it.MoveNext ();
@@ -186,28 +187,76 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
                 }
             }
-            if (jsonMode == JsonMode.Dictionary && wrapperKey != "\"\"") {
+            if (wrapperKey != "\"\"") {
                 throw new Exception ("Invalid wrapper data: key should be wrapped with \"\".");
             }
 
             var needComma = false;
+            string itemValue;
+            string wrapChars;
             while (it.MoveNext ()) {
-                if (jsonMode == JsonMode.Dictionary) {
-                    sb.AppendFormat ("{0}\"{1}\":{{", needComma ? "," : string.Empty, it.Current.Key);
-                } else {
-                    sb.AppendFormat ("{0}{{", needComma ? "," : string.Empty);
-                }
+                sb.AppendFormat ("{0}\"{1}\":{{", needComma ? "," : string.Empty, it.Current.Key);
                 for (var i = 0; i < headerValue.Length; i++) {
-                    var wrapChars = wrapperValue[i];
-                    var item = wrapChars.Length > 0 ?
+                    wrapChars = wrapperValue[i];
+                    itemValue = wrapChars.Length > 0 ?
                         string.Format ("{0}{1}{2}", wrapChars[0], it.Current.Value[i], wrapChars[1]) : it.Current.Value[i];
-                    sb.AppendFormat ("{0}\"{1}\":{2}", i > 0 ? "," : string.Empty, headerValue[i], item);
+                    sb.AppendFormat ("{0}\"{1}\":{2}", i > 0 ? "," : string.Empty, headerValue[i], itemValue);
                 }
                 sb.Append ("}");
                 needComma = true;
             }
 
-            sb.Append (jsonMode == JsonMode.Array ? "]" : "}");
+            sb.Append ("}");
+            return sb.ToString ();
+        }
+
+        static string ConvertToArrayJson (string data) {
+            var sb = new StringBuilder (data.Length * 2);
+            var list = Singleton.Get<CsvSerialization> ().DeserializeAsArray (data);
+            if (list.Count < 2) {
+                throw new Exception ("Invalid header data: first line should contains field names, second line - pair of wrapping chars.");
+            }
+
+            sb.Append ("[");
+            var it = list.GetEnumerator ();
+
+            // header.
+            it.MoveNext ();
+            var headerValue = it.Current;
+
+            // wrappers.
+            it.MoveNext ();
+            var wrapperValue = it.Current;
+            for (var i = 0; i < wrapperValue.Length; i++) {
+                if (!(
+                        wrapperValue[i] == string.Empty ||
+                        wrapperValue[i] == "[]" ||
+                        wrapperValue[i] == "{}" ||
+                        wrapperValue[i] == "\"\"")) {
+                    throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
+                }
+            }
+
+            var needComma = false;
+            string itemValue;
+            string wrapChars;
+            while (it.MoveNext ()) {
+                sb.AppendFormat ("{0}{{", needComma ? "," : string.Empty);
+                for (var i = 0; i < headerValue.Length; i++) {
+                    wrapChars = wrapperValue[i];
+                    itemValue = wrapChars.Length > 0 ?
+                        string.Format ("{0}{1}{2}", wrapChars[0], it.Current[i], wrapChars[1]) : it.Current[i];
+                    sb.AppendFormat (
+                        "{0}\"{1}\":{2}",
+                        i > 0 ? "," : string.Empty,
+                        headerValue[i],
+                        itemValue);
+                }
+                sb.Append ("}");
+                needComma = true;
+            }
+
+            sb.Append ("]");
             return sb.ToString ();
         }
 
@@ -239,8 +288,13 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                             data = CsvMultilineRegex.Replace (data, m => m.Value.Replace ("\n", "\\n"));
 
                             // json generation.
-                            if (item.JsonMode != JsonMode.None) {
-                                data = ConvertToJson (data, item.JsonMode);
+                            switch (item.JsonMode) {
+                                case JsonMode.Array:
+                                    data = ConvertToArrayJson (data);
+                                    break;
+                                case JsonMode.Dictionary:
+                                    data = ConvertToDictJson (data);
+                                    break;
                             }
 
                             File.WriteAllText (path, data, Encoding.UTF8);
