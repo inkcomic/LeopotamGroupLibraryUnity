@@ -607,8 +607,6 @@ namespace LeopotamGroup.Serialization {
 
             readonly Dictionary<Type, TypeDesc> _types = new Dictionary<Type, TypeDesc> (32);
 
-            readonly StringBuilder _sb = new StringBuilder (256);
-
             static readonly object SyncLock = new object ();
 
             public void SetValue (Type type, string name, object instance, object val) {
@@ -657,13 +655,15 @@ namespace LeopotamGroup.Serialization {
                                 } else {
                                     name = f.Name;
                                 }
-                                _sb.Length = 0;
-                                _sb.Append (name);
-                                desc.Fields.Add (_sb.ToString (), f);
+                                try {
+                                    desc.Fields.Add (name, f);
+                                } catch {
+                                    throw new ArgumentException ("Duplicated field name", name);
+                                }
                             }
                         }
                         foreach (var p in type.GetProperties ()) {
-                            if (p.CanRead && p.CanWrite && !Attribute.IsDefined (p, ignoreType)) {
+                            if (p.CanRead && p.CanWrite && Attribute.IsDefined (p, nameType) && !Attribute.IsDefined (p, ignoreType)) {
                                 if (string.CompareOrdinal (p.Name, "Item") != 0 || p.GetIndexParameters ().Length == 0) {
                                     if (Attribute.IsDefined (p, nameType)) {
                                         name = ((JsonNameAttribute) Attribute.GetCustomAttribute (p, nameType)).Name;
@@ -673,9 +673,14 @@ namespace LeopotamGroup.Serialization {
                                     } else {
                                         name = p.Name;
                                     }
-                                    _sb.Length = 0;
-                                    _sb.Append (name);
-                                    desc.Properties.Add (_sb.ToString (), p);
+                                    try {
+                                        if (desc.Fields.ContainsKey (name)) {
+                                            throw new Exception ();
+                                        }
+                                        desc.Properties.Add (name, p);
+                                    } catch {
+                                        throw new ArgumentException ("Duplicated property name", name);
+                                    }
                                 }
                             }
                         }
