@@ -597,7 +597,7 @@ namespace LeopotamGroup.Serialization {
         }
 
         sealed class TypesCache {
-            public class TypeDesc {
+            public sealed class TypeDesc {
                 public readonly Dictionary<string, FieldInfo> Fields = new Dictionary<string, FieldInfo> (8);
 
                 public readonly Dictionary<string, PropertyInfo> Properties = new Dictionary<string, PropertyInfo> (8);
@@ -611,11 +611,18 @@ namespace LeopotamGroup.Serialization {
 
             public void SetValue (Type type, string name, object instance, object val) {
                 var desc = GetCache (type);
-                if (desc.Fields.ContainsKey (name)) {
-                    desc.Fields[name].SetValue (instance, val);
+                FieldInfo fi;
+                if (desc.Fields.TryGetValue (name, out fi)) {
+                    fi.SetValue (
+                        instance,
+                        fi.FieldType.IsEnum && val is string ? Enum.Parse (fi.FieldType, (string) val) : val);
                 } else {
-                    if (desc.Properties.ContainsKey (name)) {
-                        desc.Properties[name].SetValue (instance, val, null);
+                    PropertyInfo pi;
+                    if (desc.Properties.TryGetValue (name, out pi)) {
+                        pi.SetValue (
+                            instance,
+                            pi.PropertyType.IsEnum && val is string ? Enum.Parse (pi.PropertyType, (string) val) : val,
+                            null);
                     }
                 }
             }
