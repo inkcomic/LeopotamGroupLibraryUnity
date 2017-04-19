@@ -183,7 +183,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                         wrapperValue[i] == string.Empty ||
                         wrapperValue[i] == "[]" ||
                         wrapperValue[i] == "{}" ||
-                        wrapperValue[i] == "IGNORE" ||
+                        string.Compare (wrapperValue[i], "IGNORE", true) == 0 ||
                         wrapperValue[i] == "\"\"")) {
                     throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
                 }
@@ -199,7 +199,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 sb.AppendFormat ("{0}\"{1}\":{{", needComma ? "," : string.Empty, it.Current.Key);
                 for (var i = 0; i < headerValue.Length; i++) {
                     wrapChars = wrapperValue[i];
-                    if (wrapChars == "IGNORE") {
+                    if (string.Compare (wrapChars, "IGNORE", true) == 0) {
                         continue;
                     }
                     itemValue = wrapChars.Length > 0 ?
@@ -236,7 +236,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                         wrapperValue[i] == string.Empty ||
                         wrapperValue[i] == "[]" ||
                         wrapperValue[i] == "{}" ||
-                        wrapperValue[i] == "IGNORE" ||
+                        string.Compare (wrapperValue[i], "IGNORE", true) == 0 ||
                         wrapperValue[i] == "\"\"")) {
                     throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
                 }
@@ -249,7 +249,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 sb.AppendFormat ("{0}{{", needComma ? "," : string.Empty);
                 for (var i = 0; i < headerValue.Length; i++) {
                     wrapChars = wrapperValue[i];
-                    if (wrapChars == "IGNORE") {
+                    if (string.Compare (wrapChars, "IGNORE", true) == 0) {
                         continue;
                     }
                     itemValue = wrapChars.Length > 0 ?
