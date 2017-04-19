@@ -183,6 +183,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                         wrapperValue[i] == string.Empty ||
                         wrapperValue[i] == "[]" ||
                         wrapperValue[i] == "{}" ||
+                        wrapperValue[i] == "IGNORE" ||
                         wrapperValue[i] == "\"\"")) {
                     throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
                 }
@@ -198,6 +199,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 sb.AppendFormat ("{0}\"{1}\":{{", needComma ? "," : string.Empty, it.Current.Key);
                 for (var i = 0; i < headerValue.Length; i++) {
                     wrapChars = wrapperValue[i];
+                    if (wrapChars == "IGNORE") {
+                        continue;
+                    }
                     itemValue = wrapChars.Length > 0 ?
                         string.Format ("{0}{1}{2}", wrapChars[0], it.Current.Value[i], wrapChars[1]) : it.Current.Value[i];
                     sb.AppendFormat ("{0}\"{1}\":{2}", i > 0 ? "," : string.Empty, headerValue[i], itemValue);
@@ -232,6 +236,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                         wrapperValue[i] == string.Empty ||
                         wrapperValue[i] == "[]" ||
                         wrapperValue[i] == "{}" ||
+                        wrapperValue[i] == "IGNORE" ||
                         wrapperValue[i] == "\"\"")) {
                     throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
                 }
@@ -244,6 +249,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 sb.AppendFormat ("{0}{{", needComma ? "," : string.Empty);
                 for (var i = 0; i < headerValue.Length; i++) {
                     wrapChars = wrapperValue[i];
+                    if (wrapChars == "IGNORE") {
+                        continue;
+                    }
                     itemValue = wrapChars.Length > 0 ?
                         string.Format ("{0}{1}{2}", wrapChars[0], it.Current[i], wrapChars[1]) : it.Current[i];
                     sb.AppendFormat (
