@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -174,6 +175,37 @@ namespace LeopotamGroup.Math {
 
                 return _floatToStrBuf.ToString ();
             }
+        }
+
+        /// <summary>
+        /// Get universal hash code for short string.
+        /// </summary>
+        /// <param name="str">String for hashing.</param>
+        public static int GetStableHashCode (this string str) {
+            if (str == null) {
+                throw new ArgumentException ();
+            }
+            return GetStableHashCode (str, 0, str.Length);
+        }
+
+        /// <summary>
+        /// Get universal hash code for part of short string.
+        /// </summary>
+        /// <param name="str">String for hashing.</param>
+        /// <param name="offset">Start hashing from this offset.</param>
+        /// <param name="len">Length of part for hashing.</param>
+        public static int GetStableHashCode (this string str, int offset, int len) {
+            if (str == null || offset < 0 || offset >= str.Length || len < 0 || offset + len > str.Length) {
+                throw new ArgumentException ();
+            }
+            if (len == 0) {
+                return 0;
+            }
+            var seed = 173;
+            for (int i = offset, iMax = offset + len; i < iMax; i++) {
+                seed = 37 * seed + (int) str[i];
+            }
+            return seed;
         }
     }
 }

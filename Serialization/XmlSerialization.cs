@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using LeopotamGroup.Collections;
+using LeopotamGroup.Math;
+using LeopotamGroup.Serialization.XmlInternal;
 
 namespace LeopotamGroup.Serialization {
     /// <summary>
@@ -17,13 +19,15 @@ namespace LeopotamGroup.Serialization {
         /// Deserialize xml data from raw string source to nodes tree.
         /// </summary>
         /// <param name="source">Xml source.</param>
-        public XmlNode Deserialize (string source) {
+        /// <param name="useHashesForNames">Use int-hashes instead of string for node / attribute names.
+        /// When uses - better for GC allocation.</param>
+        public XmlNode Deserialize (string source, bool useHashesForNames = false) {
             if (string.IsNullOrEmpty (source)) {
                 throw new Exception ("Invalid xml");
             }
             var i = 0;
             while (true) {
-                XmlNode.XmlUtils.SkipWhitespace (source, ref i);
+                XmlUtils.SkipWhitespace (source, ref i);
                 if (source[i] != '<') {
                     throw new Exception ("Invalid token");
                 }
@@ -41,7 +45,7 @@ namespace LeopotamGroup.Serialization {
                     i++;
                     continue;
                 }
-                return XmlNode.Get (source, ref i);
+                return XmlNode.Get (source, ref i, useHashesForNames);
             }
         }
     }
@@ -49,23 +53,30 @@ namespace LeopotamGroup.Serialization {
     /// <summary>
     /// Xml node. Contains information about node attributes and children nodes.
     /// </summary>
-    public class XmlNode {
+    public sealed class XmlNode {
         /// <summary>
-        /// Node name.
+        /// Node name. If "UseHashesForNames" is false - node name, otherwise null.
         /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Node name hash. If "UseHashesForNames" is true - hash of node name, otherwise 0.
+        /// </summary>
+        public int NameHash { get; private set; }
 
         /// <summary>
         /// Textual data inside node (not nested node). Can be null.
         /// </summary>
         public string Value { get; private set; }
 
+        public bool UseHashesForNames { get; private set; }
+
         /// <summary>
         /// Children nodes list.
         /// </summary>
         public readonly List<XmlNode> Children = new List<XmlNode> ();
 
-        List<XmlUtils.XmlAttribute> _attributes = new List<XmlUtils.XmlAttribute> (4);
+        List<XmlAttribute> _attributes = new List<XmlAttribute> (4);
 
         static FastList<XmlNode> _pool = new FastList<XmlNode> (128);
 
@@ -74,7 +85,7 @@ namespace LeopotamGroup.Serialization {
         /// </summary>
         /// <param name="source">Xml source.</param>
         /// <param name="offset">Offset from start of xml source.</param>
-        public static XmlNode Get (string source, ref int offset) {
+        public static XmlNode Get (string source, ref int offset, bool useHashesForNames) {
             XmlNode item;
             if (_pool.Count > 0) {
                 item = _pool[_pool.Count - 1];
@@ -82,7 +93,7 @@ namespace LeopotamGroup.Serialization {
             } else {
                 item = new XmlNode ();
             }
-            item.Init (source, ref offset);
+            item.Init (source, ref offset, useHashesForNames);
             return item;
         }
 
@@ -100,10 +111,17 @@ namespace LeopotamGroup.Serialization {
 
         XmlNode () { }
 
-        void Init (string str, ref int i) {
+        void Init (string str, ref int i, bool useHashesForNames) {
+            UseHashesForNames = useHashesForNames;
             XmlUtils.SkipWhitespace (str, ref i);
-            Name = XmlUtils.GetValue (str, ref i, '>', '/', true);
-            XmlUtils.ParseAttributes (str, ref i, _attributes, '>', '/');
+            if (useHashesForNames) {
+                Name = null;
+                NameHash = XmlUtils.GetHashedValue (str, ref i, '>', '/', true);
+            } else {
+                Name = XmlUtils.GetValue (str, ref i, '>', '/', true);
+                NameHash = 0;
+            }
+            XmlUtils.ParseAttributes (str, ref i, _attributes, '>', '/', useHashesForNames);
             // skip '/>'.
             if (str[i] == '/') {
                 i += 2;
@@ -117,7 +135,7 @@ namespace LeopotamGroup.Serialization {
                 // parse children.
                 while (str[i + 1] != '/') {
                     i++;
-                    Children.Add (XmlNode.Get (str, ref i));
+                    Children.Add (XmlNode.Get (str, ref i, useHashesForNames));
                     XmlUtils.SkipWhitespace (str, ref i);
                     if (i >= str.Length) {
                         return;
@@ -131,27 +149,32 @@ namespace LeopotamGroup.Serialization {
                 Value = XmlUtils.GetValue (str, ref i, '<', '\0', false);
                 i++;
                 if (str[i] != '/') {
-                    throw new Exception ("Invalid ending on tag " + Name);
+                    throw new Exception ("Invalid ending tag at " + i);
                 }
             }
             i++;
             XmlUtils.SkipWhitespace (str, ref i);
-            var endName = XmlUtils.GetValue (str, ref i, '>', '\0', true);
-            if (endName != Name) {
-                throw new Exception ("Start/end tag name mismatch: " + Name + " and " + endName);
+            var isValid = useHashesForNames ?
+                XmlUtils.GetHashedValue (str, ref i, '>', '\0', true) == NameHash :
+                XmlUtils.GetValue (str, ref i, '>', '\0', true) == Name;
+            if (!isValid) {
+                throw new Exception ("Start/end tag name mismatch at " + i);
             }
             XmlUtils.SkipWhitespace (str, ref i);
             if (str[i] != '>') {
-                throw new Exception ("Invalid ending on tag " + Name);
+                throw new Exception ("Invalid ending tag at " + i);
             }
             i++;
         }
 
         /// <summary>
-        /// Get value of attribute. Returns null if no attribute with specified name.
+        /// Get value of attribute. Returns null if no attribute with specified name or "UseHashesForNames" is true.
         /// </summary>
         /// <param name="name">Attribute name.</param>
         public string GetAttribute (string name) {
+            if (UseHashesForNames) {
+                return null;
+            }
             for (var i = _attributes.Count - 1; i >= 0; i--) {
                 if (string.CompareOrdinal (_attributes[i].Name, name) == 0) {
                     return _attributes[i].Value;
@@ -161,9 +184,26 @@ namespace LeopotamGroup.Serialization {
         }
 
         /// <summary>
+        /// Get value of hashed attribute. Returns null if no attribute with specified nameHash or "UseHashesForNames" is false.
+        /// </summary>
+        /// <param name="name">Attribute name.</param>
+        public string GetAttribute (int nameHash) {
+            if (!UseHashesForNames) {
+                return null;
+            }
+            for (var i = _attributes.Count - 1; i >= 0; i--) {
+                if (_attributes[i].NameHash == nameHash) {
+                    return _attributes[i].Value;
+                }
+            }
+            return null;
+        }
+    }
+    namespace XmlInternal {
+        /// <summary>
         /// For internal use.
         /// </summary>
-        internal static class XmlUtils {
+        static class XmlUtils {
             public static void SkipWhitespace (string str, ref int i) {
                 while (i < str.Length) {
                     if (!(str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r')) {
@@ -186,16 +226,33 @@ namespace LeopotamGroup.Serialization {
                 var start = i;
                 while (
                     (!stopOnSpace || !(str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r')) &&
-                    str[i] != endChar && str[i] != endChar2) { i++; }
+                    str[i] != endChar && str[i] != endChar2) {
+                    i++;
+                }
                 return str.Substring (start, i - start);
             }
 
-            public static void ParseAttributes (string str, ref int i, List<XmlAttribute> list, char endChar, char endChar2) {
+            public static int GetHashedValue (string str, ref int i, char endChar, char endChar2, bool stopOnSpace) {
+                var start = i;
+                while (
+                    (!stopOnSpace || !(str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r')) &&
+                    str[i] != endChar && str[i] != endChar2) {
+                    i++;
+                }
+                return str.GetStableHashCode (start, i - start);
+            }
+
+            public static void ParseAttributes (
+                string str, ref int i, List<XmlAttribute> list, char endChar, char endChar2, bool useHashesForNames) {
                 list.Clear ();
                 SkipWhitespace (str, ref i);
                 while (str[i] != endChar && str[i] != endChar2) {
                     var attr = new XmlAttribute ();
-                    attr.Name = GetValue (str, ref i, '=', '\0', true);
+                    if (useHashesForNames) {
+                        attr.NameHash = GetHashedValue (str, ref i, '=', '\0', true);
+                    } else {
+                        attr.Name = GetValue (str, ref i, '=', '\0', true);
+                    }
                     SkipWhitespace (str, ref i);
                     i++;
                     SkipWhitespace (str, ref i);
@@ -210,12 +267,14 @@ namespace LeopotamGroup.Serialization {
                     SkipWhitespace (str, ref i);
                 }
             }
+        }
 
-            public struct XmlAttribute {
-                public string Name;
+        struct XmlAttribute {
+            public string Name;
 
-                public string Value;
-            }
+            public int NameHash;
+
+            public string Value;
         }
     }
 }
