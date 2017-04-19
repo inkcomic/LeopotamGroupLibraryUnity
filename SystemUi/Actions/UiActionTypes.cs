@@ -88,7 +88,11 @@ namespace LeopotamGroup.SystemUi.Actions {
         protected int GroupId { get; private set; }
 
         void Awake () {
-            GroupId = _group.GetHashCode ();
+            SetGroup (_group);
+        }
+
+        public void SetGroup (string group) {
+            GroupId = group != null ? group.GetHashCode () : 0;
         }
     }
 
