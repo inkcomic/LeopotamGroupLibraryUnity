@@ -49,7 +49,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         Dictionary<int, Func<XmlNode, MarkupContainer, GameObject>> _generators = new Dictionary<int, Func<XmlNode, MarkupContainer, GameObject>> (64);
 
-        Dictionary<int, Transform> _namedNodes = new Dictionary<int, Transform> (128);
+        Dictionary<int, GameObject> _namedNodes = new Dictionary<int, GameObject> (128);
 
         int _uiLayer;
 
@@ -134,7 +134,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                     Debug.LogWarning ("Duplicate name: " + nodeName);
 #endif
                 } else {
-                    _namedNodes[nodeNameHash] = tr;
+                    _namedNodes[nodeNameHash] = go;
                 }
             }
 
@@ -218,14 +218,14 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
-        /// Get transform of specific node from markup or null.
+        /// Get GameObject of specific node from markup or null.
         /// </summary>
         /// <param name="name">Unique name of node.</param>
-        public Transform GetNamedNode (string name) {
+        public GameObject GetNamedNode (string name) {
             var hash = name.GetStableHashCode ();
-            Transform tr;
-            if (_namedNodes.TryGetValue (hash, out tr)) {
-                return tr;
+            GameObject go;
+            if (_namedNodes.TryGetValue (hash, out go)) {
+                return go;
             }
             return null;
         }

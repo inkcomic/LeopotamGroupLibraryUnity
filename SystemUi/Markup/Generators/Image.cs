@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
     static class ImageNode {
-        static readonly int HashedSrc = "src".GetStableHashCode ();
+        static readonly int HashedPath = "path".GetStableHashCode ();
 
         static readonly int HashedNativeSize = "nativeSize".GetStableHashCode ();
 
@@ -28,7 +28,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var img = go.AddComponent<Image> ();
             var rt = go.GetComponent<RectTransform> ();
 
-            var attrValue = node.GetAttribute (HashedSrc);
+            var attrValue = node.GetAttribute (HashedPath);
             if (!string.IsNullOrEmpty (attrValue)) {
                 img.sprite = container.GetAtlasSprite (attrValue);
             }
