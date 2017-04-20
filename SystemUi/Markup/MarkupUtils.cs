@@ -19,7 +19,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedSize = "size".GetStableHashCode ();
 
-        public static readonly int HashedDisabled = "disabled".GetStableHashCode ();
+        public static readonly int HashedHidden = "hidden".GetStableHashCode ();
 
         static readonly int HashedColor = "color".GetStableHashCode ();
 
@@ -42,12 +42,12 @@ namespace LeopotamGroup.SystemUi.Markup {
         public static readonly int HashedOnSelection = "onSelection".GetStableHashCode ();
 
         /// <summary>
-        /// Process "disabled" attribute of node.
+        /// Process "hidden" attribute of node.
         /// </summary>
         /// <param name="go">GameObject holder.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetDisabled (GameObject go, XmlNode node) {
-            var attrValue = node.GetAttribute (HashedDisabled);
+        public static void SetHidden (GameObject go, XmlNode node) {
+            var attrValue = node.GetAttribute (HashedHidden);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
                 go.SetActive (false);
             }

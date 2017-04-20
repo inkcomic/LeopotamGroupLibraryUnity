@@ -20,18 +20,6 @@ namespace LeopotamGroup.SystemUi.Markup {
     /// Ui markup container. Supports spawning of named xml-schema from Resources folder.
     /// </summary>
     public class MarkupContainer : MonoBehaviour {
-        public static readonly int HashedUi = "ui".GetStableHashCode ();
-
-        public static readonly int HashedBox = "box".GetStableHashCode ();
-
-        public static readonly int HashedAlign = "align".GetStableHashCode ();
-
-        public static readonly int HashedImage = "image".GetStableHashCode ();
-
-        public static readonly int HashedText = "text".GetStableHashCode ();
-
-        public static readonly int HashedGrid = "grid".GetStableHashCode ();
-
         public static readonly int HashedName = "name".GetStableHashCode ();
 
         [SerializeField]
@@ -63,12 +51,13 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         protected virtual void AttachGenerators () {
-            _generators.Add (HashedUi, UiNode.Create);
-            _generators.Add (HashedBox, BoxNode.Create);
-            _generators.Add (HashedAlign, AlignNode.Create);
-            _generators.Add (HashedImage, ImageNode.Create);
-            _generators.Add (HashedText, TextNode.Create);
-            _generators.Add (HashedGrid, GridNode.Create);
+            _generators.Add ("align".GetStableHashCode (), AlignNode.Create);
+            _generators.Add ("box".GetStableHashCode (), BoxNode.Create);
+            _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
+            _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
+            _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
+            _generators.Add ("text".GetStableHashCode (), TextNode.Create);
+            _generators.Add ("ui".GetStableHashCode (), UiNode.Create);
         }
 
         void Load () {
