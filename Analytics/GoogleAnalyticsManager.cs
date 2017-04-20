@@ -165,6 +165,30 @@ namespace LeopotamGroup.Analytics {
                 WWW.EscapeURL (value)
             ));
         }
+        
+        /// <summary>
+        /// Track transaction for e-commerce, in-app purchases.
+        /// </summary>
+        /// <param name="transaction">Transaction ID, should be equils or less 100 symbols.</param>
+        /// <param name="name">Product name.</param>
+        /// <param name="sku">Product code.</param>
+        /// <param name="price">Product price.</param>      
+        /// <param name="currency">ISO currency code, 3 letters</param> 
+        public void TrackTransaction (string transaction, string name, string sku, decimal price, string currency) {     
+            transaction = (transaction.Length <= 100) ? transaction : transaction.Substring(0, 100);   
+            EnqueueRequest (string.Format ("t=transaction&ti={0}&tr={1}&cu={2}&ts=0&tt=0",
+                WWW.EscapeURL (transaction),
+                price,
+                WWW.EscapeURL (currency)
+            ));
+            EnqueueRequest (string.Format ("t=item&ti={0}&in={1}&ic={2}&ip={3}&iq=1&cu={4}",
+                WWW.EscapeURL (transaction),
+                WWW.EscapeURL (name),
+                WWW.EscapeURL (sku),
+                price,
+                WWW.EscapeURL (currency)
+            ));            
+    }    
 
         /// <summary>
         /// Track exception event.
