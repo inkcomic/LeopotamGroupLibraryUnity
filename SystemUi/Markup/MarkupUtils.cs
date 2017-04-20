@@ -4,33 +4,24 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Globalization;
+using LeopotamGroup.Common;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using LeopotamGroup.SystemUi.Actions;
-using LeopotamGroup.SystemUi.Widgets;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup {
-    /// <summary>
-    /// Default widgets.
-    /// </summary>
-    static class StandardGenerators {
-        public static readonly int HashedSide = "side".GetStableHashCode ();
-
-        public static readonly int HashedAlign = "align".GetStableHashCode ();
-
+    static class MarkupUtils {
         public static readonly int HashedOffset = "offset".GetStableHashCode ();
 
         public static readonly int HashedSize = "size".GetStableHashCode ();
 
-        public static readonly int HashedSrc = "src".GetStableHashCode ();
-
-        public static readonly int HashedNativeSize = "nativeSize".GetStableHashCode ();
-
         public static readonly int HashedDisabled = "disabled".GetStableHashCode ();
+
+        static readonly int HashedColor = "color".GetStableHashCode ();
 
         public static readonly int HashedOnClick = "onClick".GetStableHashCode ();
 
@@ -51,149 +42,6 @@ namespace LeopotamGroup.SystemUi.Markup {
         public static readonly int HashedOnSelection = "onSelection".GetStableHashCode ();
 
         /// <summary>
-        /// Create "ui" node.
-        /// </summary>
-        /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
-        public static GameObject CreateUi (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("ui");
-            var canvas = go.AddComponent<Canvas> ();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.pixelPerfect = false;
-
-            var scaler = go.AddComponent<CanvasScaler> ();
-            var refData = node.GetAttribute ("base".GetStableHashCode ());
-            if (refData != null) {
-                var refWidth = 1024;
-                var refHeight = 768;
-                var refBalance = 1f;
-                try {
-                    var parts = refData.Split (';');
-                    var w = int.Parse (parts[0]);
-                    var h = int.Parse (parts[1]);
-                    var b = Mathf.Clamp01 (float.Parse (parts[2], MathExtensions.UnifiedNumberFormat));
-                    refWidth = w;
-                    refHeight = h;
-                    refBalance = b;
-                } catch { }
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                scaler.referenceResolution = new Vector2 (refWidth, refHeight);
-                scaler.matchWidthOrHeight = refBalance;
-            }
-
-            go.AddComponent<GraphicRaycaster> ();
-
-            var es = GameObject.FindObjectOfType<EventSystem> ();
-            if ((object) es == null) {
-                es = new GameObject ("EventSystem").AddComponent<EventSystem> ();
-                es.gameObject.AddComponent<StandaloneInputModule> ();
-            }
-
-            return go;
-        }
-
-        /// <summary>
-        /// Create "box" node.
-        /// </summary>
-        /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
-        public static GameObject CreateBox (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("box");
-            var rt = go.AddComponent<RectTransform> ();
-            SetRectTransformSize (rt, node);
-            SetDisabled (rt, node);
-            if (ValidateInteractive (rt, node)) {
-                go.AddComponent<NonVisualWidget> ();
-            }
-            return go;
-        }
-
-        /// <summary>
-        /// Create "align" node.
-        /// </summary>
-        /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
-        public static GameObject CreateAlign (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("align");
-            var rt = go.AddComponent<RectTransform> ();
-            var offset = Vector2.one * 0.5f;
-            var attrValue = node.GetAttribute (HashedSide);
-            if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
-                for (int i = 0; i < parts.Length; i++) {
-                    switch (parts[i]) {
-                        case "left":
-                            offset.x = 0f;
-                            break;
-                        case "right":
-                            offset.x = 1f;
-                            break;
-                        case "top":
-                            offset.y = 1f;
-                            break;
-                        case "down":
-                            offset.y = 0f;
-                            break;
-                    }
-                }
-            }
-
-            rt.anchorMin = offset;
-            rt.anchorMax = offset;
-            rt.offsetMin = -Vector2.one * 0.5f;
-            rt.offsetMax = -rt.offsetMin;
-
-            SetDisabled (rt, node);
-            return go;
-        }
-
-        /// <summary>
-        /// Create "image" node.
-        /// </summary>
-        /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
-        public static GameObject CreateImage (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("image");
-            var img = go.AddComponent<Image> ();
-            var rt = go.GetComponent<RectTransform> ();
-
-            img.raycastTarget = false;
-
-            var attrValue = node.GetAttribute (HashedSrc);
-            if (!string.IsNullOrEmpty (attrValue)) {
-                img.sprite = container.GetAtlasSprite (attrValue);
-            }
-
-            attrValue = node.GetAttribute (HashedNativeSize);
-            var ignoreSize = (object) img.sprite != null && string.CompareOrdinal (attrValue, "true") == 0;
-            if (ignoreSize) {
-                img.SetNativeSize ();
-            }
-
-            SetRectTransformSize (rt, node, ignoreSize);
-            SetDisabled (rt, node);
-            if (ValidateInteractive (rt, node)) {
-                img.raycastTarget = true;
-            }
-            return go;
-        }
-
-        /// <summary>
-        /// Create "grid" node.
-        /// </summary>
-        /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
-        public static GameObject CreateGrid (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("grid");
-            var grid = go.AddComponent<GridLayoutGroup> ();
-            var rt = go.GetComponent<RectTransform> ();
-
-            SetRectTransformSize (rt, node);
-            SetDisabled (rt, node);
-            return go;
-        }
-
-        /// <summary>
         /// Process "disable"-attribute of node.
         /// </summary>
         /// <param name="node">Xml node.</param>
@@ -202,6 +50,18 @@ namespace LeopotamGroup.SystemUi.Markup {
             var attrValue = node.GetAttribute (HashedDisabled);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
                 rt.gameObject.SetActive (false);
+            }
+        }
+
+        /// <summary>
+        /// Process "color"-attribute of node.
+        /// </summary>
+        /// <param name="node">Xml node.</param>
+        /// <param name="container">markup container.</param>
+        public static void SetColor (Graphic widget, XmlNode node) {
+            var attrValue = node.GetAttribute (HashedColor);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                widget.color = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
             }
         }
 
@@ -267,7 +127,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             string attrValue;
 
             if (!ignoreSize) {
-                attrValue = node.GetAttribute ("size".GetStableHashCode ());
+                attrValue = node.GetAttribute (HashedSize);
                 if (!string.IsNullOrEmpty (attrValue)) {
                     int percentIdx;
                     var parts = attrValue.Split (';');
@@ -324,7 +184,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                 }
             }
 
-            attrValue = node.GetAttribute ("offset".GetStableHashCode ());
+            attrValue = node.GetAttribute (HashedOffset);
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = attrValue.Split (';');
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {

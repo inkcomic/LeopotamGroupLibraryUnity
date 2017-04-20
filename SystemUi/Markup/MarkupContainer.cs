@@ -11,6 +11,7 @@ using LeopotamGroup.Common;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using LeopotamGroup.SystemUi.Atlases;
+using LeopotamGroup.SystemUi.Markup.Generators;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -27,6 +28,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedImage = "image".GetStableHashCode ();
 
+        public static readonly int HashedText = "text".GetStableHashCode ();
+
         public static readonly int HashedGrid = "grid".GetStableHashCode ();
 
         public static readonly int HashedName = "name".GetStableHashCode ();
@@ -36,6 +39,9 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         [SerializeField]
         List<SpriteAtlas> _atlases = new List<SpriteAtlas> ();
+
+        [SerializeField]
+        List<Font> _fonts = new List<Font> ();
 
         XmlNode _xmlTree;
 
@@ -49,17 +55,20 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         bool _isLoaded;
 
+        Font _defaultFont;
+
         void Awake () {
             _uiLayer = LayerMask.NameToLayer ("UI");
             AttachGenerators ();
         }
 
         protected virtual void AttachGenerators () {
-            _generators.Add (HashedUi, StandardGenerators.CreateUi);
-            _generators.Add (HashedBox, StandardGenerators.CreateBox);
-            _generators.Add (HashedAlign, StandardGenerators.CreateAlign);
-            _generators.Add (HashedImage, StandardGenerators.CreateImage);
-            _generators.Add (HashedGrid, StandardGenerators.CreateGrid);
+            _generators.Add (HashedUi, UiNode.Create);
+            _generators.Add (HashedBox, BoxNode.Create);
+            _generators.Add (HashedAlign, AlignNode.Create);
+            _generators.Add (HashedImage, ImageNode.Create);
+            _generators.Add (HashedText, TextNode.Create);
+            _generators.Add (HashedGrid, GridNode.Create);
         }
 
         void Load () {
@@ -106,7 +115,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
             Func<XmlNode, MarkupContainer, GameObject> generator;
             if (!_generators.TryGetValue (xmlTree.NameHash, out generator)) {
-                generator = StandardGenerators.CreateBox;
+                generator = BoxNode.Create;
             }
             var go = generator (xmlTree, this);
             var tr = go.transform;
@@ -121,7 +130,9 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (!string.IsNullOrEmpty (nodeName)) {
                 var nodeNameHash = nodeName.GetStableHashCode ();
                 if (_namedNodes.ContainsKey (nodeNameHash)) {
+#if UNITY_EDITOR
                     Debug.LogWarning ("Duplicate name: " + nodeName);
+#endif
                 } else {
                     _namedNodes[nodeNameHash] = tr;
                 }
@@ -144,6 +155,9 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// Force cleanup / create widgets infrastructure from attached xml-schema.
         /// </summary>
         public void CreateVisuals () {
+            if ((object) _defaultFont == null) {
+                _defaultFont = _fonts.Count > 0 ? _fonts[0] : Resources.GetBuiltinResource<Font> ("Arial.ttf");
+            }
             Load ();
             Clear ();
             CreateVisualNode (_xmlTree, transform);
@@ -152,10 +166,23 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <summary>
         /// Attach sprite atlas. Should be called before any visuals with content from this atlas will be created.
         /// </summary>
-        /// <param name="atlas">Sprite atlas.</param>
+        /// <param name="font">Sprite atlas.</param>
         public void AttachAtlas (SpriteAtlas atlas) {
             if ((object) atlas != null && !_atlases.Contains (atlas)) {
                 _atlases.Add (atlas);
+            }
+        }
+
+        /// <summary>
+        /// Attach font. Should be called before any visuals with content from this font will be created.
+        /// </summary>
+        /// <param name="font">Font.</param>
+        public void AttachFont (Font font, bool asDefault = false) {
+            if ((object) font != null && !_fonts.Contains (font)) {
+                _fonts.Add (font);
+                if (asDefault) {
+                    _defaultFont = font;
+                }
             }
         }
 
@@ -179,6 +206,15 @@ namespace LeopotamGroup.SystemUi.Markup {
                 }
             }
             return null;
+        }
+
+        public Font GetFont (string fontName) {
+            for (var i = _fonts.Count - 1; i >= 0; i--) {
+                if (string.CompareOrdinal (_fonts[i].name, fontName) == 0) {
+                    return _fonts[i];
+                }
+            }
+            return _defaultFont;
         }
 
         /// <summary>
