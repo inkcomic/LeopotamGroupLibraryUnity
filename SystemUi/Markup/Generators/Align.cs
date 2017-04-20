@@ -52,7 +52,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             rt.offsetMin = -Vector2.one * 0.5f;
             rt.offsetMax = -rt.offsetMin;
 
-            MarkupUtils.SetDisabled (go, node);
+            MarkupUtils.SetHidden (go, node);
         }
     }
 }

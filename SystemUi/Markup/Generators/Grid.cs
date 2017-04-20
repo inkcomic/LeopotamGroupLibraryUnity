@@ -62,7 +62,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             MarkupUtils.SetSize (go, node);
             MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetDisabled (go, node);
+            MarkupUtils.SetHidden (go, node);
         }
     }
 }

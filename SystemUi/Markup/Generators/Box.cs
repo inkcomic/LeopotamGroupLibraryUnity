@@ -25,7 +25,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 #endif
             MarkupUtils.SetSize (go, node);
             MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetDisabled (go, node);
+            MarkupUtils.SetHidden (go, node);
 
             if (MarkupUtils.ValidateInteractive (go, node)) {
                 go.AddComponent<NonVisualWidget> ();
