@@ -39,13 +39,12 @@ namespace LeopotamGroup.Common {
             }
             IEnumerator retVal;
             if (list.Count > 0) {
-                // Debug.Log ("pooled-instance");
                 retVal = list[list.Count - 1];
                 list.RemoveLast ();
             } else {
-                // Debug.Log ("new-instance");
                 retVal = new CustomWaitForSeconds (seconds, list);
             }
+            retVal.Reset ();
             return retVal;
         }
 
@@ -75,7 +74,6 @@ namespace LeopotamGroup.Common {
                 }
                 (this as IEnumerator).Reset ();
                 if (_poolList != null) {
-                    // Debug.Log ("recycle");
                     _poolList.Add (this);
                 }
                 return false;
