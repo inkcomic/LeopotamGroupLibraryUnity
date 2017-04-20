@@ -15,10 +15,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "ui" node.
         /// </summary>
+        /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">markup container.</param>
-        public static GameObject Create (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("ui");
+        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+#if UNITY_EDITOR
+            go.name = "ui";
+#endif
             var canvas = go.AddComponent<Canvas> ();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = false;
@@ -50,8 +53,6 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 es = new GameObject ("EventSystem").AddComponent<EventSystem> ();
                 es.gameObject.AddComponent<StandaloneInputModule> ();
             }
-
-            return go;
         }
     }
 }

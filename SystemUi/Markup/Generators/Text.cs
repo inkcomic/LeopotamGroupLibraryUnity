@@ -20,12 +20,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "text" node.
         /// </summary>
+        /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">markup container.</param>
-        public static GameObject Create (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("text");
+        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+#if UNITY_EDITOR
+            go.name = "text";
+#endif
             var txt = go.AddComponent<Text> ();
-            var rt = go.GetComponent<RectTransform> ();
             string attrValue;
             string font = null;
             var align = TextAnchor.MiddleCenter;
@@ -50,11 +52,10 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             txt.color = color;
 
             MarkupUtils.SetColor (txt, node);
-            MarkupUtils.SetRectTransformSize (rt, node);
-            MarkupUtils.SetDisabled (rt, node);
-            txt.raycastTarget = MarkupUtils.ValidateInteractive (rt, node);
-
-            return go;
+            MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetOffset (go, node);
+            MarkupUtils.SetDisabled (go, node);
+            txt.raycastTarget = MarkupUtils.ValidateInteractive (go, node);
         }
     }
 }

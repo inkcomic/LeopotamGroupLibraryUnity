@@ -47,7 +47,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         Canvas _canvas;
 
-        Dictionary<int, Func<XmlNode, MarkupContainer, GameObject>> _generators = new Dictionary<int, Func<XmlNode, MarkupContainer, GameObject>> (64);
+        Dictionary<int, Action<GameObject, XmlNode, MarkupContainer>> _generators = new Dictionary<int, Action<GameObject, XmlNode, MarkupContainer>> (64);
 
         Dictionary<int, GameObject> _namedNodes = new Dictionary<int, GameObject> (128);
 
@@ -113,14 +113,15 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (xmlTree == null) {
                 return;
             }
-            Func<XmlNode, MarkupContainer, GameObject> generator;
+            Action<GameObject, XmlNode, MarkupContainer> generator;
             if (!_generators.TryGetValue (xmlTree.NameHash, out generator)) {
                 generator = BoxNode.Create;
             }
-            var go = generator (xmlTree, this);
-            var tr = go.transform;
+            var go = new GameObject ();
             go.layer = _uiLayer;
-            tr.SetParent (root, false);
+            var tr = go.AddComponent<RectTransform> ();
+            go.transform.SetParent (root, false);
+            generator (go, xmlTree, this);
 
             if ((object) _canvas == null) {
                 _canvas = go.GetComponentInChildren<Canvas> ();

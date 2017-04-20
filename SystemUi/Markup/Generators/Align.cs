@@ -17,11 +17,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "align" node.
         /// </summary>
+        /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">markup container.</param>
-        public static GameObject Create (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("align");
-            var rt = go.AddComponent<RectTransform> ();
+        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+#if UNITY_EDITOR
+            go.name = "align";
+#endif
+            var rt = go.GetComponent<RectTransform> ();
             var offset = Vector2.one * 0.5f;
             var attrValue = node.GetAttribute (HashedSide);
             if (!string.IsNullOrEmpty (attrValue)) {
@@ -49,9 +52,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             rt.offsetMin = -Vector2.one * 0.5f;
             rt.offsetMax = -rt.offsetMin;
 
-            MarkupUtils.SetDisabled (rt, node);
-            
-            return go;
+            MarkupUtils.SetDisabled (go, node);
         }
     }
 }

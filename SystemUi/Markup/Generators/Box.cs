@@ -16,20 +16,20 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "box" node.
         /// </summary>
+        /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">markup container.</param>
-        public static GameObject Create (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("box");
-            var rt = go.AddComponent<RectTransform> ();
-            
-            MarkupUtils.SetRectTransformSize (rt, node);
-            MarkupUtils.SetDisabled (rt, node);
-            
-            if (MarkupUtils.ValidateInteractive (rt, node)) {
+        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+#if UNITY_EDITOR
+            go.name = "box";
+#endif
+            MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetOffset (go, node);
+            MarkupUtils.SetDisabled (go, node);
+
+            if (MarkupUtils.ValidateInteractive (go, node)) {
                 go.AddComponent<NonVisualWidget> ();
             }
-
-            return go;
         }
     }
 }

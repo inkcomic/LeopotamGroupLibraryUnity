@@ -21,10 +21,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "image" node.
         /// </summary>
+        /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">markup container.</param>
-        public static GameObject Create (XmlNode node, MarkupContainer container) {
-            var go = new GameObject ("image");
+        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+#if UNITY_EDITOR
+            go.name = "image";
+#endif
             var img = go.AddComponent<Image> ();
             var rt = go.GetComponent<RectTransform> ();
 
@@ -37,14 +40,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var ignoreSize = (object) img.sprite != null && string.CompareOrdinal (attrValue, "true") == 0;
             if (ignoreSize) {
                 img.SetNativeSize ();
+            } else {
+                MarkupUtils.SetSize (go, node);
             }
 
             MarkupUtils.SetColor (img, node);
-            MarkupUtils.SetRectTransformSize (rt, node, ignoreSize);
-            MarkupUtils.SetDisabled (rt, node);
-            img.raycastTarget = MarkupUtils.ValidateInteractive (rt, node);
-
-            return go;
+            MarkupUtils.SetOffset (go, node);
+            MarkupUtils.SetDisabled (go, node);
+            img.raycastTarget = MarkupUtils.ValidateInteractive (go, node);
         }
     }
 }
