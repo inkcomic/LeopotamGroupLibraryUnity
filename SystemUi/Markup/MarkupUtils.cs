@@ -23,6 +23,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         static readonly int HashedColor = "color".GetStableHashCode ();
 
+        static readonly int HashedTheme = "theme".GetStableHashCode ();
+
         public static readonly int HashedOnClick = "onClick".GetStableHashCode ();
 
         public static readonly int HashedOnBeginDrag = "onBeginDrag".GetStableHashCode ();
@@ -63,6 +65,15 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (!string.IsNullOrEmpty (attrValue)) {
                 widget.color = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
             }
+        }
+
+        /// <summary>
+        /// Process "theme" attribute and request it from markup container.
+        /// </summary>
+        /// <param name="node">Xml node.</param>
+        /// <param name="container">Markup container.</param>
+        public static MarkupTheme GetTheme (XmlNode node, MarkupContainer container) {
+            return container.GetTheme (node.GetAttribute (HashedTheme));
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
+        /// <param name="container">Markup container.</param>
         public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "text";

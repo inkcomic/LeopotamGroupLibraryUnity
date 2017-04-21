@@ -31,6 +31,9 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         List<Font> _fonts = new List<Font> ();
 
+        [SerializeField]
+        List<MarkupTheme> _themes = new List<MarkupTheme> ();
+
         XmlNode _xmlTree;
 
         Canvas _canvas;
@@ -44,6 +47,8 @@ namespace LeopotamGroup.SystemUi.Markup {
         bool _isLoaded;
 
         Font _defaultFont;
+
+        MarkupTheme _defaultTheme;
 
         void Awake () {
             _uiLayer = LayerMask.NameToLayer ("UI");
@@ -148,6 +153,9 @@ namespace LeopotamGroup.SystemUi.Markup {
             if ((object) _defaultFont == null) {
                 _defaultFont = _fonts.Count > 0 ? _fonts[0] : Resources.GetBuiltinResource<Font> ("Arial.ttf");
             }
+            if ((object) _defaultTheme == null) {
+                _defaultTheme = _themes.Count > 0 ? _themes[0] : ScriptableObject.CreateInstance<MarkupTheme> ();
+            }
             Load ();
             Clear ();
             CreateVisualNode (_xmlTree, transform);
@@ -167,12 +175,19 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// Attach font. Should be called before any visuals with content from this font will be created.
         /// </summary>
         /// <param name="font">Font.</param>
-        public void AttachFont (Font font, bool asDefault = false) {
+        public void AttachFont (Font font) {
             if ((object) font != null && !_fonts.Contains (font)) {
                 _fonts.Add (font);
-                if (asDefault) {
-                    _defaultFont = font;
-                }
+            }
+        }
+
+        /// <summary>
+        /// Attach markup theme. Should be called before any visuals with content from this theme will be created.
+        /// </summary>
+        /// <param name="theme">Markup theme.</param>
+        public void AttachTheme (MarkupTheme theme) {
+            if ((object) theme != null && !_themes.Contains (theme)) {
+                _themes.Add (theme);
             }
         }
 
@@ -205,6 +220,15 @@ namespace LeopotamGroup.SystemUi.Markup {
                 }
             }
             return _defaultFont;
+        }
+
+        public MarkupTheme GetTheme (string themeName) {
+            for (var i = _themes.Count - 1; i >= 0; i--) {
+                if (string.CompareOrdinal (_themes[i].name, themeName) == 0) {
+                    return _themes[i];
+                }
+            }
+            return _defaultTheme;
         }
 
         /// <summary>

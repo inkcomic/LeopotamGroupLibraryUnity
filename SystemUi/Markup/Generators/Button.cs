@@ -14,15 +14,7 @@ using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
     static class ButtonNode {
-        static readonly int HashedImage = "image".GetStableHashCode ();
-
-        static readonly int HashedNormalColor = "normalColor".GetStableHashCode ();
-
-        static readonly int HashedPressedColor = "pressedColor".GetStableHashCode ();
-
-        static readonly int HashedFocusedColor = "focusedColor".GetStableHashCode ();
-
-        static readonly int HashedDisabledColor = "disabledColor".GetStableHashCode ();
+        static readonly int HashedBlend = "blend".GetStableHashCode ();
 
         static readonly int HashedDisabled = "disabled".GetStableHashCode ();
 
@@ -31,7 +23,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
-        /// <param name="container">markup container.</param>
+        /// <param name="container">Markup container.</param>
         public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "button";
@@ -41,32 +33,38 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             string attrValue;
             var transition = Button.Transition.ColorTint;
 
-            attrValue = node.GetAttribute (HashedImage);
-            if (!string.IsNullOrEmpty (attrValue)) {
-                img.sprite = container.GetAtlasSprite (attrValue);
+            attrValue = node.GetAttribute (HashedBlend);
+            switch (attrValue) {
+                case "sprites":
+                    transition = Button.Transition.SpriteSwap;
+                    break;
+                case "none":
+                    transition = Button.Transition.None;
+                    break;
             }
 
-            if (transition == Button.Transition.ColorTint) {
-                var colors = btn.colors;
-                attrValue = node.GetAttribute (HashedNormalColor);
-                if (!string.IsNullOrEmpty (attrValue)) {
-                    colors.normalColor = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
-                }
-                attrValue = node.GetAttribute (HashedPressedColor);
-                if (!string.IsNullOrEmpty (attrValue)) {
-                    colors.pressedColor = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
-                }
-                attrValue = node.GetAttribute (HashedFocusedColor);
-                if (!string.IsNullOrEmpty (attrValue)) {
-                    colors.highlightedColor = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
-                }
-                attrValue = node.GetAttribute (HashedDisabledColor);
-                if (!string.IsNullOrEmpty (attrValue)) {
-                    colors.disabledColor = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
-                }
-                btn.colors = colors;
+            var theme = MarkupUtils.GetTheme (node, container);
+
+            switch (transition) {
+                case Button.Transition.ColorTint:
+                    var colors = btn.colors;
+                    colors.normalColor = theme.GetButtonColor (MarkupTheme.ButtonState.Normal);
+                    colors.pressedColor = theme.GetButtonColor (MarkupTheme.ButtonState.Pressed);
+                    colors.highlightedColor = theme.GetButtonColor (MarkupTheme.ButtonState.Highlighted);
+                    colors.disabledColor = theme.GetButtonColor (MarkupTheme.ButtonState.Disabled);
+                    btn.colors = colors;
+                    break;
+                case Button.Transition.SpriteSwap:
+                    var sprites = btn.spriteState;
+                    sprites.pressedSprite = theme.GetButtonSprite (MarkupTheme.ButtonState.Pressed);
+                    sprites.highlightedSprite = theme.GetButtonSprite (MarkupTheme.ButtonState.Highlighted);
+                    sprites.disabledSprite = theme.GetButtonSprite (MarkupTheme.ButtonState.Disabled);
+                    btn.spriteState = sprites;
+                    break;
             }
 
+            img.sprite = theme.GetButtonSprite (MarkupTheme.ButtonState.Normal);
+            img.type = Image.Type.Sliced;
             btn.targetGraphic = img;
             btn.transition = transition;
 
