@@ -5,7 +5,6 @@
 // ----------------------------------------------------------------------------
 
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup {
     [CreateAssetMenu (menuName = "LeopotamGroup/SystemUi/Create new markup theme", order = 150)]
@@ -37,11 +36,35 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Color _buttonDisabledColor = Color.gray;
 
+        [SerializeField]
+        Sprite _sliderBackgroundSprite;
+
+        [SerializeField]
+        Sprite _sliderForegroundSprite;
+
+        [SerializeField]
+        Sprite _sliderHandleSprite;
+
+        [SerializeField]
+        Color _sliderBackgroundColor = Color.gray;
+
+        [SerializeField]
+        Color _sliderForegroundColor = Color.white;
+
+        [SerializeField]
+        Color _sliderHandleColor = Color.white;
+
         public enum ButtonState {
             Normal,
             Pressed,
             Highlighted,
             Disabled
+        }
+
+        public enum SliderState {
+            Background,
+            Foreground,
+            Handle
         }
 
         public string GetName () {
@@ -73,6 +96,32 @@ namespace LeopotamGroup.SystemUi.Markup {
                     return _buttonFocusedColor;
                 case ButtonState.Disabled:
                     return _buttonDisabledColor;
+                default:
+                    return Color.black;
+            }
+        }
+
+        public Sprite GetSliderSprite (SliderState state) {
+            switch (state) {
+                case SliderState.Background:
+                    return _sliderBackgroundSprite;
+                case SliderState.Foreground:
+                    return _sliderForegroundSprite;
+                case SliderState.Handle:
+                    return _sliderHandleSprite;
+                default:
+                    return null;
+            }
+        }
+
+        public Color GetSliderColor (SliderState state) {
+            switch (state) {
+                case SliderState.Background:
+                    return _sliderBackgroundColor;
+                case SliderState.Foreground:
+                    return _sliderForegroundColor;
+                case SliderState.Handle:
+                    return _sliderHandleColor;
                 default:
                     return Color.black;
             }

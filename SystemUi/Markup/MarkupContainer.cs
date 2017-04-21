@@ -61,6 +61,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
             _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
             _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
+            _generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
             _generators.Add ("text".GetStableHashCode (), TextNode.Create);
             _generators.Add ("ui".GetStableHashCode (), UiNode.Create);
         }
@@ -213,6 +214,10 @@ namespace LeopotamGroup.SystemUi.Markup {
             return null;
         }
 
+        /// <summary>
+        /// Get font. If not found - default (or first) font will be returned.
+        /// </summary>
+        /// <param name="fontName">Font name</param>
         public Font GetFont (string fontName) {
             for (var i = _fonts.Count - 1; i >= 0; i--) {
                 if (string.CompareOrdinal (_fonts[i].name, fontName) == 0) {
@@ -222,9 +227,13 @@ namespace LeopotamGroup.SystemUi.Markup {
             return _defaultFont;
         }
 
+        /// <summary>
+        /// Get markup theme. If not found - default (or first) theme will be returned.
+        /// </summary>
+        /// <param name="themeName">Theme name.</param>
         public MarkupTheme GetTheme (string themeName) {
             for (var i = _themes.Count - 1; i >= 0; i--) {
-                if (string.CompareOrdinal (_themes[i].name, themeName) == 0) {
+                if (string.CompareOrdinal (_themes[i].GetName (), themeName) == 0) {
                     return _themes[i];
                 }
             }
