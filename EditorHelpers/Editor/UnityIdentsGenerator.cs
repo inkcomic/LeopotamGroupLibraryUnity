@@ -42,7 +42,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string DefaultNamespace = "Client.Common";
 
-        const string DefaultIgnoredScenes = "";
+        const string DefaultIgnoredPaths = "";
 
         const Options DefaultOptions = (Options) (-1);
 
@@ -54,7 +54,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             [JsonName ("n")]
             public string Namespace = DefaultNamespace;
             [JsonName ("is")]
-            public string IgnoredScenes = DefaultIgnoredScenes;
+            public string IgnoredPaths = DefaultIgnoredPaths;
         }
 
         const string CodeTemplate =
@@ -111,7 +111,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             }
             _settings.Options = (Options) EditorGUILayout.MaskField ("Options", (int) _settings.Options, _optionNames);
 
-            _settings.IgnoredScenes = EditorGUILayout.TextField ("Ignore scenes at paths", _settings.IgnoredScenes).Trim ();
+            _settings.IgnoredPaths = EditorGUILayout.TextField ("Ignore assets at paths", _settings.IgnoredPaths).Trim ();
 
             if (GUILayout.Button ("Reset settings")) {
                 ProjectPrefs.DeleteKey (SettingsKey);
@@ -125,10 +125,30 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             }
         }
 
+        static bool ShouldBeIgnored (string assetPath, string[] ignoredPaths) {
+            if (string.IsNullOrEmpty (assetPath)) {
+                return true;
+            }
+            if (ignoredPaths == null || ignoredPaths.Length == 0) {
+                return false;
+            }
+            assetPath = assetPath.Substring (assetPath.IndexOf ('/') + 1);
+            var i = ignoredPaths.Length - 1;
+            for (; i >= 0; i--) {
+                if (assetPath.StartsWith (ignoredPaths[i])) {
+                    break;
+                }
+            }
+            return i != -1;
+        }
+
         static string GenerateFields (string indent, GenerationSettings settings) {
             var lines = new List<string> (128);
             var uniquesList = new HashSet<string> ();
             var options = settings.Options;
+
+            var ignoredPaths = string.IsNullOrEmpty (settings.IgnoredPaths) ?
+                new string[0] : settings.IgnoredPaths.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
             // layers, layer masks
             if ((int) (options & Options.Layers) != 0) {
@@ -147,18 +167,9 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             // scenes
             if ((int) (options & Options.Scenes) != 0) {
-                var ignoredPaths = string.IsNullOrEmpty (settings.IgnoredScenes) ?
-                    new string[0] : settings.IgnoredScenes.Split (new char[';'], StringSplitOptions.RemoveEmptyEntries);
                 foreach (var scene in EditorBuildSettings.scenes) {
-                    var scenePath = scene.path.Substring (scene.path.IndexOf ('/') + 1);
-                    var i = ignoredPaths.Length - 1;
-                    for (; i >= 0; i--) {
-                        if (scenePath.StartsWith (ignoredPaths[i])) {
-                            break;
-                        }
-                    }
-                    if (i == -1) {
-                        var sceneName = Path.GetFileNameWithoutExtension (scenePath);
+                    if (!ShouldBeIgnored (scene.path, ignoredPaths)) {
+                        var sceneName = Path.GetFileNameWithoutExtension (scene.path);
                         lines.Add (string.Format (SceneName, indent, CleanupName (sceneName), CleanupValue (sceneName)));
                     }
                 }
@@ -168,12 +179,14 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if ((int) (options & Options.Animators) != 0) {
                 foreach (var guid in AssetDatabase.FindAssets ("t:animatorcontroller")) {
                     var assetPath = AssetDatabase.GUIDToAssetPath (guid);
-                    var ac = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController> (assetPath);
-                    for (int i = 0, iMax = ac.parameters.Length; i < iMax; i++) {
-                        var name = ac.parameters[i].name;
-                        if (!uniquesList.Contains (name)) {
-                            lines.Add (string.Format (AnimatorName, indent, CleanupName (name), CleanupValue (name)));
-                            uniquesList.Add (name);
+                    if (!ShouldBeIgnored (assetPath, ignoredPaths)) {
+                        var ac = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController> (assetPath);
+                        for (int i = 0, iMax = ac.parameters.Length; i < iMax; i++) {
+                            var name = ac.parameters[i].name.Trim ();
+                            if (!uniquesList.Contains (name)) {
+                                lines.Add (string.Format (AnimatorName, indent, CleanupName (name), CleanupValue (name)));
+                                uniquesList.Add (name);
+                            }
                         }
                     }
                 }
@@ -198,14 +211,16 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if ((int) (options & Options.Shaders) != 0) {
                 foreach (var guid in AssetDatabase.FindAssets ("t:shader")) {
                     var assetPath = AssetDatabase.GUIDToAssetPath (guid);
-                    var shader = AssetDatabase.LoadAssetAtPath<Shader> (assetPath);
-                    if (shader.name.IndexOf ("Hidden", StringComparison.Ordinal) != 0) {
-                        for (int i = 0, iMax = ShaderUtil.GetPropertyCount (shader); i < iMax; i++) {
-                            if (!ShaderUtil.IsShaderPropertyHidden (shader, i)) {
-                                var name = ShaderUtil.GetPropertyName (shader, i);
-                                if (!uniquesList.Contains (name)) {
-                                    lines.Add (string.Format (ShaderName, indent, CleanupName (name), CleanupValue (name)));
-                                    uniquesList.Add (name);
+                    if (!ShouldBeIgnored (assetPath, ignoredPaths)) {
+                        var shader = AssetDatabase.LoadAssetAtPath<Shader> (assetPath);
+                        if (shader.name.IndexOf ("Hidden", StringComparison.Ordinal) != 0) {
+                            for (int i = 0, iMax = ShaderUtil.GetPropertyCount (shader); i < iMax; i++) {
+                                if (!ShaderUtil.IsShaderPropertyHidden (shader, i)) {
+                                    var name = ShaderUtil.GetPropertyName (shader, i);
+                                    if (!uniquesList.Contains (name)) {
+                                        lines.Add (string.Format (ShaderName, indent, CleanupName (name), CleanupValue (name)));
+                                        uniquesList.Add (name);
+                                    }
                                 }
                             }
                         }
