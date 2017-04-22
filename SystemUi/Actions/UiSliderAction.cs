@@ -8,12 +8,13 @@ using LeopotamGroup.Common;
 using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Actions {
     /// <summary>
-    /// Event data of UiScrollAction.
+    /// Event data of UiSliderAction.
     /// </summary>
-    public struct UiScrollActionData {
+    public struct UiSliderActionData {
         /// <summary>
         /// Logical group for filtering events.
         /// </summary>
@@ -22,24 +23,32 @@ namespace LeopotamGroup.SystemUi.Actions {
         /// <summary>
         /// Event sender.
         /// </summary>
-        public GameObject Sender;
+        public Slider Sender;
 
         /// <summary>
-        /// Event data from uGui.
+        /// New value.
         /// </summary>
-        public PointerEventData EventData;
+        public float Value;
     }
 
     /// <summary>
-    /// Ui action for processing OnScroll events.
+    /// Ui action for processing OnClick events.
     /// </summary>
-    public sealed class UiScrollAction : UiActionBase, IScrollHandler {
-        void IScrollHandler.OnScroll (PointerEventData eventData) {
-            var action = new UiScrollActionData ();
+    [RequireComponent (typeof (Slider))]
+    public sealed class UiSliderAction : UiActionBase {
+        Slider _slider;
+
+        protected override void Awake () {
+            base.Awake ();
+            _slider = GetComponent<Slider> ();
+            _slider.onValueChanged.AddListener (OnSliderValueChanged);
+        }
+        void OnSliderValueChanged (float value) {
+            var action = new UiSliderActionData ();
             action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiScrollActionData> (action);
+            action.Sender = _slider;
+            action.Value = value;
+            Singleton.Get<UnityEventBus> ().Publish<UiSliderActionData> (action);
         }
     }
 }

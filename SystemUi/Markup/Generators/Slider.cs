@@ -7,6 +7,7 @@
 using System.Globalization;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
+using LeopotamGroup.SystemUi.Actions;
 using LeopotamGroup.SystemUi.Widgets;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,6 +22,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static readonly int HashedRange = "range".GetStableHashCode ();
 
         static readonly int HashedValue = "value".GetStableHashCode ();
+
+        static readonly int HashedOnChange = "onChange".GetStableHashCode ();
 
         /// <summary>
         /// Create "slider" node.
@@ -42,6 +45,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var maxValue = 1f;
             var useInts = false;
             var dataValue = 0f;
+            var isInteractive = false;
 
             // background.
             img = new GameObject ().AddComponent<Image> ();
@@ -118,6 +122,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 }
             }
 
+            attrValue = node.GetAttribute (HashedOnChange);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                go.gameObject.AddComponent<UiSliderAction> ().SetGroup (attrValue);
+                isInteractive = true;
+            }
+
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = useInts;
@@ -130,8 +140,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetHidden (go, node);
 
-            // TODO: interactive.
-            slider.interactable = useHandle;
+            slider.interactable = useHandle && isInteractive;
         }
     }
 }

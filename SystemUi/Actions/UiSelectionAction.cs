@@ -6,33 +6,68 @@
 
 using LeopotamGroup.Common;
 using LeopotamGroup.Events;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace LeopotamGroup.SystemUi.Actions {
     /// <summary>
     /// Event data of UiSelectAction.
     /// </summary>
-    public sealed class UiSelectActionData : UiActionDataBase { }
+    public struct UiSelectActionData {
+        /// <summary>
+        /// Logical group for filtering events.
+        /// </summary>
+        public int GroupId;
+
+        /// <summary>
+        /// Event sender.
+        /// </summary>
+        public GameObject Sender;
+
+        /// <summary>
+        /// Event data from uGui.
+        /// </summary>
+        public BaseEventData EventData;
+    }
 
     /// <summary>
     /// Event data of UiDeselectAction.
     /// </summary>
-    public sealed class UiDeselectActionData : UiActionDataBase { }
+    public struct UiDeselectActionData {
+        /// <summary>
+        /// Logical group for filtering events.
+        /// </summary>
+        public int GroupId;
+
+        /// <summary>
+        /// Event sender.
+        /// </summary>
+        public GameObject Sender;
+
+        /// <summary>
+        /// Event data from uGui.
+        /// </summary>
+        public BaseEventData EventData;
+    }
 
     /// <summary>
     /// Ui action for processing OnSelect / OnDeselect events.
     /// </summary>
     public sealed class UiSelectionAction : UiActionBase, ISelectHandler, IDeselectHandler {
         void IDeselectHandler.OnDeselect (BaseEventData eventData) {
-            var action = UiActionDataBase.GetFromPool<UiDeselectActionData> (gameObject, GroupId, eventData);
+            var action = new UiDeselectActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
             Singleton.Get<UnityEventBus> ().Publish<UiDeselectActionData> (action);
-            action.RecycleToPool ();
         }
 
         void ISelectHandler.OnSelect (BaseEventData eventData) {
-            var action = UiActionDataBase.GetFromPool<UiSelectActionData> (gameObject, GroupId, eventData);
+            var action = new UiSelectActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
             Singleton.Get<UnityEventBus> ().Publish<UiSelectActionData> (action);
-            action.RecycleToPool ();
         }
     }
 }
