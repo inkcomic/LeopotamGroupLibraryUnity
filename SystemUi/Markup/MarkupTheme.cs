@@ -7,7 +7,6 @@
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.Markup {
-    [CreateAssetMenu (menuName = "LeopotamGroup/SystemUi/Create new markup theme", order = 150)]
     public sealed class MarkupTheme : ScriptableObject {
         [SerializeField]
         string _name = "NewMarkupTheme";
