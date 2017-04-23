@@ -7,6 +7,7 @@
 using LeopotamGroup.Common;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
+using LeopotamGroup.SystemUi.Localization;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static readonly int HashedFontSize = "fontSize".GetStableHashCode ();
 
         static readonly int HashedFontStyle = "fontStyle".GetStableHashCode ();
+
+        static readonly int HashedLocalize = "localize".GetStableHashCode ();
 
         /// <summary>
         /// Create "text" node.
@@ -64,7 +67,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 }
             }
 
-            txt.text = node.Value;
+            attrValue = node.GetAttribute (HashedLocalize);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                go.AddComponent<TextLocalization> ().SetToken (attrValue);
+            } else {
+                txt.text = node.Value;
+            }
+
             txt.alignment = align;
             txt.font = container.GetFont (font);
             txt.color = color;
