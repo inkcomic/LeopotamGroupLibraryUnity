@@ -25,6 +25,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedOnChange = "onChange".GetStableHashCode ();
 
+        public const string BackgroundImageName = "background";
+
+        public const string ForegroundImageName = "foreground";
+
+        public const string HandleImageName = "handle";
+
         /// <summary>
         /// Create "slider" node.
         /// </summary>
@@ -49,7 +55,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var isInteractive = false;
 
             // background.
-            go1 = new GameObject ();
+            go1 = new GameObject (BackgroundImageName);
             go1.layer = go.layer;
             go1.hideFlags = HideFlags.DontSave;
             img = go1.AddComponent<Image> ();
@@ -63,7 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             rt.sizeDelta = Vector2.zero;
 
             // foreground.
-            go1 = new GameObject ();
+            go1 = new GameObject (ForegroundImageName);
             go1.layer = go.layer;
             go1.hideFlags = HideFlags.DontSave;
             img = go1.AddComponent<Image> ();
@@ -87,7 +93,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 handle.SetParent (slider.transform, false);
                 slider.handleRect = handle;
 
-                go1 = new GameObject ();
+                go1 = new GameObject (HandleImageName);
                 go1.layer = go.layer;
                 go1.hideFlags = HideFlags.DontSave;
                 img = go1.AddComponent<Image> ();
