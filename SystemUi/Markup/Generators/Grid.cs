@@ -61,6 +61,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             grid.startCorner = (GridLayoutGroup.Corner) ((flipX ? 1 : 0) | (flipY ? 2 : 0));
 
             MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetHidden (go, node);
         }

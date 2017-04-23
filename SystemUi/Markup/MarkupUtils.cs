@@ -17,6 +17,8 @@ namespace LeopotamGroup.SystemUi.Markup {
     static class MarkupUtils {
         public static readonly int HashedOffset = "offset".GetStableHashCode ();
 
+        public static readonly int HashedRotation = "rotation".GetStableHashCode ();
+
         public static readonly int HashedSize = "size".GetStableHashCode ();
 
         public static readonly int HashedHidden = "hidden".GetStableHashCode ();
@@ -148,6 +150,43 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
 
             rt.localPosition = point;
+        }
+
+        /// <summary>
+        /// Process "rotation" attribute of node.
+        /// </summary>
+        /// <param name="go">GameObject holder.</param>
+        /// <param name="node">Xml node.</param>
+        public static void SetRotation (GameObject go, XmlNode node) {
+            var rt = go.GetComponent<RectTransform> ();
+            var angles = Vector3.zero;
+            float amount;
+
+            var attrValue = node.GetAttribute (HashedRotation);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                var parts = attrValue.Split (';');
+                if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
+                    if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                        if (parts.Length > 1) {
+                            angles.x = amount;
+                        } else {
+                            angles.z = amount;
+                        }
+                    }
+                }
+                if (parts.Length > 1 && !string.IsNullOrEmpty (parts[1])) {
+                    if (float.TryParse (parts[1], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                        angles.y = amount;
+                    }
+                }
+                if (parts.Length > 2 && !string.IsNullOrEmpty (parts[2])) {
+                    if (float.TryParse (parts[2], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                        angles.z = amount;
+                    }
+                }
+            }
+
+            rt.localRotation = Quaternion.Euler (angles);
         }
 
         /// <summary>

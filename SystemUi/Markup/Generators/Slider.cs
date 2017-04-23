@@ -137,6 +137,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             slider.transition = Selectable.Transition.None;
 
             MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetHidden (go, node);
 

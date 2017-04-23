@@ -69,6 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             btn.transition = transition;
 
             MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetHidden (go, node);
 

@@ -53,6 +53,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             MarkupUtils.SetColor (txt, node);
             MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetHidden (go, node);
             txt.raycastTarget = MarkupUtils.ValidateInteractive (go, node);

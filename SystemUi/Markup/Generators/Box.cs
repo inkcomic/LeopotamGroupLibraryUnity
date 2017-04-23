@@ -24,6 +24,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             go.name = "box";
 #endif
             MarkupUtils.SetSize (go, node);
+            MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetHidden (go, node);
 
