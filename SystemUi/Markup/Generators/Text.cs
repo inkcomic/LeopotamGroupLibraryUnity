@@ -17,6 +17,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedFontSize = "fontSize".GetStableHashCode ();
 
+        static readonly int HashedFontStyle = "fontStyle".GetStableHashCode ();
+
         /// <summary>
         /// Create "text" node.
         /// </summary>
@@ -32,6 +34,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             string font = null;
             var align = TextAnchor.MiddleCenter;
             var color = Color.black;
+            var style = FontStyle.Normal;
 
             attrValue = node.GetAttribute (HashedFontName);
             if (!string.IsNullOrEmpty (attrValue)) {
@@ -46,10 +49,26 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 }
             }
 
+            attrValue = node.GetAttribute (HashedFontStyle);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                var parts = attrValue.Split (';');
+                for (var i = 0; i < parts.Length; i++) {
+                    switch (parts[i]) {
+                        case "bold":
+                            style |= FontStyle.Bold;
+                            break;
+                        case "italic":
+                            style |= FontStyle.Italic;
+                            break;
+                    }
+                }
+            }
+
             txt.text = node.Value;
             txt.alignment = align;
             txt.font = container.GetFont (font);
             txt.color = color;
+            txt.fontStyle = style;
 
             MarkupUtils.SetColor (txt, node);
             MarkupUtils.SetSize (go, node);

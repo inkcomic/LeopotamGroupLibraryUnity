@@ -194,6 +194,21 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
+        /// Get attached atlas or null.
+        /// </summary>
+        /// <param name="atlasName">Name of atlas.</param>
+        public SpriteAtlas GetAtlas (string atlasName) {
+            if (!string.IsNullOrEmpty (atlasName)) {
+                for (var i = _atlases.Count - 1; i >= 0; i--) {
+                    if (string.CompareOrdinal (_atlases[i].GetName (), atlasName) == 0) {
+                        return _atlases[i];
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Get sprite from attached atlas or null.
         /// </summary>
         /// <param name="spriteName">Name of atlas-sprite pair. Should be in format "atlasName;spriteName".</param>
@@ -220,9 +235,11 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// </summary>
         /// <param name="fontName">Font name</param>
         public Font GetFont (string fontName) {
-            for (var i = _fonts.Count - 1; i >= 0; i--) {
-                if (string.CompareOrdinal (_fonts[i].name, fontName) == 0) {
-                    return _fonts[i];
+            if (!string.IsNullOrEmpty (fontName)) {
+                for (var i = _fonts.Count - 1; i >= 0; i--) {
+                    if (string.CompareOrdinal (_fonts[i].name, fontName) == 0) {
+                        return _fonts[i];
+                    }
                 }
             }
             return _defaultFont;
@@ -233,9 +250,11 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// </summary>
         /// <param name="themeName">Theme name.</param>
         public MarkupTheme GetTheme (string themeName) {
-            for (var i = _themes.Count - 1; i >= 0; i--) {
-                if (string.CompareOrdinal (_themes[i].GetName (), themeName) == 0) {
-                    return _themes[i];
+            if (!string.IsNullOrEmpty (themeName)) {
+                for (var i = _themes.Count - 1; i >= 0; i--) {
+                    if (string.CompareOrdinal (_themes[i].GetName (), themeName) == 0) {
+                        return _themes[i];
+                    }
                 }
             }
             return _defaultTheme;

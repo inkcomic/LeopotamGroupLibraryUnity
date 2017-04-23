@@ -29,7 +29,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var attrValue = node.GetAttribute (HashedSide);
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = attrValue.Split (';');
-                for (int i = 0; i < parts.Length; i++) {
+                for (var i = 0; i < parts.Length; i++) {
                     switch (parts[i]) {
                         case "left":
                             offset.x = 0f;
