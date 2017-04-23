@@ -26,6 +26,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetSize (go, node);
             MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
+            MarkupUtils.SetMask (go, node);
             MarkupUtils.SetHidden (go, node);
 
             if (MarkupUtils.ValidateInteractive (go, node)) {

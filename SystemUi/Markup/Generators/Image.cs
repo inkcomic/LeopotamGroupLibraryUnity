@@ -44,6 +44,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetColor (img, node);
             MarkupUtils.SetRotation (go, node);
             MarkupUtils.SetOffset (go, node);
+            MarkupUtils.SetMask (go, node);
             MarkupUtils.SetHidden (go, node);
             img.raycastTarget = MarkupUtils.ValidateInteractive (go, node);
         }

@@ -23,6 +23,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedHidden = "hidden".GetStableHashCode ();
 
+        public static readonly int HashedMask = "mask".GetStableHashCode ();
+
         static readonly int HashedColor = "color".GetStableHashCode ();
 
         static readonly int HashedTheme = "theme".GetStableHashCode ();
@@ -54,6 +56,18 @@ namespace LeopotamGroup.SystemUi.Markup {
             var attrValue = node.GetAttribute (HashedHidden);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
                 go.SetActive (false);
+            }
+        }
+
+        /// <summary>
+        /// Process "mask" attribute of node.
+        /// </summary>
+        /// <param name="go">GameObject holder.</param>
+        /// <param name="node">Xml node.</param>
+        public static void SetMask (GameObject go, XmlNode node) {
+            var attrValue = node.GetAttribute (HashedMask);
+            if (string.CompareOrdinal (attrValue, "true") == 0) {
+                go.AddComponent<RectMask2D> ();
             }
         }
 

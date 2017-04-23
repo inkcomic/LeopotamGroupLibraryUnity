@@ -100,7 +100,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             _namedNodes.Clear ();
             var tr = transform;
             for (int i = tr.childCount - 1; i >= 0; i--) {
-                DestroyImmediate (tr.GetChild (i));
+                Destroy (tr.GetChild (i));
             }
         }
 
@@ -114,6 +114,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
             var go = new GameObject ();
             go.layer = _uiLayer;
+            go.hideFlags = HideFlags.DontSave;
             var tr = go.AddComponent<RectTransform> ();
             go.transform.SetParent (root, false);
             generator (go, xmlTree, this);
