@@ -14,6 +14,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
     static class ImageNode {
         static readonly int HashedPath = "path".GetStableHashCode ();
 
+        static readonly int HashedRaw = "raw".GetStableHashCode ();
+
         static readonly int HashedNativeSize = "nativeSize".GetStableHashCode ();
 
         /// <summary>
@@ -26,21 +28,42 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 #if UNITY_EDITOR
             go.name = "image";
 #endif
-            var img = go.AddComponent<Image> ();
+            Image img = null;
+            RawImage tex = null;
+            string attrValue;
+            var useImg = true;
+            var ignoreSize = false;
 
-            var attrValue = node.GetAttribute (HashedPath);
+            attrValue = node.GetAttribute (HashedRaw);
+            if (string.CompareOrdinal (attrValue, "true") == 0) {
+                useImg = false;
+                tex = go.AddComponent<RawImage> ();
+            } else {
+                img = go.AddComponent<Image> ();
+            }
+
+            attrValue = node.GetAttribute (HashedPath);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = MarkupUtils.SplitAttrValue (attrValue);
-                if (parts.Length == 2) {
-                    var atlas = container.GetAtlas (parts[0]);
-                    if ((object) atlas != null) {
-                        img.sprite = atlas.Get (parts[1]);
+                if (useImg) {
+                    // Image.
+                    var parts = MarkupUtils.SplitAttrValue (attrValue);
+                    if (parts.Length == 2) {
+                        var atlas = container.GetAtlas (parts[0]);
+                        if ((object) atlas != null) {
+                            img.sprite = atlas.Get (parts[1]);
+                        }
                     }
+                } else {
+                    // RawImage.
+                    tex.texture = Resources.Load<Texture2D> (attrValue);
                 }
             }
 
-            attrValue = node.GetAttribute (HashedNativeSize);
-            var ignoreSize = (object) img.sprite != null && string.CompareOrdinal (attrValue, "true") == 0;
+            if (useImg) {
+                attrValue = node.GetAttribute (HashedNativeSize);
+                ignoreSize = (object) img.sprite != null && string.CompareOrdinal (attrValue, "true") == 0;
+            }
+
             if (ignoreSize) {
                 img.SetNativeSize ();
             } else {
@@ -52,7 +75,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetOffset (go, node);
             MarkupUtils.SetMask (go, node);
             MarkupUtils.SetHidden (go, node);
-            img.raycastTarget = MarkupUtils.ValidateInteractive (go, node);
+            var isInteractive = MarkupUtils.ValidateInteractive (go, node);
+            if (useImg) {
+                img.raycastTarget = isInteractive;
+            } else {
+                tex.raycastTarget = isInteractive;
+            }
         }
     }
 }
