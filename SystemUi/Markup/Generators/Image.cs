@@ -30,7 +30,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             var attrValue = node.GetAttribute (HashedPath);
             if (!string.IsNullOrEmpty (attrValue)) {
-                img.sprite = container.GetAtlasSprite (attrValue);
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
+                if (parts.Length == 2) {
+                    var atlas = container.GetAtlas (parts[0]);
+                    if ((object) atlas != null) {
+                        img.sprite = atlas.Get (parts[1]);
+                    }
+                }
             }
 
             attrValue = node.GetAttribute (HashedNativeSize);

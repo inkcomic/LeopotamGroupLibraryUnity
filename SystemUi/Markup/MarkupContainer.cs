@@ -212,28 +212,6 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
-        /// Get sprite from attached atlas or null.
-        /// </summary>
-        /// <param name="spriteName">Name of atlas-sprite pair. Should be in format "atlasName;spriteName".</param>
-        public Sprite GetAtlasSprite (string spriteName) {
-            if (string.IsNullOrEmpty (spriteName)) {
-                return null;
-            }
-            var parts = spriteName.Split (';');
-            if (parts.Length != 2) {
-                Debug.LogWarning ("Invalid sprite name: " + spriteName);
-                return null;
-            }
-            var atlasName = parts[0];
-            for (var i = _atlases.Count - 1; i >= 0; i--) {
-                if (string.CompareOrdinal (_atlases[i].GetName (), atlasName) == 0) {
-                    return _atlases[i].Get (parts[1]);
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Get font. If not found - default (or first) font will be returned.
         /// </summary>
         /// <param name="fontName">Font name</param>

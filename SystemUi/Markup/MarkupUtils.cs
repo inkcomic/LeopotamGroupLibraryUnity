@@ -15,6 +15,8 @@ using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup {
     static class MarkupUtils {
+        public const char AttrSeparator = ',';
+
         public static readonly int HashedOffset = "offset".GetStableHashCode ();
 
         public static readonly int HashedRotation = "rotation".GetStableHashCode ();
@@ -46,6 +48,14 @@ namespace LeopotamGroup.SystemUi.Markup {
         public static readonly int HashedOnEnterExit = "onEnterExit".GetStableHashCode ();
 
         public static readonly int HashedOnSelection = "onSelection".GetStableHashCode ();
+
+        /// <summary>
+        /// Split attribute with multiple values to array of them.
+        /// </summary>
+        /// <param name="attrValue">Attribute value.</param>
+        public static string[] SplitAttrValue (string attrValue) {
+            return attrValue != null ? attrValue.Split (AttrSeparator) : null;
+        }
 
         /// <summary>
         /// Process "hidden" attribute of node.
@@ -150,7 +160,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
             var attrValue = node.GetAttribute (HashedOffset);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
                     if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
                         point.x = amount;
@@ -178,7 +188,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
             var attrValue = node.GetAttribute (HashedRotation);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
                     if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
                         if (parts.Length > 1) {
@@ -221,7 +231,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             attrValue = node.GetAttribute (HashedSize);
             if (!string.IsNullOrEmpty (attrValue)) {
                 int percentIdx;
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
                     amountStr = parts[0];
                     percentIdx = amountStr.IndexOf ('%');

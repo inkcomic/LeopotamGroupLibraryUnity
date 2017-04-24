@@ -27,13 +27,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             canvas.pixelPerfect = false;
 
             var scaler = go.AddComponent<CanvasScaler> ();
-            var refData = node.GetAttribute ("base".GetStableHashCode ());
-            if (refData != null) {
+            var attrValue = node.GetAttribute ("base".GetStableHashCode ());
+            if (attrValue != null) {
                 var refWidth = 1024;
                 var refHeight = 768;
                 var refBalance = 1f;
                 try {
-                    var parts = refData.Split (';');
+                    var parts = MarkupUtils.SplitAttrValue (attrValue);
                     var w = int.Parse (parts[0]);
                     var h = int.Parse (parts[1]);
                     var b = Mathf.Clamp01 (float.Parse (parts[2], MathExtensions.UnifiedNumberFormat));

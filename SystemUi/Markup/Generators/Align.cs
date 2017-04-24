@@ -28,7 +28,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var offset = Vector2.one * 0.5f;
             var attrValue = node.GetAttribute (HashedSide);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue(attrValue);
                 for (var i = 0; i < parts.Length; i++) {
                     switch (parts[i]) {
                         case "left":

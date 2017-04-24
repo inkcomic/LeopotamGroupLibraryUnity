@@ -36,7 +36,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             var attrValue = node.GetAttribute (HashedFlip);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue(attrValue);
                 flipX = parts.Length > 0 && string.CompareOrdinal (parts[0], "true") == 0;
                 flipY = parts.Length > 1 && string.CompareOrdinal (parts[1], "true") == 0;
             }
@@ -44,7 +44,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             float amount;
             attrValue = node.GetAttribute (HashedCellSize);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue(attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
                     if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
                         cellSize.x = amount;

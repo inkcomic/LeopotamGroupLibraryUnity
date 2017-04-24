@@ -54,7 +54,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedFontStyle);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = attrValue.Split (';');
+                var parts = MarkupUtils.SplitAttrValue(attrValue);
                 for (var i = 0; i < parts.Length; i++) {
                     switch (parts[i]) {
                         case "bold":
