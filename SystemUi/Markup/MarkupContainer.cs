@@ -125,6 +125,9 @@ namespace LeopotamGroup.SystemUi.Markup {
 
             var nodeName = xmlTree.GetAttribute (HashedName);
             if (!string.IsNullOrEmpty (nodeName)) {
+#if UNITY_EDITOR
+                go.name = string.Format ("{0}-{1}", go.name, nodeName);
+#endif
                 var nodeNameHash = nodeName.GetStableHashCode ();
                 if (_namedNodes.ContainsKey (nodeNameHash)) {
 #if UNITY_EDITOR
