@@ -12,9 +12,9 @@ using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Actions {
     /// <summary>
-    /// Event data of UiSliderAction.
+    /// Event data of UiToggleAction.
     /// </summary>
-    public struct UiSliderActionData {
+    public struct UiToggleActionData {
         /// <summary>
         /// Logical group for filtering events.
         /// </summary>
@@ -23,32 +23,32 @@ namespace LeopotamGroup.SystemUi.Actions {
         /// <summary>
         /// Event sender.
         /// </summary>
-        public Slider Sender;
+        public Toggle Sender;
 
         /// <summary>
         /// New value.
         /// </summary>
-        public float Value;
+        public bool Value;
     }
 
     /// <summary>
-    /// Ui action for processing Slider events.
+    /// Ui action for processing Toggle events.
     /// </summary>
-    [RequireComponent (typeof (Slider))]
-    public sealed class UiSliderAction : UiActionBase {
-        Slider _slider;
+    [RequireComponent (typeof (Toggle))]
+    public sealed class UiToggleAction : UiActionBase {
+        Toggle _toggle;
 
         protected override void Awake () {
             base.Awake ();
-            _slider = GetComponent<Slider> ();
-            _slider.onValueChanged.AddListener (OnSliderValueChanged);
+            _toggle = GetComponent<Toggle> ();
+            _toggle.onValueChanged.AddListener (OnSliderValueChanged);
         }
-        void OnSliderValueChanged (float value) {
-            var action = new UiSliderActionData ();
+        void OnSliderValueChanged (bool value) {
+            var action = new UiToggleActionData ();
             action.GroupId = GroupId;
-            action.Sender = _slider;
+            action.Sender = _toggle;
             action.Value = value;
-            Singleton.Get<UnityEventBus> ().Publish<UiSliderActionData> (action);
+            Singleton.Get<UnityEventBus> ().Publish<UiToggleActionData> (action);
         }
     }
 }
