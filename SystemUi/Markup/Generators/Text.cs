@@ -23,12 +23,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static readonly int HashedLocalize = "localize".GetStableHashCode ();
 
         /// <summary>
-        /// Create "text" node.
+        /// Create "text" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "text";
 #endif
@@ -86,6 +86,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetMask (go, node);
             MarkupUtils.SetHidden (go, node);
             txt.raycastTarget = MarkupUtils.ValidateInteractive (go, node);
+
+            return go;
         }
     }
 }

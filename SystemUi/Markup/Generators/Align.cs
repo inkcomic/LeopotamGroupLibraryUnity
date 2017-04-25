@@ -15,12 +15,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static readonly int HashedSide = "side".GetStableHashCode ();
 
         /// <summary>
-        /// Create "align" node.
+        /// Create "align" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "align";
 #endif
@@ -28,7 +28,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var offset = Vector2.one * 0.5f;
             var attrValue = node.GetAttribute (HashedSide);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = MarkupUtils.SplitAttrValue(attrValue);
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
                 for (var i = 0; i < parts.Length; i++) {
                     switch (parts[i]) {
                         case "left":
@@ -53,6 +53,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             rt.offsetMax = -rt.offsetMin;
 
             MarkupUtils.SetHidden (go, node);
+
+            return go;
         }
     }
 }

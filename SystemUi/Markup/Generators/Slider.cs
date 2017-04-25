@@ -32,12 +32,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         public const string HandleImageName = "handle";
 
         /// <summary>
-        /// Create "slider" node.
+        /// Create "slider" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "slider";
 #endif
@@ -158,6 +158,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetHidden (go, node);
 
             slider.interactable = useHandle && isInteractive;
+
+            return go;
         }
     }
 }

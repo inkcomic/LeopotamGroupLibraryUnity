@@ -38,7 +38,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         Canvas _canvas;
 
-        Dictionary<int, Action<GameObject, XmlNode, MarkupContainer>> _generators = new Dictionary<int, Action<GameObject, XmlNode, MarkupContainer>> (64);
+        Dictionary<int, Func<GameObject, XmlNode, MarkupContainer, GameObject>> _generators =
+            new Dictionary<int, Func<GameObject, XmlNode, MarkupContainer, GameObject>> (64);
 
         Dictionary<int, GameObject> _namedNodes = new Dictionary<int, GameObject> (128);
 
@@ -63,6 +64,8 @@ namespace LeopotamGroup.SystemUi.Markup {
             _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
             _generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
             _generators.Add ("text".GetStableHashCode (), TextNode.Create);
+            _generators.Add ("toggle".GetStableHashCode (), ToggleNode.Create);
+            _generators.Add ("toggleGroup".GetStableHashCode (), ToggleGroupNode.Create);
             _generators.Add ("ui".GetStableHashCode (), UiNode.Create);
         }
 
@@ -108,16 +111,16 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (xmlTree == null) {
                 return;
             }
-            Action<GameObject, XmlNode, MarkupContainer> generator;
+            Func<GameObject, XmlNode, MarkupContainer, GameObject> generator;
             if (!_generators.TryGetValue (xmlTree.NameHash, out generator)) {
                 generator = BoxNode.Create;
             }
             var go = new GameObject ();
             go.layer = _uiLayer;
             go.hideFlags = HideFlags.DontSave;
-            var tr = go.AddComponent<RectTransform> ();
+            Transform tr = go.AddComponent<RectTransform> ();
             go.transform.SetParent (root, false);
-            generator (go, xmlTree, this);
+            var rootGO = generator (go, xmlTree, this);
 
             if ((object) _canvas == null) {
                 _canvas = go.GetComponentInChildren<Canvas> ();
@@ -139,8 +142,15 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
 
             var children = xmlTree.Children;
-            for (int i = 0, iMax = children.Count; i < iMax; i++) {
-                CreateVisualNode (children[i], tr);
+            if (children.Count > 0) {
+                if ((object) rootGO != null) {
+                    tr = rootGO.transform;
+                    for (int i = 0, iMax = children.Count; i < iMax; i++) {
+                        CreateVisualNode (children[i], tr);
+                    }
+                } else {
+                    Debug.LogWarning ("Node not supported children.", go);
+                }
             }
         }
 

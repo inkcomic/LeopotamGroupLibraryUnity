@@ -30,7 +30,7 @@ namespace LeopotamGroup.SystemUi.Markup {
         Color _buttonPressedColor = Color.white;
 
         [SerializeField]
-        Color _buttonFocusedColor = Color.white;
+        Color _buttonHighlightedColor = Color.white;
 
         [SerializeField]
         Color _buttonDisabledColor = Color.gray;
@@ -53,6 +53,24 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Color _sliderHandleColor = Color.white;
 
+        [SerializeField]
+        Sprite _toggleBackgroundSprite;
+
+        [SerializeField]
+        Sprite _toggleForegroundSprite;
+
+        [SerializeField]
+        Color _toggleBackgroundColor = Color.white;
+
+        [SerializeField]
+        Color _toggleForegroundColor = Color.white;
+
+        [SerializeField]
+        Vector2 _toggleBackgroundSize = Vector2.one * 24f;
+
+        [SerializeField]
+        Vector2 _toggleForegroundSize = Vector2.one * 24f;
+
         public enum ButtonState {
             Normal,
             Pressed,
@@ -64,6 +82,11 @@ namespace LeopotamGroup.SystemUi.Markup {
             Background,
             Foreground,
             Handle
+        }
+
+        public enum ToggleState {
+            Background,
+            Foreground
         }
 
         public string GetName () {
@@ -92,7 +115,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                 case ButtonState.Pressed:
                     return _buttonPressedColor;
                 case ButtonState.Highlighted:
-                    return _buttonFocusedColor;
+                    return _buttonHighlightedColor;
                 case ButtonState.Disabled:
                     return _buttonDisabledColor;
                 default:
@@ -123,6 +146,39 @@ namespace LeopotamGroup.SystemUi.Markup {
                     return _sliderHandleColor;
                 default:
                     return Color.black;
+            }
+        }
+
+        public Sprite GetToggleSprite (ToggleState state) {
+            switch (state) {
+                case ToggleState.Background:
+                    return _toggleBackgroundSprite;
+                case ToggleState.Foreground:
+                    return _toggleForegroundSprite;
+                default:
+                    return null;
+            }
+        }
+
+        public Color GetToggleColor (ToggleState state) {
+            switch (state) {
+                case ToggleState.Background:
+                    return _toggleBackgroundColor;
+                case ToggleState.Foreground:
+                    return _toggleForegroundColor;
+                default:
+                    return Color.black;
+            }
+        }
+
+        public Vector2 GetToggleSize (ToggleState state) {
+            switch (state) {
+                case ToggleState.Background:
+                    return _toggleBackgroundSize;
+                case ToggleState.Foreground:
+                    return _toggleForegroundSize;
+                default:
+                    return Vector2.zero;
             }
         }
     }

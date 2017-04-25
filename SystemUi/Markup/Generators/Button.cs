@@ -19,12 +19,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static readonly int HashedDisabled = "disabled".GetStableHashCode ();
 
         /// <summary>
-        /// Create "button" node.
+        /// Create "button" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "button";
 #endif
@@ -78,6 +78,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var disabled = string.CompareOrdinal (attrValue, "true") == 0;
 
             btn.interactable = !disabled && MarkupUtils.ValidateInteractive (go, node);
+
+            return go;
         }
     }
 }

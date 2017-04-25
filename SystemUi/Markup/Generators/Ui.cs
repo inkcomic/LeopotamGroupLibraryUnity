@@ -13,12 +13,12 @@ using UnityEngine.UI;
 namespace LeopotamGroup.SystemUi.Markup.Generators {
     static class UiNode {
         /// <summary>
-        /// Create "ui" node.
+        /// Create "ui" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="go">Gameobject holder.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static void Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
             go.name = "ui";
 #endif
@@ -53,6 +53,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 es = new GameObject ("EventSystem").AddComponent<EventSystem> ();
                 es.gameObject.AddComponent<StandaloneInputModule> ();
             }
+
+            return go;
         }
     }
 }
