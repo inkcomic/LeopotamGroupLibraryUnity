@@ -49,6 +49,22 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedOnSelection = "onSelection".GetStableHashCode ();
 
+        static readonly int _uiLayer = LayerMask.NameToLayer ("UI");
+
+        /// <summary>
+        /// Create GameObject holder - compatible with UI.
+        /// </summary>
+        /// <param name="name">Name of GameObject. Can be null.</param>
+        /// <param name="root">Root transform. Can be null.</param>
+        public static RectTransform CreateUiObject (string name, Transform root) {
+            var go = new GameObject (name);
+            var rt = go.AddComponent<RectTransform> ();
+            go.layer = _uiLayer;
+            go.hideFlags = HideFlags.DontSave;
+            rt.SetParent (root, false);
+            return rt;
+        }
+
         /// <summary>
         /// Split attribute with multiple values to array of them.
         /// </summary>
@@ -60,24 +76,24 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <summary>
         /// Process "hidden" attribute of node.
         /// </summary>
-        /// <param name="go">GameObject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetHidden (GameObject go, XmlNode node) {
+        public static void SetHidden (RectTransform widget, XmlNode node) {
             var attrValue = node.GetAttribute (HashedHidden);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
-                go.SetActive (false);
+                widget.gameObject.SetActive (false);
             }
         }
 
         /// <summary>
         /// Process "mask" attribute of node.
         /// </summary>
-        /// <param name="go">GameObject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetMask (GameObject go, XmlNode node) {
+        public static void SetMask (RectTransform widget, XmlNode node) {
             var attrValue = node.GetAttribute (HashedMask);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
-                go.AddComponent<Mask> ();
+                widget.gameObject.AddComponent<Mask> ();
             }
         }
 
@@ -105,44 +121,44 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <summary>
         /// Process interactive callbacks of node.
         /// </summary>
-        /// <param name="go">GameObject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static bool ValidateInteractive (GameObject go, XmlNode node) {
+        public static bool ValidateInteractive (RectTransform widget, XmlNode node) {
             var isInteractive = false;
             string attrValue;
             attrValue = node.GetAttribute (HashedOnClick);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiClickAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiClickAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnDrag);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiDragAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiDragAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnPressRelease);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiPressReleaseAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiPressReleaseAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnScroll);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiScrollAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiScrollAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnDrop);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiDropAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiDropAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnEnterExit);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiEnterExitAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiEnterExitAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnSelection);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiSelectionAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiSelectionAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
             return isInteractive;
@@ -151,10 +167,9 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <summary>
         /// Process "offset" attribute of node.
         /// </summary>
-        /// <param name="go">GameObject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetOffset (GameObject go, XmlNode node) {
-            var rt = go.GetComponent<RectTransform> ();
+        public static void SetOffset (RectTransform widget, XmlNode node) {
             var point = Vector3.zero;
             float amount;
 
@@ -173,16 +188,15 @@ namespace LeopotamGroup.SystemUi.Markup {
                 }
             }
 
-            rt.localPosition = point;
+            widget.localPosition = point;
         }
 
         /// <summary>
         /// Process "rotation" attribute of node.
         /// </summary>
-        /// <param name="go">GameObject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetRotation (GameObject go, XmlNode node) {
-            var rt = go.GetComponent<RectTransform> ();
+        public static void SetRotation (RectTransform widget, XmlNode node) {
             var angles = Vector3.zero;
             float amount;
 
@@ -210,16 +224,15 @@ namespace LeopotamGroup.SystemUi.Markup {
                 }
             }
 
-            rt.localRotation = Quaternion.Euler (angles);
+            widget.localRotation = Quaternion.Euler (angles);
         }
 
         /// <summary>
         /// Process "size" attribute of node.
         /// </summary>
-        /// <param name="go">GameObject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetSize (GameObject go, XmlNode node) {
-            var rt = go.GetComponent<RectTransform> ();
+        public static void SetSize (RectTransform widget, XmlNode node) {
             var anchorMin = Vector2.zero;
             var anchorMax = Vector2.one;
             var offsetMin = Vector3.zero;
@@ -284,10 +297,10 @@ namespace LeopotamGroup.SystemUi.Markup {
                 }
             }
 
-            rt.anchorMin = anchorMin;
-            rt.anchorMax = anchorMax;
-            rt.offsetMin = offsetMin;
-            rt.offsetMax = offsetMax;
+            widget.anchorMin = anchorMin;
+            widget.anchorMax = anchorMax;
+            widget.offsetMin = offsetMin;
+            widget.offsetMax = offsetMax;
         }
     }
 }

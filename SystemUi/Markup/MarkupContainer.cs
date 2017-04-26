@@ -38,12 +38,10 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         Canvas _canvas;
 
-        Dictionary<int, Func<GameObject, XmlNode, MarkupContainer, GameObject>> _generators =
-            new Dictionary<int, Func<GameObject, XmlNode, MarkupContainer, GameObject>> (64);
+        Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> _generators =
+            new Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> (64);
 
-        Dictionary<int, GameObject> _namedNodes = new Dictionary<int, GameObject> (128);
-
-        int _uiLayer;
+        Dictionary<int, RectTransform> _namedNodes = new Dictionary<int, RectTransform> (128);
 
         bool _isLoaded;
 
@@ -52,7 +50,6 @@ namespace LeopotamGroup.SystemUi.Markup {
         MarkupTheme _defaultTheme;
 
         void Awake () {
-            _uiLayer = LayerMask.NameToLayer ("UI");
             AttachGenerators ();
         }
 
@@ -107,29 +104,25 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
         }
 
-        void CreateVisualNode (XmlNode xmlTree, Transform root) {
+        void CreateVisualNode (XmlNode xmlTree, RectTransform root) {
             if (xmlTree == null) {
                 return;
             }
-            Func<GameObject, XmlNode, MarkupContainer, GameObject> generator;
+            Func<RectTransform, XmlNode, MarkupContainer, RectTransform> generator;
             if (!_generators.TryGetValue (xmlTree.NameHash, out generator)) {
                 generator = BoxNode.Create;
             }
-            var go = new GameObject ();
-            go.layer = _uiLayer;
-            go.hideFlags = HideFlags.DontSave;
-            Transform tr = go.AddComponent<RectTransform> ();
-            go.transform.SetParent (root, false);
-            var rootGO = generator (go, xmlTree, this);
+            var tr = MarkupUtils.CreateUiObject (null, root);
+            var contentTr = generator (tr, xmlTree, this);
 
             if ((object) _canvas == null) {
-                _canvas = go.GetComponentInChildren<Canvas> ();
+                _canvas = tr.GetComponentInChildren<Canvas> ();
             }
 
             var nodeName = xmlTree.GetAttribute (HashedName);
             if (!string.IsNullOrEmpty (nodeName)) {
 #if UNITY_EDITOR
-                go.name = string.Format ("{0}-{1}", go.name, nodeName);
+                tr.name = string.Format ("{0}-{1}", tr.name, nodeName);
 #endif
                 var nodeNameHash = nodeName.GetStableHashCode ();
                 if (_namedNodes.ContainsKey (nodeNameHash)) {
@@ -137,19 +130,18 @@ namespace LeopotamGroup.SystemUi.Markup {
                     Debug.LogWarning ("Duplicate name: " + nodeName);
 #endif
                 } else {
-                    _namedNodes[nodeNameHash] = go;
+                    _namedNodes[nodeNameHash] = tr;
                 }
             }
 
             var children = xmlTree.Children;
             if (children.Count > 0) {
-                if ((object) rootGO != null) {
-                    tr = rootGO.transform;
+                if ((object) contentTr != null) {
                     for (int i = 0, iMax = children.Count; i < iMax; i++) {
-                        CreateVisualNode (children[i], tr);
+                        CreateVisualNode (children[i], contentTr);
                     }
                 } else {
-                    Debug.LogWarning ("Node not supported children.", go);
+                    Debug.LogWarning ("Node not supported children.", tr);
                 }
             }
         }
@@ -173,7 +165,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
             Load ();
             Clear ();
-            CreateVisualNode (_xmlTree, transform);
+            CreateVisualNode (_xmlTree, MarkupUtils.CreateUiObject ("root", transform));
         }
 
         /// <summary>
@@ -252,14 +244,14 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
-        /// Get GameObject of specific node from markup or null.
+        /// Get widget of specific node from markup or null.
         /// </summary>
         /// <param name="name">Unique name of node.</param>
-        public GameObject GetNamedNode (string name) {
+        public RectTransform GetNamedNode (string name) {
             var hash = name.GetStableHashCode ();
-            GameObject go;
-            if (_namedNodes.TryGetValue (hash, out go)) {
-                return go;
+            RectTransform rt;
+            if (_namedNodes.TryGetValue (hash, out rt)) {
+                return rt;
             }
             return null;
         }

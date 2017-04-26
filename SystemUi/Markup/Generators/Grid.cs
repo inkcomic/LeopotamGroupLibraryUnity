@@ -20,14 +20,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "grid" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "grid";
+            widget.name = "grid";
 #endif
-            var grid = go.AddComponent<GridLayoutGroup> ();
+            var grid = widget.gameObject.AddComponent<GridLayoutGroup> ();
 
             grid.childAlignment = TextAnchor.MiddleCenter;
             var flipX = false;
@@ -60,13 +60,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             grid.cellSize = cellSize;
             grid.startCorner = (GridLayoutGroup.Corner) ((flipX ? 1 : 0) | (flipY ? 2 : 0));
 
-            MarkupUtils.SetSize (go, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetMask (go, node);
-            MarkupUtils.SetHidden (go, node);
+            MarkupUtils.SetSize (widget, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetHidden (widget, node);
 
-            return go;
+            return widget;
         }
     }
 }

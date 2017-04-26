@@ -21,12 +21,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "image" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "image";
+            widget.name = "image";
 #endif
             Image img = null;
             RawImage tex = null;
@@ -37,9 +37,9 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             attrValue = node.GetAttribute (HashedRaw);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
                 useImg = false;
-                tex = go.AddComponent<RawImage> ();
+                tex = widget.gameObject.AddComponent<RawImage> ();
             } else {
-                img = go.AddComponent<Image> ();
+                img = widget.gameObject.AddComponent<Image> ();
             }
 
             attrValue = node.GetAttribute (HashedPath);
@@ -67,22 +67,22 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             if (ignoreSize) {
                 img.SetNativeSize ();
             } else {
-                MarkupUtils.SetSize (go, node);
+                MarkupUtils.SetSize (widget, node);
             }
 
             MarkupUtils.SetColor (img, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetMask (go, node);
-            MarkupUtils.SetHidden (go, node);
-            var isInteractive = MarkupUtils.ValidateInteractive (go, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetHidden (widget, node);
+            var isInteractive = MarkupUtils.ValidateInteractive (widget, node);
             if (useImg) {
                 img.raycastTarget = isInteractive;
             } else {
                 tex.raycastTarget = isInteractive;
             }
 
-            return go;
+            return widget;
         }
     }
 }

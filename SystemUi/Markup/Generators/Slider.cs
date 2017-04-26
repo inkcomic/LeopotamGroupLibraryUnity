@@ -34,18 +34,17 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "slider" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "slider";
+            widget.name = "slider";
 #endif
-            var slider = go.AddComponent<Slider> ();
+            var slider = widget.gameObject.AddComponent<Slider> ();
             var theme = MarkupUtils.GetTheme (node, container);
             Image img;
             RectTransform rt;
-            GameObject go1;
 
             var direction = Slider.Direction.LeftToRight;
             var minValue = 0f;
@@ -55,12 +54,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var isInteractive = false;
 
             // background.
-            go1 = new GameObject (BackgroundImageName);
-            go1.layer = go.layer;
-            go1.hideFlags = HideFlags.DontSave;
-            img = go1.AddComponent<Image> ();
-            rt = img.rectTransform;
-            rt.SetParent (slider.transform, false);
+            rt = MarkupUtils.CreateUiObject (BackgroundImageName, widget);
+            img = rt.gameObject.AddComponent<Image> ();
             img.sprite = theme.GetSliderSprite (MarkupTheme.SliderState.Background);
             img.color = theme.GetSliderColor (MarkupTheme.SliderState.Background);
             img.type = Image.Type.Sliced;
@@ -69,12 +64,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             rt.sizeDelta = Vector2.zero;
 
             // foreground.
-            go1 = new GameObject (ForegroundImageName);
-            go1.layer = go.layer;
-            go1.hideFlags = HideFlags.DontSave;
-            img = go1.AddComponent<Image> ();
-            rt = img.rectTransform;
-            rt.SetParent (slider.transform, false);
+            rt = MarkupUtils.CreateUiObject (ForegroundImageName, widget);
+            img = rt.gameObject.AddComponent<Image> ();
             img.sprite = theme.GetSliderSprite (MarkupTheme.SliderState.Foreground);
             img.color = theme.GetSliderColor (MarkupTheme.SliderState.Foreground);
             img.type = Image.Type.Sliced;
@@ -86,23 +77,16 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             attrValue = node.GetAttribute (HashedHandle);
             var useHandle = string.CompareOrdinal (attrValue, "true") == 0;
             if (useHandle) {
-                go1 = new GameObject ();
-                go1.layer = go.layer;
-                go1.hideFlags = HideFlags.DontSave;
-                var handle = go1.AddComponent<RectTransform> ();
-                handle.SetParent (slider.transform, false);
+                var handle = MarkupUtils.CreateUiObject (null, widget);
                 slider.handleRect = handle;
 
-                go1 = new GameObject (HandleImageName);
-                go1.layer = go.layer;
-                go1.hideFlags = HideFlags.DontSave;
-                img = go1.AddComponent<Image> ();
+                rt = MarkupUtils.CreateUiObject (HandleImageName, handle);
+                img = rt.gameObject.AddComponent<Image> ();
                 img.raycastTarget = false;
                 img.sprite = theme.GetSliderSprite (MarkupTheme.SliderState.Handle);
                 img.color = theme.GetSliderColor (MarkupTheme.SliderState.Handle);
                 img.type = Image.Type.Sliced;
                 img.SetNativeSize ();
-                img.transform.SetParent (handle, false);
                 handle.sizeDelta = img.rectTransform.sizeDelta;
             }
 
@@ -114,7 +98,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             float amount;
             attrValue = node.GetAttribute (HashedRange);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = MarkupUtils.SplitAttrValue(attrValue);
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
                     if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
                         minValue = amount;
@@ -139,7 +123,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedOnChange);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.gameObject.AddComponent<UiSliderAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<UiSliderAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
 
@@ -151,15 +135,15 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             slider.transition = Selectable.Transition.None;
 
-            MarkupUtils.SetSize (go, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetMask (go, node);
-            MarkupUtils.SetHidden (go, node);
+            MarkupUtils.SetSize (widget, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetHidden (widget, node);
 
             slider.interactable = useHandle && isInteractive;
 
-            return go;
+            return widget;
         }
     }
 }

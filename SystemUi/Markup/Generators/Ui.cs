@@ -15,13 +15,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "ui" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "ui";
+            widget.name = "ui";
 #endif
+            var go = widget.gameObject;
             var canvas = go.AddComponent<Canvas> ();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = false;
@@ -54,7 +55,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 es.gameObject.AddComponent<StandaloneInputModule> ();
             }
 
-            return go;
+            return widget;
         }
     }
 }

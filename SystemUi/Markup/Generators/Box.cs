@@ -16,24 +16,24 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "box" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "box";
+            widget.name = "box";
 #endif
-            MarkupUtils.SetSize (go, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetMask (go, node);
-            MarkupUtils.SetHidden (go, node);
+            MarkupUtils.SetSize (widget, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetHidden (widget, node);
 
-            if (MarkupUtils.ValidateInteractive (go, node)) {
-                go.AddComponent<NonVisualWidget> ();
+            if (MarkupUtils.ValidateInteractive (widget, node)) {
+                widget.gameObject.AddComponent<NonVisualWidget> ();
             }
 
-            return go;
+            return widget;
         }
     }
 }

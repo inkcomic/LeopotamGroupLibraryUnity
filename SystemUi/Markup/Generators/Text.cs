@@ -25,14 +25,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "text" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "text";
+            widget.name = "text";
 #endif
-            var txt = go.AddComponent<Text> ();
+            var txt = widget.gameObject.AddComponent<Text> ();
             string attrValue;
             string font = null;
             var align = TextAnchor.MiddleCenter;
@@ -54,7 +54,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedFontStyle);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var parts = MarkupUtils.SplitAttrValue(attrValue);
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
                 for (var i = 0; i < parts.Length; i++) {
                     switch (parts[i]) {
                         case "bold":
@@ -69,7 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedLocalize);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.AddComponent<TextLocalization> ().SetToken (attrValue);
+                widget.gameObject.AddComponent<TextLocalization> ().SetToken (attrValue);
             } else {
                 txt.text = node.Value;
             }
@@ -80,14 +80,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             txt.fontStyle = style;
 
             MarkupUtils.SetColor (txt, node);
-            MarkupUtils.SetSize (go, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetMask (go, node);
-            MarkupUtils.SetHidden (go, node);
-            txt.raycastTarget = MarkupUtils.ValidateInteractive (go, node);
+            MarkupUtils.SetSize (widget, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetHidden (widget, node);
+            txt.raycastTarget = MarkupUtils.ValidateInteractive (widget, node);
 
-            return go;
+            return widget;
         }
     }
 }

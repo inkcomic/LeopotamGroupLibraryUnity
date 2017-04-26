@@ -21,15 +21,15 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "button" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "button";
+            widget.name = "button";
 #endif
-            var btn = go.AddComponent<Button> ();
-            var img = go.AddComponent<Image> ();
+            var btn = widget.gameObject.AddComponent<Button> ();
+            var img = widget.gameObject.AddComponent<Image> ();
             string attrValue;
             var transition = Button.Transition.ColorTint;
 
@@ -68,18 +68,18 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             btn.targetGraphic = img;
             btn.transition = transition;
 
-            MarkupUtils.SetSize (go, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetMask (go, node);
-            MarkupUtils.SetHidden (go, node);
+            MarkupUtils.SetSize (widget, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetHidden (widget, node);
 
             attrValue = node.GetAttribute (HashedDisabled);
             var disabled = string.CompareOrdinal (attrValue, "true") == 0;
 
-            btn.interactable = !disabled && MarkupUtils.ValidateInteractive (go, node);
+            btn.interactable = !disabled && MarkupUtils.ValidateInteractive (widget, node);
 
-            return go;
+            return widget;
         }
     }
 }

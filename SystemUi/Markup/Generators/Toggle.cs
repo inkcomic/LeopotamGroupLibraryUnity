@@ -29,31 +29,27 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "toggle" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "toggle";
+            widget.name = "toggle";
 #endif
-            GameObject go1;
+            var tr = widget.transform;
             Image img;
             RectTransform rt;
             Vector2 size;
             string attrValue;
 
-            var toggle = go.AddComponent<Toggle> ();
+            var toggle = widget.gameObject.AddComponent<Toggle> ();
             var theme = MarkupUtils.GetTheme (node, container);
 
             var isInteractive = false;
 
             // background.
-            go1 = new GameObject (BackgroundImageName);
-            go1.layer = go.layer;
-            go1.hideFlags = HideFlags.DontSave;
-            img = go1.AddComponent<Image> ();
-            rt = img.rectTransform;
-            rt.SetParent (go.transform, false);
+            rt = MarkupUtils.CreateUiObject (BackgroundImageName, tr);
+            img = rt.gameObject.AddComponent<Image> ();
             img.sprite = theme.GetToggleSprite (MarkupTheme.ToggleState.Background);
             img.type = Image.Type.Sliced;
             img.raycastTarget = false;
@@ -65,12 +61,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             toggle.targetGraphic = img;
 
             // foreground.
-            go1 = new GameObject (ForegroundImageName);
-            go1.layer = go.layer;
-            go1.hideFlags = HideFlags.DontSave;
-            go1.transform.SetParent (rt, false);
-            img = go1.AddComponent<Image> ();
-            rt = img.rectTransform;
+            rt = MarkupUtils.CreateUiObject (ForegroundImageName, rt);
+            img = rt.gameObject.AddComponent<Image> ();
             rt.anchorMin = new Vector2 (0.5f, 0.5f);
             rt.anchorMax = new Vector2 (0.5f, 0.5f);
             rt.sizeDelta = theme.GetToggleSize (MarkupTheme.ToggleState.Foreground);
@@ -80,11 +72,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             toggle.graphic = img;
 
             // content.
-            go1 = new GameObject (ContentName);
-            go1.layer = go.layer;
-            go1.hideFlags = HideFlags.DontSave;
-            rt = go1.AddComponent<RectTransform> ();
-            rt.SetParent (go.transform, false);
+            rt = MarkupUtils.CreateUiObject (ContentName, tr);
             rt.anchorMin = Vector2.zero;
             rt.anchorMax = Vector2.one;
             rt.offsetMin = Vector2.right * size.x;
@@ -105,20 +93,20 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedOnChange);
             if (!string.IsNullOrEmpty (attrValue)) {
-                go.AddComponent<NonVisualWidget> ();
-                go.gameObject.AddComponent<UiToggleAction> ().SetGroup (attrValue);
+                widget.gameObject.AddComponent<NonVisualWidget> ();
+                widget.gameObject.AddComponent<UiToggleAction> ().SetGroup (attrValue);
                 isInteractive = true;
             }
 
             toggle.transition = Selectable.Transition.None;
             toggle.interactable = isInteractive;
 
-            MarkupUtils.SetSize (go, node);
-            MarkupUtils.SetRotation (go, node);
-            MarkupUtils.SetOffset (go, node);
-            MarkupUtils.SetHidden (go, node);
+            MarkupUtils.SetSize (widget, node);
+            MarkupUtils.SetRotation (widget, node);
+            MarkupUtils.SetOffset (widget, node);
+            MarkupUtils.SetHidden (widget, node);
 
-            return go1;
+            return rt;
         }
     }
 }

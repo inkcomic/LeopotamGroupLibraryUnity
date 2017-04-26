@@ -17,14 +17,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         /// <summary>
         /// Create "align" node. If children supported - GameObject container for them should be returned.
         /// </summary>
-        /// <param name="go">Gameobject holder.</param>
+        /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
-        public static GameObject Create (GameObject go, XmlNode node, MarkupContainer container) {
+        public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            go.name = "align";
+            widget.name = "align";
 #endif
-            var rt = go.GetComponent<RectTransform> ();
+            var rt = widget.GetComponent<RectTransform> ();
             var offset = Vector2.one * 0.5f;
             var attrValue = node.GetAttribute (HashedSide);
             if (!string.IsNullOrEmpty (attrValue)) {
@@ -52,9 +52,9 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             rt.offsetMin = -Vector2.one * 0.5f;
             rt.offsetMax = -rt.offsetMin;
 
-            MarkupUtils.SetHidden (go, node);
+            MarkupUtils.SetHidden (widget, node);
 
-            return go;
+            return widget;
         }
     }
 }
