@@ -18,6 +18,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedNativeSize = "nativeSize".GetStableHashCode ();
 
+        static readonly int HashedMask = "mask".GetStableHashCode ();
+
         /// <summary>
         /// Create "image" node. If children supported - GameObject container for them should be returned.
         /// </summary>
@@ -70,11 +72,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 MarkupUtils.SetSize (widget, node);
             }
 
+            attrValue = node.GetAttribute (HashedMask);
+            if (string.CompareOrdinal (attrValue, "true") == 0) {
+                widget.gameObject.AddComponent<Mask> ();
+            }
+
             MarkupUtils.SetColor (img, node);
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
-            MarkupUtils.SetMask (widget, node);
-            MarkupUtils.SetMask2D (widget, node);
             MarkupUtils.SetHidden (widget, node);
             var isInteractive = MarkupUtils.ValidateInteractive (widget, node);
             if (useImg) {

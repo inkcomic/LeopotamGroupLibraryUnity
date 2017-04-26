@@ -25,10 +25,6 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedHidden = "hidden".GetStableHashCode ();
 
-        public static readonly int HashedMask = "mask".GetStableHashCode ();
-
-        public static readonly int HashedMask2D = "mask2d".GetStableHashCode ();
-
         static readonly int HashedColor = "color".GetStableHashCode ();
 
         static readonly int HashedTheme = "theme".GetStableHashCode ();
@@ -84,30 +80,6 @@ namespace LeopotamGroup.SystemUi.Markup {
             var attrValue = node.GetAttribute (HashedHidden);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
                 widget.gameObject.SetActive (false);
-            }
-        }
-
-        /// <summary>
-        /// Process "mask" attribute of node.
-        /// </summary>
-        /// <param name="widget">Ui widget.</param>
-        /// <param name="node">Xml node.</param>
-        public static void SetMask (RectTransform widget, XmlNode node) {
-            var attrValue = node.GetAttribute (HashedMask);
-            if (string.CompareOrdinal (attrValue, "true") == 0) {
-                widget.gameObject.AddComponent<Mask> ();
-            }
-        }
-
-        /// <summary>
-        /// Process "mask2d" attribute of node.
-        /// </summary>
-        /// <param name="widget">Ui widget.</param>
-        /// <param name="node">Xml node.</param>
-        public static void SetMask2D (RectTransform widget, XmlNode node) {
-            var attrValue = node.GetAttribute (HashedMask2D);
-            if (string.CompareOrdinal (attrValue, "true") == 0) {
-                widget.gameObject.AddComponent<RectMask2D> ();
             }
         }
 

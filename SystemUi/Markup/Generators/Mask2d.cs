@@ -12,17 +12,18 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
-    static class BoxNode {
+    static class Mask2dNode {
         /// <summary>
-        /// Create "box" node. If children supported - GameObject container for them should be returned.
+        /// Create "mask2d" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
         public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            widget.name = "box";
+            widget.name = "mask2d";
 #endif
+            widget.gameObject.AddComponent<RectMask2D> ();
             MarkupUtils.SetSize (widget, node);
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
