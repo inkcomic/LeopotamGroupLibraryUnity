@@ -72,6 +72,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetMask (widget, node);
+            MarkupUtils.SetMask2D (widget, node);
             MarkupUtils.SetHidden (widget, node);
 
             attrValue = node.GetAttribute (HashedDisabled);
