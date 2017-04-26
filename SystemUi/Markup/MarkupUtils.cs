@@ -77,7 +77,7 @@ namespace LeopotamGroup.SystemUi.Markup {
         public static void SetMask (GameObject go, XmlNode node) {
             var attrValue = node.GetAttribute (HashedMask);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
-                go.AddComponent<RectMask2D> ();
+                go.AddComponent<Mask> ();
             }
         }
 
