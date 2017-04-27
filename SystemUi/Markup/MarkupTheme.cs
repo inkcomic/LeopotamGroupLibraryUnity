@@ -71,6 +71,21 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Vector2 _toggleForegroundSize = Vector2.one * 24f;
 
+        [SerializeField]
+        Sprite _scrollbarBackgroundSprite;
+
+        [SerializeField]
+        Sprite _scrollbarHandleSprite;
+
+        [SerializeField]
+        Color _scrollbarBackgroundColor = Color.gray;
+
+        [SerializeField]
+        Color _scrollbarHandleColor = Color.white;
+
+        [SerializeField]
+        float _scrollbarWidth = 16f;
+
         public enum ButtonState {
             Normal,
             Pressed,
@@ -87,6 +102,11 @@ namespace LeopotamGroup.SystemUi.Markup {
         public enum ToggleState {
             Background,
             Foreground
+        }
+
+        public enum ScrollbarState {
+            Background,
+            Handle
         }
 
         public string GetName () {
@@ -180,6 +200,32 @@ namespace LeopotamGroup.SystemUi.Markup {
                 default:
                     return Vector2.zero;
             }
+        }
+
+        public Sprite GetScrollbarSprite (ScrollbarState state) {
+            switch (state) {
+                case ScrollbarState.Background:
+                    return _scrollbarBackgroundSprite;
+                case ScrollbarState.Handle:
+                    return _scrollbarHandleSprite;
+                default:
+                    return null;
+            }
+        }
+
+        public Color GetScrollbarColor (ScrollbarState state) {
+            switch (state) {
+                case ScrollbarState.Background:
+                    return _scrollbarBackgroundColor;
+                case ScrollbarState.Handle:
+                    return _scrollbarHandleColor;
+                default:
+                    return Color.black;
+            }
+        }
+
+        public float GetScrollbarWidth () {
+            return _scrollbarWidth;
         }
     }
 }

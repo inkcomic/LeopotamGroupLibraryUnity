@@ -10,7 +10,6 @@ using LeopotamGroup.Serialization;
 using LeopotamGroup.SystemUi.Actions;
 using LeopotamGroup.SystemUi.Widgets;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
@@ -20,6 +19,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         public const string ContentName = "content";
 
         static readonly int HashedContentSize = "contentSize".GetStableHashCode ();
+
+        static readonly int HashedBar = "bar".GetStableHashCode ();
+
+        static readonly int HashedDrag = "drag".GetStableHashCode ();
+
+        static readonly int HashedClamp = "clamp".GetStableHashCode ();
 
         static readonly int HashedOnChange = "onChange".GetStableHashCode ();
 
@@ -33,32 +38,33 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 #if UNITY_EDITOR
             widget.name = "scrollView";
 #endif
-            // GameObject go1;
-            // Image img;
-            RectTransform rt;
             float amount;
             string attrValue;
+            Scrollbar horScroll = null;
+            Scrollbar verScroll = null;
 
             var anchorMin = Vector2.zero;
             var anchorMax = Vector2.one;
             var offsetMin = Vector3.zero;
             var offsetMax = Vector3.zero;
+            var needHorScroll = true;
+            var needVerScroll = true;
 
-            var scrollView = widget.gameObject.AddComponent<ScrollRect> ();
             var theme = MarkupUtils.GetTheme (node, container);
 
+            var scrollView = widget.gameObject.AddComponent<ScrollRect> ();
+
             // viewport.
-            rt = MarkupUtils.CreateUiObject (ViewportName, widget);
-            rt.gameObject.AddComponent<RectMask2D> ();
-            rt.gameObject.AddComponent<NonVisualWidget> ().raycastTarget = false;
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
-            rt.offsetMin = Vector2.zero;
-            rt.offsetMax = Vector2.zero;
-            scrollView.viewport = rt;
+            var viewport = MarkupUtils.CreateUiObject (ViewportName, widget);
+            viewport.gameObject.AddComponent<RectMask2D> ();
+            viewport.gameObject.AddComponent<NonVisualWidget> ().raycastTarget = false;
+            viewport.anchorMin = Vector2.zero;
+            viewport.anchorMax = Vector2.one;
+            viewport.sizeDelta = Vector2.zero;
+            viewport.pivot = Vector2.up;
 
             // content.
-            rt = MarkupUtils.CreateUiObject (ContentName, rt);
+            var content = MarkupUtils.CreateUiObject (ContentName, viewport);
             attrValue = node.GetAttribute (HashedContentSize);
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = MarkupUtils.SplitAttrValue (attrValue);
@@ -81,13 +87,44 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                     }
                 }
             }
-            rt.anchorMin = anchorMin;
-            rt.anchorMax = anchorMax;
-            rt.offsetMin = offsetMin;
-            rt.offsetMax = offsetMax;
-            scrollView.content = rt;
+            content.anchorMin = anchorMin;
+            content.anchorMax = anchorMax;
+            content.offsetMin = offsetMin;
+            content.offsetMax = offsetMax;
 
-            // TODO: scrollbars.
+            attrValue = node.GetAttribute (HashedClamp);
+            if (string.CompareOrdinal (attrValue, "true") == 0) {
+                scrollView.movementType = ScrollRect.MovementType.Clamped;
+            }
+
+            attrValue = node.GetAttribute (HashedDrag);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
+                if (parts.Length > 0 && string.CompareOrdinal (parts[0], "false") == 0) {
+                    scrollView.horizontal = false;
+                }
+                if (parts.Length > 1 && string.CompareOrdinal (parts[1], "false") == 0) {
+                    scrollView.vertical = false;
+                }
+            }
+
+            attrValue = node.GetAttribute (HashedBar);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
+                if (parts.Length > 0 && string.CompareOrdinal (parts[0], "false") == 0) {
+                    needHorScroll = false;
+                }
+                if (parts.Length > 1 && string.CompareOrdinal (parts[1], "false") == 0) {
+                    needVerScroll = false;
+                }
+            }
+
+            if (needHorScroll) {
+                horScroll = CreateScrollbar (widget, theme, true);
+            }
+            if (needVerScroll) {
+                verScroll = CreateScrollbar (widget, theme, false);
+            }
 
             attrValue = node.GetAttribute (HashedOnChange);
             if (!string.IsNullOrEmpty (attrValue)) {
@@ -95,15 +132,64 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 widget.gameObject.AddComponent<UiScrollViewAction> ().SetGroup (attrValue);
             }
 
-            scrollView.horizontalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
-            scrollView.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+            scrollView.content = content;
+            scrollView.viewport = viewport;
+            scrollView.horizontalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+            scrollView.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+            scrollView.horizontalScrollbar = horScroll;
+            scrollView.verticalScrollbar = verScroll;
+            scrollView.decelerationRate = 0.01f;
 
             MarkupUtils.SetSize (widget, node);
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
 
-            return rt;
+            scrollView.normalizedPosition = Vector2.up;
+
+            return content;
+        }
+
+        static Scrollbar CreateScrollbar (RectTransform widget, MarkupTheme theme, bool isHorizontal) {
+            Image img;
+            var width = theme.GetScrollbarWidth ();
+            // background.
+            var rt = MarkupUtils.CreateUiObject (null, widget);
+            var sb = rt.gameObject.AddComponent<Scrollbar> ();
+            img = rt.gameObject.AddComponent<Image> ();
+            img.sprite = theme.GetScrollbarSprite (MarkupTheme.ScrollbarState.Background);
+            img.color = theme.GetScrollbarColor (MarkupTheme.ScrollbarState.Background);
+            img.type = Image.Type.Sliced;
+            if (isHorizontal) {
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.right;
+                rt.pivot = Vector2.zero;
+                rt.sizeDelta = new Vector2 (0f, width);
+            } else {
+                rt.anchorMin = Vector2.right;
+                rt.anchorMax = Vector2.one;
+                rt.pivot = Vector2.one;
+                rt.sizeDelta = new Vector2 (width, 0f);
+            }
+
+            // handle.
+            rt = MarkupUtils.CreateUiObject (null, rt);
+            img = rt.gameObject.AddComponent<Image> ();
+            img.sprite = theme.GetScrollbarSprite (MarkupTheme.ScrollbarState.Handle);
+            img.color = theme.GetScrollbarColor (MarkupTheme.ScrollbarState.Handle);
+            img.type = Image.Type.Sliced;
+            img.raycastTarget = false;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            sb.direction = isHorizontal ? Scrollbar.Direction.LeftToRight : Scrollbar.Direction.BottomToTop;
+
+            sb.handleRect = rt;
+            sb.transition = Selectable.Transition.None;
+
+            return sb;
         }
     }
 }
