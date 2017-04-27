@@ -57,6 +57,7 @@ namespace LeopotamGroup.SystemUi.Markup {
         public static RectTransform CreateUiObject (string name, Transform root) {
             var go = new GameObject (name);
             var rt = go.AddComponent<RectTransform> ();
+            rt.sizeDelta = Vector2.one;
             go.layer = _uiLayer;
             go.hideFlags = HideFlags.DontSave;
             rt.SetParent (root, false);
@@ -222,7 +223,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             var anchorMin = Vector2.zero;
             var anchorMax = Vector2.one;
             var offsetMin = Vector3.zero;
-            var offsetMax = offsetMin;
+            var offsetMax = Vector3.zero;
             string amountStr;
             float amount;
             string attrValue;

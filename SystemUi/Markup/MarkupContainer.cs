@@ -43,34 +43,30 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         Dictionary<int, RectTransform> _namedNodes = new Dictionary<int, RectTransform> (128);
 
-        bool _isLoaded;
-
         Font _defaultFont;
 
         MarkupTheme _defaultTheme;
 
-        void Awake () {
-            AttachGenerators ();
-        }
+        bool _areGeneratorsAttached;
+
+        bool _isVisualized;
 
         protected virtual void AttachGenerators () {
-            _generators.Add ("align".GetStableHashCode (), AlignNode.Create);
-            _generators.Add ("box".GetStableHashCode (), BoxNode.Create);
-            _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
-            _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
-            _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
-            _generators.Add ("mask2d".GetStableHashCode (), Mask2dNode.Create);
-            _generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
-            _generators.Add ("text".GetStableHashCode (), TextNode.Create);
-            _generators.Add ("toggle".GetStableHashCode (), ToggleNode.Create);
-            _generators.Add ("toggleGroup".GetStableHashCode (), ToggleGroupNode.Create);
-            _generators.Add ("ui".GetStableHashCode (), UiNode.Create);
-        }
-
-        void Load () {
-            if (!_isLoaded) {
-                _isLoaded = true;
-                _xmlTree = LoadXml (_markupPath);
+            if (!_areGeneratorsAttached) {
+                _generators.Clear ();
+                _generators.Add ("align".GetStableHashCode (), AlignNode.Create);
+                _generators.Add ("box".GetStableHashCode (), BoxNode.Create);
+                _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
+                _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
+                _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
+                _generators.Add ("mask2d".GetStableHashCode (), Mask2dNode.Create);
+                _generators.Add ("scrollView".GetStableHashCode (), ScrollViewNode.Create);
+                _generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
+                _generators.Add ("text".GetStableHashCode (), TextNode.Create);
+                _generators.Add ("toggle".GetStableHashCode (), ToggleNode.Create);
+                _generators.Add ("toggleGroup".GetStableHashCode (), ToggleGroupNode.Create);
+                _generators.Add ("ui".GetStableHashCode (), UiNode.Create);
+                _areGeneratorsAttached = true;
             }
         }
 
@@ -91,17 +87,8 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         void LateUpdate () {
-            if (!_isLoaded) {
+            if (!_isVisualized) {
                 CreateVisuals ();
-            }
-        }
-
-        void Clear () {
-            _canvas = null;
-            _namedNodes.Clear ();
-            var tr = transform;
-            for (int i = tr.childCount - 1; i >= 0; i--) {
-                Destroy (tr.GetChild (i));
             }
         }
 
@@ -109,12 +96,23 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (xmlTree == null) {
                 return;
             }
+
             Func<RectTransform, XmlNode, MarkupContainer, RectTransform> generator;
-            if (!_generators.TryGetValue (xmlTree.NameHash, out generator)) {
+
+            var isFound = _generators.TryGetValue (xmlTree.NameHash, out generator);
+            if (!isFound) {
                 generator = BoxNode.Create;
             }
+
             var tr = MarkupUtils.CreateUiObject (null, root);
             var contentTr = generator (tr, xmlTree, this);
+
+#if UNITY_EDITOR
+            if (!isFound) {
+                tr.name = string.Format ("unknown-replaced-with-{0}", tr.name);
+                Debug.LogWarningFormat (tr, "Unknown hashed-node \"{0}\" - box-node will be used instead", xmlTree.NameHash);
+            }
+#endif
 
             if ((object) _canvas == null) {
                 _canvas = tr.GetComponentInChildren<Canvas> ();
@@ -148,6 +146,42 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
+        /// Remove generated widgets from scene.
+        /// </summary>
+        public void ClearVisuals () {
+            _isVisualized = false;
+            _canvas = null;
+            _namedNodes.Clear ();
+            var tr = transform;
+            for (var i = tr.childCount - 1; i >= 0; i--) {
+#if UNITY_EDITOR
+                if (Application.isPlaying) {
+                    Destroy (tr.GetChild (i).gameObject);
+                } else {
+                    DestroyImmediate (tr.GetChild (i).gameObject);
+                }
+#else
+                Destroy (tr.GetChild (i).gameObject);
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Full cleanup of container (destroy widgets, unload xml, unregister generators).
+        /// </summary>
+        public void Clear () {
+            ClearVisuals ();
+
+            if (_xmlTree != null) {
+                _xmlTree.Recycle ();
+                _xmlTree = null;
+            }
+
+            _areGeneratorsAttached = false;
+            _generators.Clear ();
+        }
+
+        /// <summary>
         /// Get root canvas of this infrastructure.
         /// </summary>
         public Canvas GetCanvas () {
@@ -158,15 +192,19 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// Force cleanup / create widgets infrastructure from attached xml-schema.
         /// </summary>
         public void CreateVisuals () {
+            AttachGenerators ();
             if ((object) _defaultFont == null) {
                 _defaultFont = _fonts.Count > 0 ? _fonts[0] : Resources.GetBuiltinResource<Font> ("Arial.ttf");
             }
             if ((object) _defaultTheme == null) {
                 _defaultTheme = _themes.Count > 0 ? _themes[0] : ScriptableObject.CreateInstance<MarkupTheme> ();
             }
-            Load ();
-            Clear ();
+            if (_xmlTree == null) {
+                _xmlTree = LoadXml (_markupPath);
+            }
+            ClearVisuals ();
             CreateVisualNode (_xmlTree, MarkupUtils.CreateUiObject ("root", transform));
+            _isVisualized = true;
         }
 
         /// <summary>
