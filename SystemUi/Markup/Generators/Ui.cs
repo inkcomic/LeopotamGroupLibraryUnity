@@ -49,10 +49,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             go.AddComponent<GraphicRaycaster> ();
 
-            var es = GameObject.FindObjectOfType<EventSystem> ();
-            if ((object) es == null) {
-                es = new GameObject ("EventSystem").AddComponent<EventSystem> ();
-                es.gameObject.AddComponent<StandaloneInputModule> ();
+            if (Application.isPlaying) {
+                var es = GameObject.FindObjectOfType<EventSystem> ();
+                if ((object) es == null) {
+                    es = new GameObject ("EventSystem").AddComponent<EventSystem> ();
+                    es.gameObject.hideFlags = HideFlags.DontSave;
+                    es.gameObject.AddComponent<StandaloneInputModule> ();
+                }
             }
 
             return widget;
