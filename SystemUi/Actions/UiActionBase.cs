@@ -4,11 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using LeopotamGroup.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace LeopotamGroup.SystemUi.Actions {
     /// <summary>

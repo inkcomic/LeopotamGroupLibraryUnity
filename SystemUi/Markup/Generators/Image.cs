@@ -7,7 +7,6 @@
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {

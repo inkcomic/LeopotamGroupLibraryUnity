@@ -4,12 +4,9 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
-using LeopotamGroup.SystemUi.Widgets;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {

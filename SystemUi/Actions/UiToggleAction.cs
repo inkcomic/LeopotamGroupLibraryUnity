@@ -7,7 +7,6 @@
 using LeopotamGroup.Common;
 using LeopotamGroup.Events;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Actions {
