@@ -90,7 +90,7 @@ namespace LeopotamGroup.Analytics {
 #endif
             if (!string.IsNullOrEmpty (_trackerId)) {
                 _requestUrl = string.Format (AnalyticsUrl, _trackerId, DeviceHash, Screen.width,
-                    Screen.height, Application.bundleIdentifier, Application.version);
+                    Screen.height, Application.identifier, Application.version);
             }
 
             string url = null;
@@ -165,6 +165,30 @@ namespace LeopotamGroup.Analytics {
                 WWW.EscapeURL (value)
             ));
         }
+        
+        /// <summary>
+        /// Track transaction for e-commerce, in-app purchases.
+        /// </summary>
+        /// <param name="transaction">Transaction ID, will be truncated up to 100 symbols.</param>
+        /// <param name="name">Product name.</param>
+        /// <param name="sku">Product code.</param>
+        /// <param name="price">Product price.</param>      
+        /// <param name="currency">ISO currency code, 3 letters. USD by default</param> 
+        public void TrackTransaction (string transaction, string name, string sku, decimal price, string currency = "USD") {     
+            transaction = (transaction.Length <= 100) ? transaction : transaction.Substring(0, 100);   
+            EnqueueRequest (string.Format ("t=transaction&ti={0}&tr={1}&cu={2}&ts=0&tt=0",
+                WWW.EscapeURL (transaction),
+                price,
+                WWW.EscapeURL (currency)
+            ));
+            EnqueueRequest (string.Format ("t=item&ti={0}&in={1}&ic={2}&ip={3}&iq=1&cu={4}",
+                WWW.EscapeURL (transaction),
+                WWW.EscapeURL (name),
+                WWW.EscapeURL (sku),
+                price,
+                WWW.EscapeURL (currency)
+            ));            
+    }    
 
         /// <summary>
         /// Track exception event.

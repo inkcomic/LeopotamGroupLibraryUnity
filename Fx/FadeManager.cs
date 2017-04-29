@@ -10,57 +10,45 @@ using UnityEngine;
 
 namespace LeopotamGroup.Fx {
     /// <summary>
-    /// Fade manager for Camera with tag "MainCamera".
+    /// Fade manager.
     /// </summary>
     sealed class FadeManager : UnitySingletonBase {
-        /// <summary>
-        /// Callback for extensions.
-        /// </summary>
-        public event Action<float> OnRender = delegate { };
+        Color _fadeFrom;
 
-        const string ShaderName = "Hidden/LeopotamGroup/Fx/ScreenFade";
+        Color _fadeTo;
 
-        Material _mtrl;
-
-        bool _fadeAudio;
-
-        float _opaque;
-
-        float _startValue;
-
-        float _endValue;
-
-        float _fadeTime;
+        float _invFadeTime;
 
         float _time;
 
         Action _callback;
 
-        int _cameraIndex;
-
         protected override void OnConstruct () {
-            if ((object) _mtrl == null) {
-                _mtrl = new Material (Shader.Find (ShaderName));
-                _mtrl.hideFlags = HideFlags.DontSave;
-            }
-
-            SetFade (0f);
+            useGUILayout = false;
         }
 
-        void LateUpdate () {
-            _cameraIndex = 0;
-            if (_fadeTime <= 0f) {
+        void OnGUI () {
+            if (_invFadeTime <= 0f) {
+                enabled = false;
                 return;
             }
-            _time = Mathf.Clamp01 (_time + Time.deltaTime / _fadeTime);
 
-            _opaque = Mathf.Lerp (_startValue, _endValue, _time);
-            if (_fadeAudio) {
-                AudioListener.volume = 1f - _opaque;
+            if (Event.current.type != EventType.Repaint) {
+                return;
             }
 
+            _time = Mathf.Clamp01 (_time + Time.deltaTime * _invFadeTime);
+            var color = Color.Lerp (_fadeFrom, _fadeTo, _time);
+
+            var savedColor = GUI.color;
+            GUI.color = color;
+            GUI.DrawTexture (
+                new Rect (0, 0, Screen.width, Screen.height),
+                Texture2D.whiteTexture, ScaleMode.StretchToFill);
+            GUI.color = savedColor;
+
             if (_time >= 1f) {
-                if (_opaque <= 0f) {
+                if (color.a <= 0f) {
                     enabled = false;
                 }
                 if (_callback != null) {
@@ -71,60 +59,20 @@ namespace LeopotamGroup.Fx {
             }
         }
 
-        void OnRenderObject () {
-            if (_opaque <= 0f) {
-                return;
-            }
-
-            if (Camera.current.gameObject.scene.IsValid ()) {
-                _cameraIndex++;
-            }
-            if (_cameraIndex == Camera.allCamerasCount) {
-                GL.PushMatrix ();
-                GL.LoadOrtho ();
-                _mtrl.SetPass (0);
-                GL.Begin (GL.QUADS);
-                GL.Color (Color.Lerp (Color.clear, Color.black, _opaque));
-                GL.Vertex3 (0f, 0f, 0f);
-                GL.Vertex3 (0f, 1f, 0f);
-                GL.Vertex3 (1f, 1f, 0f);
-                GL.Vertex3 (1f, 0f, 0f);
-                GL.End ();
-                GL.PopMatrix ();
-
-                OnRender (_opaque);
-            }
-        }
-
         /// <summary>
-        /// Set current fade status.
+        /// Process fading from one color to another as fullscreen overlayed quad.
         /// </summary>
-        /// <param name="opaque">Opaque value [0, 1], 0 - full transparent, 1 - full opaque.</param>
-        /// <param name="fadeAudio">Fade audio sources too.</param>
-        public void SetFade (float opaque, bool fadeAudio = false) {
-            _opaque = Mathf.Clamp01 (opaque);
-            if (fadeAudio) {
-                AudioListener.volume = 1f - _opaque;
-            }
-            _fadeTime = 0f;
-            enabled = _opaque > 0f;
-        }
-
-        /// <summary>
-        /// Start fading to target fade status.
-        /// </summary>
-        /// <param name="toOpaque">Target opaque status.</param>
+        /// <param name="start">Source opaque status.</param>
+        /// <param name="end">Target opaque status.</param>
         /// <param name="time">Time of fading.</param>
         /// <param name="onSuccess">Optional callback on success ending of fading.</param>
-        /// <param name="fadeAudio">Fade audio too.</param>
-        public void StartFadeTo (float toOpaque, float time, Action onSuccess = null, bool fadeAudio = false) {
-            _fadeAudio = fadeAudio;
-            _startValue = _opaque;
-            _endValue = toOpaque;
-            _fadeTime = time;
+        public void Process (Color start, Color end, float time, Action onSuccess = null) {
+            _fadeFrom = start;
+            _fadeTo = end;
             _callback = onSuccess;
             _time = 0f;
-            enabled = Mathf.Abs (_startValue - _endValue) > float.Epsilon;
+            _invFadeTime = time > 0f ? 1f / time : 0f;
+            enabled = _invFadeTime > 0f;
         }
     }
 }

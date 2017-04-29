@@ -13,7 +13,7 @@ namespace LeopotamGroup.SystemUi.Atlases.UnityEditors {
     static class EditorIntegration {
         const string Title = "SpriteAtlas packer";
 
-        [MenuItem ("Assets/LeopotamGroup/SystemUI/Create new atlas", false, 1)]
+        [MenuItem ("Assets/LeopotamGroup/SystemUi/Atlases/Create new atlas", false, 1)]
         static void CreateAtlas () {
             var path = AssetDatabase.GetAssetPath (Selection.activeObject);
             if (!string.IsNullOrEmpty (path) && AssetDatabase.Contains (Selection.activeObject)) {
@@ -32,8 +32,8 @@ namespace LeopotamGroup.SystemUi.Atlases.UnityEditors {
             AssetDatabase.Refresh ();
         }
 
-        [MenuItem ("Assets/LeopotamGroup/SystemUI/Update all atlases", false, 100)]
-        static void UpdateAtlases () {
+        [MenuItem ("Assets/LeopotamGroup/SystemUi/Atlases/Rebuild all atlases", false, 2)]
+        static void RebuildAtlases () {
             var sprites = AssetDatabase.FindAssets ("t:sprite");
             var spriteList = new Dictionary<string, List<Sprite>> ();
             string assetPath;

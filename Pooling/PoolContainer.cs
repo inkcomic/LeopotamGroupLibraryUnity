@@ -4,11 +4,9 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using LeopotamGroup.Collections;
 using UnityEngine;
-
-// ReSharper disable RedundantCast
-// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.Pooling {
     /// <summary>
@@ -23,22 +21,29 @@ namespace LeopotamGroup.Pooling {
 
         FastStack<IPoolObject> _store = new FastStack<IPoolObject> (32);
 
-        Object _cachedAsset;
+        UnityEngine.Object _cachedAsset;
 
         Vector3 _cachedScale;
 
         bool _needToAddPoolObject;
 
+        Type _overridedType;
+
         bool LoadPrefab () {
             var go = Resources.Load<GameObject> (_prefabPath);
             if (go == null) {
-                Debug.LogWarning ("Cant load asset " + _prefabPath);
+                Debug.LogWarning ("Cant load asset " + _prefabPath, gameObject);
                 return false;
             }
             _cachedAsset = go.GetComponent (typeof (IPoolObject));
             _needToAddPoolObject = (object) _cachedAsset == null;
             if (_needToAddPoolObject) {
                 _cachedAsset = go;
+            } else {
+                if (_cachedAsset.GetType () != _overridedType) {
+                    Debug.LogWarning ("Prefab already contains another IPoolObject-component", gameObject);
+                    return false;
+                }
             }
 
             _cachedScale = go.transform.localScale;
@@ -74,7 +79,7 @@ namespace LeopotamGroup.Pooling {
                 isNew = false;
             } else {
                 obj = _needToAddPoolObject ?
-                    ((GameObject) Instantiate (_cachedAsset)).AddComponent<PoolObject> () :
+                    (IPoolObject) ((GameObject) Instantiate (_cachedAsset)).AddComponent (_overridedType) :
                     (IPoolObject) Instantiate (_cachedAsset);
                 obj.PoolContainer = this;
                 var tr = obj.PoolTransform;
@@ -97,7 +102,7 @@ namespace LeopotamGroup.Pooling {
             if ((object) obj != null) {
 #if UNITY_EDITOR
                 if ((object) obj.PoolContainer != (object) this) {
-                    Debug.LogWarning ("Invalid obj to recycle", (Object) obj);
+                    Debug.LogWarning ("Invalid obj to recycle", (UnityEngine.Object) obj);
                     return;
                 }
 #endif
@@ -112,23 +117,42 @@ namespace LeopotamGroup.Pooling {
         }
 
         /// <summary>
+        /// /// Creates new pool container for specified prefab.
+        /// </summary>
+        /// <returns>Created pool container.</returns>
+        /// <param name="prefabPath">Prefab path at Resources folder.</param>
+        /// <param name="itemsRoot">Root for new items.</param>
+        /// <param name="overridedType">Overrided type of pool object.
+        /// If null - PoolObject-type will be used or exist IPool component on prefab.</param>
+        public static PoolContainer CreatePool<T> (string prefabPath, Transform itemsRoot = null) where T : IPoolObject {
+            return CreatePool (prefabPath, itemsRoot, typeof (T));
+        }
+
+        /// <summary>
         /// Creates new pool container for specified prefab.
         /// </summary>
         /// <returns>Created pool container.</returns>
         /// <param name="prefabPath">Prefab path at Resources folder.</param>
         /// <param name="itemsRoot">Root for new items.</param>
-        public static PoolContainer CreatePool (string prefabPath, Transform itemsRoot = null) {
+        /// <param name="overridedType">Overrided type of pool object.
+        /// If null - PoolObject-type will be used or exist IPool component on prefab.</param>
+        public static PoolContainer CreatePool (string prefabPath, Transform itemsRoot = null, System.Type overridedType = null) {
             if (string.IsNullOrEmpty (prefabPath)) {
                 return null;
             }
+            if (overridedType != null && !typeof (IPoolObject).IsAssignableFrom (overridedType)) {
+                Debug.LogWarningFormat ("Invalid IPoolObject-type \"{0}\" for prefab \"{1}\"", overridedType, prefabPath);
+                return null;
+            }
             var container =
-                    new GameObject (
+                new GameObject (
 #if UNITY_EDITOR
-                        "_POOL_" + prefabPath
+                    "_POOL_" + prefabPath
 #endif
-                    ).AddComponent<PoolContainer> ();
+                ).AddComponent<PoolContainer> ();
             container._prefabPath = prefabPath;
             container._itemsRoot = itemsRoot;
+            container._overridedType = overridedType ?? typeof (PoolObject);
             return container;
         }
     }

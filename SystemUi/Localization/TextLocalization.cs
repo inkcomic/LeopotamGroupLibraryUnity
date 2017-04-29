@@ -24,6 +24,13 @@ namespace LeopotamGroup.SystemUi.Localization {
             OnLocalize ();
         }
 
+        public void SetToken (string token) {
+            if (string.CompareOrdinal (_token, token) != 0) {
+                _token = token;
+                OnLocalize ();
+            }
+        }
+
         [Preserve]
         void OnLocalize () {
             if (!string.IsNullOrEmpty (_token)) {

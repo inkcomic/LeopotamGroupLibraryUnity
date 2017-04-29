@@ -77,5 +77,46 @@ namespace LeopotamGroup.Serialization {
             }
             return list;
         }
+
+        /// <summary>
+        /// Deserialize csv data from raw string source as array - all columns will be used as common data.
+        /// </summary>
+        /// <returns>Deserialized list of columns data.</returns>
+        /// <param name="data">Raw text data.</param>
+        /// <param name="list">Target list if specified (useful for decrease GC allocations).</param>
+        public List<string[]> DeserializeAsArray (
+            string data, List<string[]> list = null) {
+            if (list == null) {
+                list = new List<string[]> ();
+            }
+            list.Clear ();
+
+            var headerLen = -1;
+            using (var reader = new StringReader (data)) {
+                while (reader.Peek () != -1) {
+                    ParseLine (reader.ReadLine ());
+                    if (_tokens.Count == 0) {
+                        continue;
+                    }
+                    if (headerLen == -1) {
+                        headerLen = _tokens.Count;
+                        if (headerLen < 1) {
+#if UNITY_EDITOR
+                            Debug.LogWarning ("Invalid csv header.");
+#endif
+                            break;
+                        }
+                    }
+                    if (_tokens.Count != headerLen) {
+#if UNITY_EDITOR
+                        Debug.LogWarning ("Invalid csv line, skipping.");
+#endif
+                        continue;
+                    }
+                    list.Add (_tokens.ToArray ());
+                }
+            }
+            return list;
+        }
     }
 }

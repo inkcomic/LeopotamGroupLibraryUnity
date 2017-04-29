@@ -21,30 +21,35 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             Fonts = 2,
 
-            Models = 4,
+            Images = 4,
 
-            Plugins = 8,
+            Models = 8,
 
-            Prefabs = 16,
+            Plugins = 16,
 
-            Resources = 32,
+            Prefabs = 32,
 
-            Scenes = 64,
+            Resources = 64,
 
-            Scripts = 128,
+            Scenes = 128,
 
-            Shaders = 256,
+            Scripts = 256,
 
-            Sounds = 512,
+            Shaders = 512,
 
-            StreamingAssets = 1024,
+            Sounds = 1024,
 
-            Textures = 2048,
+            StreamingAssets = 2048,
         }
 
         static readonly Dictionary<int, List<string>> DefinedPaths = new Dictionary<int, List<string>> {
-            { (int) Options.Scripts, new List<string> { "Editor" } },
-            { (int) Options.Textures, new List<string> { "AppIcon", "UI" } }
+            {
+                (int) Options.Animations, new List<string> { "Sources", "Controllers" }
+            },
+            {
+                (int) Options.Images,
+                new List<string> { "AppIcon", "Ui", "Ui/Sources" }
+            }
         };
 
         const string Title = "Project folders generator";
@@ -55,7 +60,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string DefaultRootProjectFolder = "Client";
 
-        const string DefaultCvsFileName = ".keep";
+        const string DefaultCvsFileName = "RemoveMe.txt";
 
         string _projectRootFolder;
 
@@ -88,7 +93,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             _cvsFileName = DefaultCvsFileName;
         }
 
-        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_optionNames == null) {
                 _optionNames = Enum.GetNames (typeof (Options));

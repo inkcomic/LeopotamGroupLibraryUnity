@@ -106,8 +106,14 @@ namespace LeopotamGroup.Serialization {
                 _sb.Append (((float) Convert.ChangeType (obj, typeof (float))).ToStringFast ());
                 return;
             }
+            // enum
             if (objType.IsEnum) {
                 _sb.Append (Convert.ChangeType (obj, typeof (int)));
+                return;
+            }
+            // boolean
+            if (objType == typeof (bool)) {
+                _sb.Append ((bool) obj ? "true" : "false");
                 return;
             }
 
@@ -180,7 +186,9 @@ namespace LeopotamGroup.Serialization {
                         if (isComma) {
                             _sb.Append (",");
                         }
+                        _sb.Append ("\"");
                         _sb.Append (prop.Key);
+                        _sb.Append ("\"");
                         _sb.Append (":");
                         SerializeMember (val);
                         isComma = true;
@@ -223,7 +231,7 @@ namespace LeopotamGroup.Serialization {
 
         class Reader {
             static bool IsWordBreak (int c) {
-                return (c >= 0x01 && c <= 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x5e) || (c == 0x60) || (c >= 0x7b);
+                return (c >= 0x01 && c <= 0x2a) || (c == 0x2c) || (c == 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x5e) || (c == 0x60) || (c >= 0x7b);
             }
 
             enum JsonToken {
@@ -589,7 +597,7 @@ namespace LeopotamGroup.Serialization {
         }
 
         sealed class TypesCache {
-            public class TypeDesc {
+            public sealed class TypeDesc {
                 public readonly Dictionary<string, FieldInfo> Fields = new Dictionary<string, FieldInfo> (8);
 
                 public readonly Dictionary<string, PropertyInfo> Properties = new Dictionary<string, PropertyInfo> (8);
@@ -599,17 +607,22 @@ namespace LeopotamGroup.Serialization {
 
             readonly Dictionary<Type, TypeDesc> _types = new Dictionary<Type, TypeDesc> (32);
 
-            readonly StringBuilder _sb = new StringBuilder (256);
-
             static readonly object SyncLock = new object ();
 
             public void SetValue (Type type, string name, object instance, object val) {
                 var desc = GetCache (type);
-                if (desc.Fields.ContainsKey (name)) {
-                    desc.Fields[name].SetValue (instance, val);
+                FieldInfo fi;
+                if (desc.Fields.TryGetValue (name, out fi)) {
+                    fi.SetValue (
+                        instance,
+                        fi.FieldType.IsEnum && val is string ? Enum.Parse (fi.FieldType, (string) val) : val);
                 } else {
-                    if (desc.Properties.ContainsKey (name)) {
-                        desc.Properties[name].SetValue (instance, val, null);
+                    PropertyInfo pi;
+                    if (desc.Properties.TryGetValue (name, out pi)) {
+                        pi.SetValue (
+                            instance,
+                            pi.PropertyType.IsEnum && val is string ? Enum.Parse (pi.PropertyType, (string) val) : val,
+                            null);
                     }
                 }
             }
@@ -649,13 +662,15 @@ namespace LeopotamGroup.Serialization {
                                 } else {
                                     name = f.Name;
                                 }
-                                _sb.Length = 0;
-                                _sb.Append (name);
-                                desc.Fields.Add (_sb.ToString (), f);
+                                try {
+                                    desc.Fields.Add (name, f);
+                                } catch {
+                                    throw new ArgumentException ("Duplicated field name", name);
+                                }
                             }
                         }
                         foreach (var p in type.GetProperties ()) {
-                            if (p.CanRead && p.CanWrite && !Attribute.IsDefined (p, ignoreType)) {
+                            if (p.CanRead && p.CanWrite && Attribute.IsDefined (p, nameType) && !Attribute.IsDefined (p, ignoreType)) {
                                 if (string.CompareOrdinal (p.Name, "Item") != 0 || p.GetIndexParameters ().Length == 0) {
                                     if (Attribute.IsDefined (p, nameType)) {
                                         name = ((JsonNameAttribute) Attribute.GetCustomAttribute (p, nameType)).Name;
@@ -665,9 +680,14 @@ namespace LeopotamGroup.Serialization {
                                     } else {
                                         name = p.Name;
                                     }
-                                    _sb.Length = 0;
-                                    _sb.Append (name);
-                                    desc.Properties.Add (_sb.ToString (), p);
+                                    try {
+                                        if (desc.Fields.ContainsKey (name)) {
+                                            throw new Exception ();
+                                        }
+                                        desc.Properties.Add (name, p);
+                                    } catch {
+                                        throw new ArgumentException ("Duplicated property name", name);
+                                    }
                                 }
                             }
                         }

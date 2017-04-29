@@ -29,6 +29,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
             new Vector2i (1280, 800),
             new Vector2i (1920, 1080),
             new Vector2i (2048, 1536),
+            new Vector2i (2732, 2048),
         };
 
         const string FileNameMask = "Screenshot_{0}_{1}x{2}.png";
@@ -39,7 +40,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
         [MenuItem ("Window/LeopotamGroupLibrary/Capture screenshots...")]
         public static void Capture () {
             if (!Application.isPlaying) {
-                EditorUtility.DisplayDialog ("ScreenCapturer", "You can capture shots only at play more!", "Close");
+                EditorUtility.DisplayDialog ("ScreenCapturer", "You can capture shots only at play mode!", "Close");
                 return;
             }
             var go = new GameObject ("_CAPTURER");
@@ -54,7 +55,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
         }
 
         IEnumerator Start () {
-            var path = EditorUtility.OpenFolderPanel ("Select target folder to screenshots", string.Empty, string.Empty);
+            var path = EditorUtility.SaveFolderPanel ("Select target folder to screenshots", string.Empty, string.Empty);
             if (string.IsNullOrEmpty (path) || !Directory.Exists (path)) {
                 FinishCapturing ("Invalid path");
                 yield break;
@@ -130,7 +131,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
                 _gvsInstance = instanceProp.GetValue (null, null);
 
                 var gvsType = typeof (Editor).Assembly.GetType ("UnityEditor.GameViewSize");
-                _gvsCtor = gvsType.GetConstructor (new[] { typeof (int), typeof (int), typeof (int), typeof (string) });
+                _gvsCtor = gvsType.GetConstructor (new [] { typeof (int), typeof (int), typeof (int), typeof (string) });
             }
 
             static object GetCurrentGroup () {
@@ -149,7 +150,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
             public static int AddCustomPreset (int width, int height, string text) {
                 var grp = GetCurrentGroup ();
                 var newSize = _gvsCtor.Invoke (new object[] { 1, width, height, text });
-                _gvgAddCustomSize.Invoke (grp, new[] { newSize });
+                _gvgAddCustomSize.Invoke (grp, new [] { newSize });
                 return (int) _gvgGetTotalCount.Invoke (grp, null) - 1;
             }
 
