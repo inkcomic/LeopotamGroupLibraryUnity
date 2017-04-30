@@ -16,7 +16,11 @@ namespace LeopotamGroup.Fx {
 
         Second = 1,
 
-        Third = 2
+        Third = 2,
+
+        Fourth = 3,
+
+        Max = Fourth
     }
 
     /// <summary>
@@ -58,11 +62,12 @@ namespace LeopotamGroup.Fx {
             DontDestroyOnLoad (gameObject);
 
             _music = gameObject.AddComponent<AudioSource> ();
-            _fxes = new[] {
-                gameObject.AddComponent<AudioSource> (),
-                gameObject.AddComponent<AudioSource> (),
-                gameObject.AddComponent<AudioSource> ()
-            };
+
+            _fxes = new AudioSource[(int) SoundFxChannel.Max + 1];
+            var go = gameObject;
+            for (var i = 0; i < _fxes.Length; i++) {
+                _fxes[i] = go.AddComponent<AudioSource> ();
+            }
 
             _music.loop = false;
             _music.playOnAwake = false;
