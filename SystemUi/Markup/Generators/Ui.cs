@@ -50,10 +50,9 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             go.AddComponent<GraphicRaycaster> ();
 
             if (Application.isPlaying) {
-                var es = GameObject.FindObjectOfType<EventSystem> ();
+                var es = Object.FindObjectOfType<EventSystem> ();
                 if ((object) es == null) {
                     es = new GameObject ("EventSystem").AddComponent<EventSystem> ();
-                    es.gameObject.hideFlags = HideFlags.DontSave;
                     es.gameObject.AddComponent<StandaloneInputModule> ();
                 }
             }
