@@ -81,6 +81,10 @@ namespace LeopotamGroup.Threading {
             OnWorkerProcessOutQueueAtForeground ();
         }
 
+        protected virtual void OnEnqueueItemAtForeground (T item) {
+            _inQueue.Add (item);
+        }
+
         /// <summary>
         /// Method for custom reaction on thread start. Important - will be called at background thread!
         /// </summary>
@@ -175,7 +179,7 @@ namespace LeopotamGroup.Threading {
 #endif
                     return false;
                 }
-                _inQueue.Add (item);
+                OnEnqueueItemAtForeground (item);
             }
             return true;
         }
