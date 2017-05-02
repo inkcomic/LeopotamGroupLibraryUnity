@@ -18,6 +18,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedFontStyle = "fontStyle".GetStableHashCode ();
 
+        static readonly int HashedAlign = "align".GetStableHashCode ();
+
         static readonly int HashedLocalize = "localize".GetStableHashCode ();
 
         /// <summary>
@@ -63,6 +65,30 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                             break;
                     }
                 }
+            }
+
+            attrValue = node.GetAttribute (HashedAlign);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
+                var alignHor = 1;
+                var alignVer = 3;
+                for (var i = 0; i < parts.Length; i++) {
+                    switch (parts[i]) {
+                        case "left":
+                            alignHor = 0;
+                            break;
+                        case "right":
+                            alignHor = 2;
+                            break;
+                        case "top":
+                            alignVer = 0;
+                            break;
+                        case "bottom":
+                            alignVer = 6;
+                            break;
+                    }
+                }
+                align = (TextAnchor) (alignHor + alignVer);
             }
 
             attrValue = node.GetAttribute (HashedLocalize);

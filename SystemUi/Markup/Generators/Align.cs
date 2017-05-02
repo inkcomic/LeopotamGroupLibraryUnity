@@ -38,7 +38,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                         case "top":
                             offset.y = 1f;
                             break;
-                        case "down":
+                        case "bottom":
                             offset.y = 0f;
                             break;
                     }
