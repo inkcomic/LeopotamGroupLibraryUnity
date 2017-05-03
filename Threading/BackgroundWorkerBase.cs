@@ -85,6 +85,8 @@ namespace LeopotamGroup.Threading {
             _inQueue.Add (item);
         }
 
+        protected virtual void OnClearItemAtForeground (T item) { }
+
         /// <summary>
         /// Method for custom reaction on thread start. Important - will be called at background thread!
         /// </summary>
@@ -169,6 +171,15 @@ namespace LeopotamGroup.Threading {
                 _outQueue.Clear ();
             }
             OnWorkerStopInBackground ();
+        }
+
+        public void ClearInputQueue () {
+            lock (_inSyncObj) {
+                for (var i = _inQueue.Count - 1; i >= 0; i--) {
+                    OnClearItemAtForeground (_inQueue[i]);
+                }
+                _inQueue.Clear ();
+            }
         }
 
         public bool EnqueueItem (T item) {
