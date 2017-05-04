@@ -207,5 +207,26 @@ namespace LeopotamGroup.Math {
             }
             return seed;
         }
+
+        /// <summary>
+        /// Fill array with specified value.
+        /// </summary>
+        /// <param name="array">Target array.</param>
+        /// <param name="value">Value.</param> <summary>
+        /// <param name="length">Amount.</param>
+        public static void Fill<T> (this T[] array, T value, int length) {
+            if (array == null || array.Length < length) {
+                throw new ArgumentException ();
+            }
+            if (length > 0) {
+                array[0] = value;
+                var lenHalf = length >> 1;
+                int i;
+                for (i = 1; i < lenHalf; i <<= 1) {
+                    Array.Copy (array, 0, array, i, i);
+                }
+                Array.Copy (array, 0, array, i, length - i);
+            }
+        }
     }
 }
