@@ -212,7 +212,7 @@ namespace LeopotamGroup.Math {
         /// Fill array with specified value.
         /// </summary>
         /// <param name="array">Target array.</param>
-        /// <param name="value">Value.</param> <summary>
+        /// <param name="value">Value.</param>
         /// <param name="length">Amount.</param>
         public static void Fill<T> (this T[] array, T value, int length) {
             if (array == null || array.Length < length) {
