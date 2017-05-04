@@ -46,6 +46,13 @@ namespace LeopotamGroup.Threading {
             get { lock (_inSyncObj) { return _inQueue.Count; } }
         }
 
+        /// <summary>
+        /// Length of output data queue.
+        /// </summary>
+        protected int OutputQueueLength {
+            get { lock (_outSyncObj) { return _outQueue.Count; } }
+        }
+
         bool _isWorkerStarted;
 
         bool _dontSleepAfterItemProcess;
