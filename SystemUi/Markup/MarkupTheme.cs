@@ -86,6 +86,24 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         float _scrollbarWidth = 16f;
 
+        [SerializeField]
+        Sprite _inputBackgroundSprite;
+
+        [SerializeField]
+        Color _inputBackgroundColor = Color.white;
+
+        [SerializeField]
+        Color _inputPlaceholderColor = Color.gray;
+
+        [SerializeField]
+        Color _inputSelectionColor = new Color32 (168, 206, 255, 192);
+
+        [SerializeField]
+        FontStyle _inputPlaceholderStyle = FontStyle.Italic;
+
+        [SerializeField]
+        float _inputMargin = 10f;
+
         public enum ButtonState {
             Normal,
             Pressed,
@@ -107,6 +125,12 @@ namespace LeopotamGroup.SystemUi.Markup {
         public enum ScrollbarState {
             Background,
             Handle
+        }
+
+        public enum InputState {
+            Background,
+            Placeholder,
+            Selection
         }
 
         public string GetName () {
@@ -226,6 +250,31 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public float GetScrollbarWidth () {
             return _scrollbarWidth;
+        }
+
+        public Sprite GetInputSprite () {
+            return _inputBackgroundSprite;
+        }
+
+        public Color GetInputColor (InputState state) {
+            switch (state) {
+                case InputState.Background:
+                    return _inputBackgroundColor;
+                case InputState.Placeholder:
+                    return _inputPlaceholderColor;
+                case InputState.Selection:
+                    return _inputSelectionColor;
+                default:
+                    return Color.black;
+            }
+        }
+
+        public float GetInputMargin () {
+            return _inputMargin;
+        }
+
+        public FontStyle GetInputPlaceholderStyle () {
+            return _inputPlaceholderStyle;
         }
     }
 }

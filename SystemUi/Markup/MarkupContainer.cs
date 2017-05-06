@@ -61,6 +61,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             _generators.Add ("align".GetStableHashCode (), AlignNode.Create);
             _generators.Add ("box".GetStableHashCode (), BoxNode.Create);
             _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
+            _generators.Add ("input".GetStableHashCode (), InputNode.Create);
             _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
             _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
             _generators.Add ("mask2d".GetStableHashCode (), Mask2dNode.Create);

@@ -84,15 +84,17 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
-        /// Process "color" attribute of node.
+        /// Process "color" attribute of node. If not found - "false" will be returned, "true" otherwise.
         /// </summary>
         /// <param name="widget">Taget widget.</param>
         /// <param name="node">Xml node.</param>
-        public static void SetColor (Graphic widget, XmlNode node) {
+        public static bool SetColor (Graphic widget, XmlNode node) {
             var attrValue = node.GetAttribute (HashedColor);
             if (!string.IsNullOrEmpty (attrValue)) {
                 widget.color = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
+                return true;
             }
+            return false;
         }
 
         /// <summary>

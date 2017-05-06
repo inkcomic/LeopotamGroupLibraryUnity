@@ -6,12 +6,13 @@
 
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
+using LeopotamGroup.SystemUi.Actions;
 using LeopotamGroup.SystemUi.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
-    static class TextNode {
+    static class InputNode {
         static readonly int HashedFontName = "fontName".GetStableHashCode ();
 
         static readonly int HashedFontSize = "fontSize".GetStableHashCode ();
@@ -22,22 +23,40 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedLocalize = "localize".GetStableHashCode ();
 
+        static readonly int HashedOnChange = "onChange".GetStableHashCode ();
+
         /// <summary>
-        /// Create "text" node. If children supported - GameObject container for them should be returned.
+        /// Create "input" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
         public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            widget.name = "text";
+            widget.name = "input";
 #endif
-            var txt = widget.gameObject.AddComponent<Text> ();
+            var input = widget.gameObject.AddComponent<InputField> ();
             string attrValue;
             string font = null;
-            var align = TextAnchor.MiddleCenter;
+            var align = TextAnchor.MiddleLeft;
             var style = FontStyle.Normal;
             var size = 24;
+            var isInteractive = false;
+
+            var theme = MarkupUtils.GetTheme (node, container);
+
+            var img = widget.gameObject.AddComponent<Image> ();
+            img.type = Image.Type.Sliced;
+            img.sprite = theme.GetInputSprite ();
+            img.color = theme.GetInputColor (MarkupTheme.InputState.Background);
+
+            var ph = MarkupUtils.CreateUiObject (null, widget);
+            var phText = ph.gameObject.AddComponent<Text> ();
+            phText.fontStyle = FontStyle.Italic;
+
+            var txt = MarkupUtils.CreateUiObject (null, widget);
+            var inText = txt.gameObject.AddComponent<Text> ();
+            inText.supportRichText = false;
 
             attrValue = node.GetAttribute (HashedFontName);
             if (!string.IsNullOrEmpty (attrValue)) {
@@ -90,24 +109,62 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedLocalize);
             if (!string.IsNullOrEmpty (attrValue)) {
-                widget.gameObject.AddComponent<TextLocalization> ().SetToken (attrValue);
+                phText.gameObject.AddComponent<TextLocalization> ().SetToken (attrValue);
             } else {
-                txt.text = node.Value;
+                phText.text = node.Value;
             }
 
-            txt.alignment = align;
-            txt.font = container.GetFont (font);
-            txt.fontStyle = style;
-            txt.fontSize = size;
+            var margin = theme.GetInputMargin ();
+            var marginMin = new Vector2 (margin, margin);
+            var marginMax = -marginMin;
 
-            if (!MarkupUtils.SetColor (txt, node)) {
-                txt.color = Color.black;
+            ph.anchorMin = Vector2.zero;
+            ph.anchorMax = Vector2.one;
+            ph.offsetMin = marginMin;
+            ph.offsetMax = marginMax;
+
+            txt.anchorMin = Vector2.zero;
+            txt.anchorMax = Vector2.one;
+            txt.offsetMin = marginMin;
+            txt.offsetMax = marginMax;
+
+            phText.raycastTarget = false;
+            inText.raycastTarget = false;
+
+            phText.alignment = align;
+            inText.alignment = align;
+
+            phText.font = container.GetFont (font);
+            inText.font = phText.font;
+
+            phText.color = theme.GetInputColor (MarkupTheme.InputState.Placeholder);
+            if (!MarkupUtils.SetColor (inText, node)) {
+                inText.color = Color.black;
             }
+
+            phText.fontStyle = theme.GetInputPlaceholderStyle ();
+            inText.fontStyle = style;
+
+            phText.fontSize = size;
+            inText.fontSize = size;
+
+            input.targetGraphic = img;
+            input.transition = Selectable.Transition.None;
+            input.placeholder = phText;
+            input.textComponent = inText;
+            input.selectionColor = theme.GetInputColor (MarkupTheme.InputState.Selection);
+
             MarkupUtils.SetSize (widget, node);
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
-            txt.raycastTarget = MarkupUtils.ValidateInteractive (widget, node);
+
+            attrValue = node.GetAttribute (HashedOnChange);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                widget.gameObject.AddComponent<UiInputAction> ().SetGroup (attrValue);
+                isInteractive = true;
+            }
+            input.interactable = isInteractive;
 
             return widget;
         }
