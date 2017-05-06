@@ -32,6 +32,14 @@ namespace LeopotamGroup.Scripting {
         }
 
         /// <summary>
+        /// Show line info in error lines. True by default.
+        /// </summary>
+        /// <param name="state"></param>
+        public void ShowLineInfo (bool state) {
+            _parser.ShowLineInfo = state;
+        }
+
+        /// <summary>
         /// Load script source code. Old Vm state will be reset.
         /// </summary>
         /// <param name="source">Source.</param>
@@ -44,6 +52,7 @@ namespace LeopotamGroup.Scripting {
             if (err != null) {
                 return err;
             }
+            _parser.Vars.Reset ();
             err = _parser.Parse ();
             if (err != null) {
                 return err;
