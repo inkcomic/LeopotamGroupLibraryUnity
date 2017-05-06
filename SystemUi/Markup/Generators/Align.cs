@@ -23,32 +23,37 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             widget.name = "align";
 #endif
             var rt = widget.GetComponent<RectTransform> ();
-            var offset = Vector2.one * 0.5f;
+            var deltaSize = Vector2.zero;
+            var anchorMin = Vector2.zero;
+            var anchorMax = Vector2.one;
             var attrValue = node.GetAttribute (HashedSide);
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = MarkupUtils.SplitAttrValue (attrValue);
                 for (var i = 0; i < parts.Length; i++) {
                     switch (parts[i]) {
                         case "left":
-                            offset.x = 0f;
+                            anchorMax.x = 0f;
+                            deltaSize.x = 1f;
                             break;
                         case "right":
-                            offset.x = 1f;
+                            anchorMin.x = 1f;
+                            deltaSize.x = 1f;
                             break;
                         case "top":
-                            offset.y = 1f;
+                            anchorMin.y = 1f;
+                            deltaSize.y = 1f;
                             break;
                         case "bottom":
-                            offset.y = 0f;
+                            anchorMax.y = 0f;
+                            deltaSize.y = 1f;
                             break;
                     }
                 }
             }
 
-            rt.anchorMin = offset;
-            rt.anchorMax = offset;
-            rt.offsetMin = -Vector2.one * 0.5f;
-            rt.offsetMax = -rt.offsetMin;
+            rt.anchorMin = anchorMin;
+            rt.anchorMax = anchorMax;
+            rt.sizeDelta = deltaSize;
 
             MarkupUtils.SetHidden (widget, node);
 
