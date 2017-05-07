@@ -101,7 +101,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// Execute script code line. Code should be expression without function declaration, etc.
         /// </summary>
         /// <param name="value">Script code.</param>
-        protected void ExecuteCommand (string value) {
+        protected virtual void ExecuteCommand (string value) {
             if (!string.IsNullOrEmpty (value)) {
                 var err = _vm.Load (string.Format ("function _devConsoleMain(){{return {0};}}", value));
                 if (!string.IsNullOrEmpty (err)) {
@@ -123,7 +123,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// </summary>
         /// <param name="type">Type of message (Log, Warning, Error).</param>
         /// <param name="line">Text of message.</param>
-        protected void AppendLine (LogType type, string line) {
+        protected virtual void AppendLine (LogType type, string line) {
             if (string.IsNullOrEmpty (line)) {
                 return;
             }
