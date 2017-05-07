@@ -8,7 +8,7 @@
         <input name="input" color="ffffff" offset=",-424" size=",48" onChange="DeveloperConsole">Enter command here...</input>
         <align side="right,top">
             <button name="close" offset="-64,-424" size="128,48" onClick="DeveloperConsole">
-                <text>Close</text>
+                <text color="ff0000">Close</text>
             </button>
         </align>
     </align>

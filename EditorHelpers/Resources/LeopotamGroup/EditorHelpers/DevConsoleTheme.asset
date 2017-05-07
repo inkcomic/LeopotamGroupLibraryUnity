@@ -16,9 +16,9 @@ MonoBehaviour:
   _buttonPressedSprite: {fileID: 0}
   _buttonHighlightedSprite: {fileID: 0}
   _buttonDisabledSprite: {fileID: 0}
-  _buttonNormalColor: {r: 1, g: 1, b: 1, a: 1}
-  _buttonPressedColor: {r: 1, g: 1, b: 1, a: 1}
-  _buttonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+  _buttonNormalColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _buttonPressedColor: {r: 1, g: 0.5, b: 0.5, a: 1}
+  _buttonHighlightedColor: {r: 1, g: 0.78431374, b: 0.78431374, a: 1}
   _buttonDisabledColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _sliderBackgroundSprite: {fileID: 0}
   _sliderForegroundSprite: {fileID: 0}
