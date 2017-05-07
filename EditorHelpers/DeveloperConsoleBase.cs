@@ -13,6 +13,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace LeopotamGroup.EditorHelpers {
+    /// <summary>
+    /// Base class for developer UI console.
+    /// </summary>
     internal abstract class DeveloperConsoleBase : UnitySingletonBase {
         const string MarkupSchema = "LeopotamGroup/EditorHelpers/DevConsole";
 
@@ -24,11 +27,9 @@ namespace LeopotamGroup.EditorHelpers {
 
         const string MarkupInputName = "input";
 
-        const int MaxLines = 30;
-
         const float CloseButtonWidth = 128f;
 
-        ScriptVm _vm = new ScriptVm ();
+        ScriptVm _vm;
 
         MarkupContainer _markup;
 
@@ -40,7 +41,7 @@ namespace LeopotamGroup.EditorHelpers {
 
         bool _isVisible;
 
-        string[] _logLines = new string[MaxLines];
+        string[] _logLines;
 
         int _linesCount;
 
@@ -48,6 +49,8 @@ namespace LeopotamGroup.EditorHelpers {
 
         protected override void OnConstruct () {
             base.OnConstruct ();
+            _logLines = new string[GetMaxLines ()];
+            _vm = new ScriptVm ();
             _vm.ShowLineInfo (false);
             OnRegisterFunctions (_vm);
             _onDevConsoleId = "DeveloperConsole".GetHashCode ();
@@ -73,6 +76,13 @@ namespace LeopotamGroup.EditorHelpers {
             Singleton.Get<UnityEventBus> ().Subscribe<UiClickActionData> (OnClose);
         }
 
+        /// <summary>
+        /// Get max amount of lines in log. Should be constant during all calls!
+        /// </summary>
+        protected virtual int GetMaxLines () {
+            return 30;
+        }
+
         bool OnInputEnd (UiInputEndActionData arg) {
             if (arg.GroupId == _onDevConsoleId && Input.GetButton ("Submit")) {
                 ExecuteCommand (arg.Value);
@@ -87,7 +97,11 @@ namespace LeopotamGroup.EditorHelpers {
             return false;
         }
 
-        void ExecuteCommand (string value) {
+        /// <summary>
+        /// Execute script code line. Code should be expression without function declaration, etc.
+        /// </summary>
+        /// <param name="value">Script code.</param>
+        protected void ExecuteCommand (string value) {
             if (!string.IsNullOrEmpty (value)) {
                 var err = _vm.Load (string.Format ("function _devConsoleMain(){{return {0};}}", value));
                 if (!string.IsNullOrEmpty (err)) {
@@ -104,6 +118,11 @@ namespace LeopotamGroup.EditorHelpers {
             }
         }
 
+        /// <summary>
+        /// Append message to log. Multiline message will be splitted automatically.
+        /// </summary>
+        /// <param name="type">Type of message (Log, Warning, Error).</param>
+        /// <param name="line">Text of message.</param>
         protected void AppendLine (LogType type, string line) {
             if (string.IsNullOrEmpty (line)) {
                 return;
@@ -120,7 +139,7 @@ namespace LeopotamGroup.EditorHelpers {
             } else {
                 line = string.Format ("> {0}", line);
             }
-            if (_linesCount == MaxLines - 1) {
+            if (_linesCount == GetMaxLines () - 1) {
                 _linesCount--;
                 System.Array.Copy (_logLines, 1, _logLines, 0, _linesCount);
             }
@@ -132,21 +151,16 @@ namespace LeopotamGroup.EditorHelpers {
         }
 
         /// <summary>
-        /// Can be overrided for custom functions processing at console.
+        /// Should be implemented for custom functions processing at console.
+        /// For registering functions - use _vm.RegisterHostFunction() method.
         /// </summary>
         /// <param name="vm">Script engine instance.</param>
-        protected virtual void OnRegisterFunctions (ScriptVm vm) {
-            vm.RegisterHostFunction ("version", OnVersion);
-        }
-
-        ScriptVar OnVersion (ScriptVm vm) {
-            return new ScriptVar (Application.version);
-        }
+        protected abstract void OnRegisterFunctions (ScriptVm vm);
 
         /// <summary>
         /// Show / hide console.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="state">New state of visibility.</param>
         public void Show (bool state) {
             if (state != _isVisible) {
                 _isVisible = state;
