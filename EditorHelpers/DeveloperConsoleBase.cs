@@ -16,7 +16,13 @@ namespace LeopotamGroup.EditorHelpers {
     /// <summary>
     /// Base class for developer UI console.
     /// </summary>
+    [DefaultExecutionOrder (-32768)]
     internal abstract class DeveloperConsoleBase : UnitySingletonBase {
+        /// <summary>
+        /// Is console was shown.
+        /// </summary>
+        public bool IsVisible { get { return _isVisible; } }
+
         const string MarkupSchema = "LeopotamGroup/EditorHelpers/DevConsole";
 
         const string MarkupTheme = "LeopotamGroup/EditorHelpers/DevConsoleTheme";
@@ -97,6 +103,12 @@ namespace LeopotamGroup.EditorHelpers {
             return false;
         }
 
+        protected virtual void Update () {
+            if (_isVisible) {
+                Input.ResetInputAxes ();
+            }
+        }
+
         /// <summary>
         /// Execute script code line. Code should be expression without function declaration, etc.
         /// </summary>
@@ -161,7 +173,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// Show / hide console.
         /// </summary>
         /// <param name="state">New state of visibility.</param>
-        public void Show (bool state) {
+        public virtual void Show (bool state) {
             if (state != _isVisible) {
                 _isVisible = state;
                 _markup.gameObject.SetActive (_isVisible);
