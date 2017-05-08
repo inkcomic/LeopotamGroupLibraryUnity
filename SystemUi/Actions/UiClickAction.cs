@@ -35,11 +35,13 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiClickAction : UiActionBase, IPointerClickHandler {
         void IPointerClickHandler.OnPointerClick (PointerEventData eventData) {
-            var action = new UiClickActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiClickActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiClickActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiClickActionData> (action);
+            }
         }
     }
 }

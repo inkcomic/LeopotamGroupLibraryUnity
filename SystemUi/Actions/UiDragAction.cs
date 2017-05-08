@@ -75,27 +75,33 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiDragAction : UiActionBase, IBeginDragHandler, IDragHandler, IEndDragHandler {
         void IBeginDragHandler.OnBeginDrag (PointerEventData eventData) {
-            var action = new UiBeginDragActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiBeginDragActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiBeginDragActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiBeginDragActionData> (action);
+            }
         }
 
         void IDragHandler.OnDrag (PointerEventData eventData) {
-            var action = new UiDragActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiDragActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiDragActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiDragActionData> (action);
+            }
         }
 
         void IEndDragHandler.OnEndDrag (PointerEventData eventData) {
-            var action = new UiEndDragActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiEndDragActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiEndDragActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiEndDragActionData> (action);
+            }
         }
     }
 }

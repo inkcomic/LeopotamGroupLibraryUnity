@@ -55,19 +55,23 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiSelectionAction : UiActionBase, ISelectHandler, IDeselectHandler {
         void IDeselectHandler.OnDeselect (BaseEventData eventData) {
-            var action = new UiDeselectActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiDeselectActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiDeselectActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiDeselectActionData> (action);
+            }
         }
 
         void ISelectHandler.OnSelect (BaseEventData eventData) {
-            var action = new UiSelectActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiSelectActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiSelectActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiSelectActionData> (action);
+            }
         }
     }
 }

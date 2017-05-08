@@ -65,19 +65,23 @@ namespace LeopotamGroup.SystemUi.Actions {
         }
 
         void OnInputValueChanged (string value) {
-            var action = new UiInputChangeActionData ();
-            action.GroupId = GroupId;
-            action.Sender = _input;
-            action.Value = value;
-            Singleton.Get<UnityEventBus> ().Publish<UiInputChangeActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiInputChangeActionData ();
+                action.GroupId = GroupId;
+                action.Sender = _input;
+                action.Value = value;
+                Singleton.Get<UnityEventBus> ().Publish<UiInputChangeActionData> (action);
+            }
         }
 
         void OnInputEnded (string value) {
-            var action = new UiInputEndActionData ();
-            action.GroupId = GroupId;
-            action.Sender = _input;
-            action.Value = value;
-            Singleton.Get<UnityEventBus> ().Publish<UiInputEndActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiInputEndActionData ();
+                action.GroupId = GroupId;
+                action.Sender = _input;
+                action.Value = value;
+                Singleton.Get<UnityEventBus> ().Publish<UiInputEndActionData> (action);
+            }
         }
     }
 }

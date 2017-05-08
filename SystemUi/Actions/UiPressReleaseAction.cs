@@ -55,19 +55,23 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiPressReleaseAction : UiActionBase, IPointerDownHandler, IPointerUpHandler {
         void IPointerDownHandler.OnPointerDown (PointerEventData eventData) {
-            var action = new UiPressActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiPressActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiPressActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiPressActionData> (action);
+            }
         }
 
         void IPointerUpHandler.OnPointerUp (PointerEventData eventData) {
-            var action = new UiReleaseActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiReleaseActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiReleaseActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiReleaseActionData> (action);
+            }
         }
     }
 }

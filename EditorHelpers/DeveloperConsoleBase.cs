@@ -103,12 +103,6 @@ namespace LeopotamGroup.EditorHelpers {
             return false;
         }
 
-        protected virtual void Update () {
-            if (_isVisible) {
-                Input.ResetInputAxes ();
-            }
-        }
-
         /// <summary>
         /// Execute script code line. Code should be expression without function declaration, etc.
         /// </summary>
