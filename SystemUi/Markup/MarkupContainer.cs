@@ -149,6 +149,15 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
+        /// Clear visuals and set path to new markup schema.
+        /// </summary>
+        /// <param name="markupPath">Path to markup schema.</param>
+        public void SetMarkupPath (string markupPath) {
+            Clear (false);
+            _markupPath = markupPath;
+        }
+
+        /// <summary>
         /// Remove generated widgets from scene.
         /// </summary>
         public void ClearVisuals () {
@@ -172,7 +181,8 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <summary>
         /// Full cleanup of container (destroy widgets, unload xml, unregister generators).
         /// </summary>
-        public void Clear () {
+        /// <param name="unregisterGenerators">Unregister generators or not.</param>
+        public void Clear (bool unregisterGenerators = true) {
             ClearVisuals ();
 
             if (_xmlTree != null) {
@@ -180,8 +190,13 @@ namespace LeopotamGroup.SystemUi.Markup {
                 _xmlTree = null;
             }
 
-            _areGeneratorsAttached = false;
-            _generators.Clear ();
+            _defaultFont = null;
+            _defaultTheme = null;
+
+            if (unregisterGenerators) {
+                _areGeneratorsAttached = false;
+                _generators.Clear ();
+            }
         }
 
         /// <summary>
