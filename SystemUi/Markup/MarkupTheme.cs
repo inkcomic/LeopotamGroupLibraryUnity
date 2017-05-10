@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using LeopotamGroup.EditorHelpers;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.Markup {
@@ -23,15 +24,19 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _buttonDisabledSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonNormalColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonPressedColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonHighlightedColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonDisabledColor = Color.gray;
 
@@ -44,12 +49,15 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _sliderHandleSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _sliderBackgroundColor = Color.gray;
 
+        [HtmlColor]
         [SerializeField]
         Color _sliderForegroundColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _sliderHandleColor = Color.white;
 
@@ -59,9 +67,11 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _toggleForegroundSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _toggleBackgroundColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _toggleForegroundColor = Color.white;
 
@@ -77,9 +87,11 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _scrollbarHandleSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _scrollbarBackgroundColor = Color.gray;
 
+        [HtmlColor]
         [SerializeField]
         Color _scrollbarHandleColor = Color.white;
 
@@ -89,12 +101,15 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _inputBackgroundSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _inputBackgroundColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _inputPlaceholderColor = Color.gray;
 
+        [HtmlColor]
         [SerializeField]
         Color _inputSelectionColor = new Color32 (168, 206, 255, 192);
 

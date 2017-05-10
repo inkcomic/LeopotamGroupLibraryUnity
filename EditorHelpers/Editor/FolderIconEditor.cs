@@ -11,8 +11,6 @@ using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEngine;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.EditorHelpers.UnityEditors {
     sealed class FolderIconEditor : EditorWindow {
         class FolderIconDesc {
@@ -22,21 +20,20 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             public Color32 ValidColor {
                 get {
                     if (!_validColor.HasValue) {
-                        _validColor = HexColor.ToColor24 ();
+                        Color col;
+                        ColorUtility.TryParseHtmlString (HexColor, out col);
+                        _validColor = col;
                     }
-
-                    // ReSharper disable once PossibleInvalidOperationException
                     return _validColor.Value;
                 }
                 set {
                     _validColor = value;
-                    HexColor = ((Color) value).ToHexString24 ();
+                    HexColor = "#" + ColorUtility.ToHtmlStringRGB (value);
                 }
             }
 
-            // ReSharper disable once MemberCanBePrivate.Local
             [JsonName ("c")]
-            public string HexColor = "ffffff";
+            public string HexColor = "#ffffff";
 
             [JsonName ("i")]
             public string OverlayIcon;
@@ -48,7 +45,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         const string FolderIconName = "Folder Icon";
 
-        const string StorageKey = "lg.folder-icon.storage";
+        const string StorageKey = "lg.folder-icons";
 
         static Texture2D _folderIconBack;
 
@@ -101,8 +98,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 var icon = GetCustomIcon (guid);
                 if (icon != null) {
                     if (rect.width > rect.height) {
-                        // dirty fix for unity 5.5.
-                        rect.x += 3;
                         rect.width = rect.height;
                     } else {
                         rect.height = rect.width;
@@ -163,7 +158,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             titleContent.text = Title;
         }
 
-        // ReSharper disable once InconsistentNaming
         void OnGUI () {
             if (_folderDesc == null) {
                 Close ();

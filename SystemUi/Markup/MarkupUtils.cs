@@ -5,7 +5,6 @@
 // ----------------------------------------------------------------------------
 
 using System.Globalization;
-using LeopotamGroup.Common;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using LeopotamGroup.SystemUi.Actions;
@@ -90,8 +89,9 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <param name="node">Xml node.</param>
         public static bool SetColor (Graphic widget, XmlNode node) {
             var attrValue = node.GetAttribute (HashedColor);
-            if (!string.IsNullOrEmpty (attrValue)) {
-                widget.color = attrValue.Length >= 8 ? attrValue.ToColor32 () : attrValue.ToColor24 ();
+            Color col;
+            if (!string.IsNullOrEmpty (attrValue) && ColorUtility.TryParseHtmlString (attrValue, out col)) {
+                widget.color = col;
                 return true;
             }
             return false;
@@ -165,12 +165,12 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
-                    if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         point.x = amount;
                     }
                 }
                 if (parts.Length > 1 && !string.IsNullOrEmpty (parts[1])) {
-                    if (float.TryParse (parts[1], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         point.y = amount;
                     }
                 }
@@ -192,7 +192,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
-                    if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         if (parts.Length > 1) {
                             angles.x = amount;
                         } else {
@@ -201,12 +201,12 @@ namespace LeopotamGroup.SystemUi.Markup {
                     }
                 }
                 if (parts.Length > 1 && !string.IsNullOrEmpty (parts[1])) {
-                    if (float.TryParse (parts[1], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         angles.y = amount;
                     }
                 }
                 if (parts.Length > 2 && !string.IsNullOrEmpty (parts[2])) {
-                    if (float.TryParse (parts[2], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[2], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         angles.z = amount;
                     }
                 }
@@ -241,7 +241,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                         if (float.TryParse (
                                 amountStr.Substring (0, percentIdx),
                                 NumberStyles.Float,
-                                MathExtensions.UnifiedNumberFormat,
+                                NumberFormatInfo.InvariantInfo,
                                 out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.x = 0.5f - amount;
@@ -249,7 +249,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                         }
                     } else {
                         // absolute.
-                        if (float.TryParse (amountStr, NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                        if (float.TryParse (amountStr, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                             amount *= 0.5f;
                             anchorMin.x = 0.5f;
                             anchorMax.x = 0.5f;
@@ -266,7 +266,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                         if (float.TryParse (
                                 amountStr.Substring (0, percentIdx),
                                 NumberStyles.Float,
-                                MathExtensions.UnifiedNumberFormat,
+                                NumberFormatInfo.InvariantInfo,
                                 out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.y = 0.5f - amount;
@@ -274,7 +274,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                         }
                     } else {
                         // absolute.
-                        if (float.TryParse (amountStr, NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                        if (float.TryParse (amountStr, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                             amount *= 0.5f;
                             anchorMin.y = 0.5f;
                             anchorMax.y = 0.5f;

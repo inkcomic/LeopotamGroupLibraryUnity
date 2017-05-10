@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System.Globalization;
 using LeopotamGroup.Math;
 using LeopotamGroup.Serialization;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                     var parts = MarkupUtils.SplitAttrValue (attrValue);
                     var w = int.Parse (parts[0]);
                     var h = int.Parse (parts[1]);
-                    var b = Mathf.Clamp01 (float.Parse (parts[2], MathExtensions.UnifiedNumberFormat));
+                    var b = Mathf.Clamp01 (float.Parse (parts[2], NumberFormatInfo.InvariantInfo));
                     refWidth = w;
                     refHeight = h;
                     refBalance = b;

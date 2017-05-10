@@ -69,7 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             if (!string.IsNullOrEmpty (attrValue)) {
                 var parts = MarkupUtils.SplitAttrValue (attrValue);
                 if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
-                    if (float.TryParse (parts[0], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         amount *= 0.5f;
                         offsetMin.x = -amount;
                         offsetMax.x = amount;
@@ -78,7 +78,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                     }
                 }
                 if (parts.Length > 1 && !string.IsNullOrEmpty (parts[1])) {
-                    if (float.TryParse (parts[1], NumberStyles.Float, MathExtensions.UnifiedNumberFormat, out amount)) {
+                    if (float.TryParse (parts[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         amount *= 0.5f;
                         offsetMin.y = -amount;
                         offsetMax.y = amount;
