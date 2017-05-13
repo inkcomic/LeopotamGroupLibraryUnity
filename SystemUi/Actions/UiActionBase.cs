@@ -29,7 +29,7 @@ namespace LeopotamGroup.SystemUi.Actions {
 
         public void SetGroup (string group) {
             _group = group;
-            GroupId = group != null ? group.GetHashCode () : 0;
+            GroupId = _group.GetUiActionGroupId ();
         }
     }
 }

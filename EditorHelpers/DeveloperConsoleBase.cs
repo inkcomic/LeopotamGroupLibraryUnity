@@ -59,7 +59,7 @@ namespace LeopotamGroup.EditorHelpers {
             _vm = new ScriptVm ();
             _vm.ShowLineInfo (false);
             OnRegisterFunctions (_vm);
-            _onDevConsoleId = "DeveloperConsole".GetHashCode ();
+            _onDevConsoleId = "DeveloperConsole".GetUiActionGroupId ();
             _markup = MarkupContainer.CreateMarkup (MarkupSchema);
             _markup.AttachTheme (Resources.Load<MarkupTheme> (MarkupTheme));
             _markup.CreateVisuals ();
