@@ -11,37 +11,48 @@ using LeopotamGroup.SystemUi.Layouts;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
-    static class TableNode {
+    static class FixedTableNode {
         static readonly int HashedItemsInRow = "itemsInRow".GetStableHashCode ();
 
-        static readonly int HashedCellHeight = "cellHeight".GetStableHashCode ();
+        static readonly int HashedCellSize = "cellSize".GetStableHashCode ();
 
         /// <summary>
-        /// Create "table" node. If children supported - GameObject container for them should be returned.
+        /// Create "fixedTable" node. If children supported - GameObject container for them should be returned.
         /// </summary>
         /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
         /// <param name="container">Markup container.</param>
         public static RectTransform Create (RectTransform widget, XmlNode node, MarkupContainer container) {
 #if UNITY_EDITOR
-            widget.name = "table";
+            widget.name = "fixedTable";
 #endif
             var table = widget.gameObject.AddComponent<FixedTableLayout> ();
             var itemsInRow = 1;
-            var cellHeight = 0f;
+            var cellSize = Vector2.zero;
 
             var attrValue = node.GetAttribute (HashedItemsInRow);
             if (!string.IsNullOrEmpty (attrValue)) {
                 int.TryParse (attrValue, out itemsInRow);
             }
 
-            attrValue = node.GetAttribute (HashedCellHeight);
+            float amount;
+            attrValue = node.GetAttribute (HashedCellSize);
             if (!string.IsNullOrEmpty (attrValue)) {
-                float.TryParse (attrValue, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out cellHeight);
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
+                if (parts.Length > 0 && !string.IsNullOrEmpty (parts[0])) {
+                    if (float.TryParse (parts[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
+                        cellSize.x = amount;
+                    }
+                }
+                if (parts.Length > 1 && !string.IsNullOrEmpty (parts[1])) {
+                    if (float.TryParse (parts[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
+                        cellSize.y = amount;
+                    }
+                }
             }
 
             table.ItemsInRow = itemsInRow;
-            table.CellHeight = cellHeight;
+            table.CellSize = cellSize;
 
             MarkupUtils.SetSize (widget, node);
             MarkupUtils.SetRotation (widget, node);

@@ -27,13 +27,13 @@ namespace LeopotamGroup.SystemUi.Layouts {
         }
 
         /// <summary>
-        /// Will be used as cells height if > 0.
+        /// Will be used as cell size if > 0.
         /// </summary>
-        public float CellHeight {
-            get { return _cellHeight; }
+        public Vector2 CellSize {
+            get { return _cellSize; }
             set {
-                if (_cellHeight != value) {
-                    _cellHeight = value;
+                if (_cellSize != value) {
+                    _cellSize = value;
                     NeedReposition ();
                 }
             }
@@ -44,7 +44,7 @@ namespace LeopotamGroup.SystemUi.Layouts {
         private int _itemsInRow = 1;
 
         [SerializeField]
-        private float _cellHeight = 0;
+        private Vector2 _cellSize = Vector2.zero;
 
         private void Update () {
             RepositionNow ();
@@ -70,9 +70,9 @@ namespace LeopotamGroup.SystemUi.Layouts {
                 return;
             }
             var rootSize = root.sizeDelta;
-            var xOffset = rootSize.x / _itemsInRow;
+            var xOffset = _cellSize.x <= 0f ? rootSize.x / _itemsInRow : _cellSize.x;
             var rows = Mathf.CeilToInt (childCount / (float) _itemsInRow);
-            var yOffset = _cellHeight <= 0f ? rootSize.y / rows : _cellHeight;
+            var yOffset = _cellSize.y <= 0f ? rootSize.y / rows : _cellSize.y;
             var pivotOffset = new Vector2 (-xOffset * (_itemsInRow * 0.5f - 0.5f), yOffset * (rows * 0.5f - 0.5f));
             float itemOffset;
             float rowOffset;

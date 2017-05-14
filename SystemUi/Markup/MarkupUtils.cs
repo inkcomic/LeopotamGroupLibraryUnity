@@ -57,7 +57,6 @@ namespace LeopotamGroup.SystemUi.Markup {
             var rt = go.AddComponent<RectTransform> ();
             rt.sizeDelta = Vector2.one;
             go.layer = _uiLayer;
-            go.hideFlags = HideFlags.DontSave;
             rt.SetParent (root, false);
             return rt;
         }
