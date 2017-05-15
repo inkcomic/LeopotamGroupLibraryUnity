@@ -34,13 +34,18 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// Ui action for processing OnClick events.
     /// </summary>
     public sealed class UiClickAction : UiActionBase, IPointerClickHandler {
+        [Range (1f, 2048f)]
+        public float DragTreshold = 5f;
+
         void IPointerClickHandler.OnPointerClick (PointerEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiClickActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiClickActionData> (action);
+            if ((eventData.pressPosition - eventData.position).sqrMagnitude < DragTreshold * DragTreshold) {
+                if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                    var action = new UiClickActionData ();
+                    action.GroupId = GroupId;
+                    action.Sender = gameObject;
+                    action.EventData = eventData;
+                    Singleton.Get<UnityEventBus> ().Publish<UiClickActionData> (action);
+                }
             }
         }
     }
