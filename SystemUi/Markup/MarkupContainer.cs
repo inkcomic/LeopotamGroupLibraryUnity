@@ -18,6 +18,18 @@ namespace LeopotamGroup.SystemUi.Markup {
     /// Ui markup container. Supports spawning of named xml-schema from Resources folder.
     /// </summary>
     public class MarkupContainer : MonoBehaviour {
+        /// <summary>
+        /// Scale factor relative to "base" resolution.
+        /// </summary>
+        [NonSerialized]
+        public float PixelSize = 1f;
+
+        /// <summary>
+        /// Drag threshold for input events.
+        /// </summary>
+        [NonSerialized]
+        public float DragTreshold = 5f;
+
         public static readonly int HashedName = "name".GetStableHashCode ();
 
         [SerializeField]
@@ -164,6 +176,8 @@ namespace LeopotamGroup.SystemUi.Markup {
         public void ClearVisuals () {
             _isVisualized = false;
             _canvas = null;
+            PixelSize = 1f;
+            DragTreshold = 5f;
             _namedNodes.Clear ();
             var tr = transform;
             for (var i = tr.childCount - 1; i >= 0; i--) {

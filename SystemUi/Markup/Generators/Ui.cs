@@ -13,6 +13,9 @@ using UnityEngine.UI;
 
 namespace LeopotamGroup.SystemUi.Markup.Generators {
     static class UiNode {
+        static readonly int HashedBase = "base".GetStableHashCode ();
+
+        static readonly int HashedDragTreshold = "dragTreshold".GetStableHashCode ();
         /// <summary>
         /// Create "ui" node. If children supported - GameObject container for them should be returned.
         /// </summary>
@@ -27,9 +30,11 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var canvas = go.AddComponent<Canvas> ();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = false;
+            var pixelSize = 1f;
+            var dragTreshold = 5;
 
             var scaler = go.AddComponent<CanvasScaler> ();
-            var attrValue = node.GetAttribute ("base".GetStableHashCode ());
+            var attrValue = node.GetAttribute (HashedBase);
             if (attrValue != null) {
                 var refWidth = 1024;
                 var refHeight = 768;
@@ -46,7 +51,22 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
                 scaler.referenceResolution = new Vector2 (refWidth, refHeight);
                 scaler.matchWidthOrHeight = refBalance;
+                if (Application.isPlaying) {
+                    pixelSize = Mathf.Lerp (Screen.width / (float) refWidth, Screen.height / (float) refHeight, refBalance);
+                } else {
+                    pixelSize = 1f;
+                }
             }
+
+            attrValue = node.GetAttribute (HashedDragTreshold);
+            if (attrValue != null) {
+                if (int.TryParse (attrValue, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out dragTreshold)) {
+                    dragTreshold = Mathf.Max (1, dragTreshold);
+                }
+            }
+
+            container.PixelSize = pixelSize;
+            container.DragTreshold = dragTreshold * pixelSize;
 
             go.AddComponent<GraphicRaycaster> ();
 

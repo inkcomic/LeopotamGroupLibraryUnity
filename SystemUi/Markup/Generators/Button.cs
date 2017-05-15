@@ -73,7 +73,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             attrValue = node.GetAttribute (HashedDisabled);
             var disabled = string.CompareOrdinal (attrValue, "true") == 0;
 
-            btn.interactable = !disabled && MarkupUtils.ValidateInteractive (widget, node);
+            btn.interactable = !disabled && MarkupUtils.ValidateInteractive (widget, node, container.DragTreshold);
 
             return widget;
         }

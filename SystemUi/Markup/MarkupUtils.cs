@@ -110,12 +110,15 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// </summary>
         /// <param name="widget">Ui widget.</param>
         /// <param name="node">Xml node.</param>
-        public static bool ValidateInteractive (RectTransform widget, XmlNode node) {
+        /// <param name="dragTreshold">Pixel size for drag threshold.</param>
+        public static bool ValidateInteractive (RectTransform widget, XmlNode node, float dragTreshold) {
             var isInteractive = false;
             string attrValue;
             attrValue = node.GetAttribute (HashedOnClick);
             if (!string.IsNullOrEmpty (attrValue)) {
-                widget.gameObject.AddComponent<UiClickAction> ().SetGroup (attrValue);
+                var clickAction = widget.gameObject.AddComponent<UiClickAction> ();
+                clickAction.SetGroup (attrValue);
+                clickAction.DragTreshold = dragTreshold;
                 isInteractive = true;
             }
             attrValue = node.GetAttribute (HashedOnDrag);

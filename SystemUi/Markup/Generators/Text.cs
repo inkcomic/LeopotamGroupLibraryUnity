@@ -107,7 +107,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
-            txt.raycastTarget = MarkupUtils.ValidateInteractive (widget, node);
+            txt.raycastTarget = MarkupUtils.ValidateInteractive (widget, node, container.DragTreshold);
 
             return widget;
         }
