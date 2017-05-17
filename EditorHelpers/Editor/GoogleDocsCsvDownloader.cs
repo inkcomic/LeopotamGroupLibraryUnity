@@ -42,16 +42,16 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         [MenuItem ("Window/LeopotamGroupLibrary/Download external CSV-data...")]
         static void OpenEditorWindow () {
-            GetWindow<GoogleDocsCsvDownloader> (true);
+            var win = GetWindow<GoogleDocsCsvDownloader> (true);
+            var pos = win.position;
+            pos.width = 600f;
+            pos.height = 300f;
+            win.position = pos;
+            win.titleContent.text = Title;
         }
 
         void OnEnable () {
-            titleContent.text = Title;
             _scrollPos = Vector2.zero;
-            var pos = position;
-            pos.width = 300f;
-            pos.height = 200f;
-            position = pos;
         }
 
         void Load () {
@@ -74,10 +74,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             }
         }
 
-        void OnDisable () {
-            Save ();
-        }
-
         void OnGUI () {
             if (_items == null) {
                 Load ();
@@ -90,9 +86,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 _newRes = ResDefault;
             }
 
+            var needSave = false;
+
             if (_items.Count > 0) {
                 EditorGUILayout.LabelField ("List of csv resources", EditorStyles.boldLabel);
-                GUILayout.BeginScrollView (_scrollPos, false, true);
+                _scrollPos = GUILayout.BeginScrollView (_scrollPos, false, true);
                 for (var i = 0; i < _items.Count; i++) {
                     var item = _items[i];
                     GUILayout.BeginHorizontal (GUI.skin.box);
@@ -123,6 +121,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     GUILayout.EndVertical ();
                     if (GUILayout.Button ("Remove", GUILayout.Width (80f), GUILayout.Height (52f))) {
                         _items.Remove (item);
+                        needSave = true;
                     }
                     GUILayout.EndHorizontal ();
                 }
@@ -146,8 +145,13 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 _newUrl = UrlDefault;
                 _newRes = ResDefault;
                 _newJson = JsonMode.None;
+                needSave = true;
             }
             GUILayout.EndHorizontal ();
+
+            if (needSave) {
+                Save ();
+            }
 
             GUILayout.Space (4f);
 
