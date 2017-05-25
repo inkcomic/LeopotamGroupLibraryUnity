@@ -173,6 +173,8 @@ namespace LeopotamGroup.EditorHelpers {
                 _markup.gameObject.SetActive (_isVisible);
                 if (_isVisible) {
                     _inputField.ActivateInputField ();
+                } else {
+                    _inputField.text = string.Empty;
                 }
             }
         }
