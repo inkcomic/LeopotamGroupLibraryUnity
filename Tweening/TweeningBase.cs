@@ -18,6 +18,9 @@ namespace LeopotamGroup.Tweening {
         /// </summary>
         public AnimationCurve Curve = AnimationCurve.Linear (0f, 0f, 1f, 1f);
 
+        /// <summary>
+        /// Event will be raised on end of tweening.
+        /// </summary>
         public event Action OnCompleted = delegate { };
 
         /// <summary>
