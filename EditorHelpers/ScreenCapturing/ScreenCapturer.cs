@@ -71,8 +71,13 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
                 GameViewResolution.SetPreset (tempPreset);
                 yield return waiter;
                 try {
+#if UNITY_2017
+                    ScreenCapture.CaptureScreenshot (
+                        Path.Combine (path, string.Format (FileNameMask, platform, res.x, res.y)));
+#else
                     Application.CaptureScreenshot (
                         Path.Combine (path, string.Format (FileNameMask, platform, res.x, res.y)));
+#endif
                 } catch (Exception ex) {
                     err = ex.ToString ();
                     break;
