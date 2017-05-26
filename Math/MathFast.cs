@@ -17,6 +17,22 @@ namespace LeopotamGroup.Math {
         /// </summary>
         public const float PI = 3.141592654f;
 
+        public static float Min (float a, float b) {
+            return a > b ? b : a;
+        }
+
+        public static int Min (int a, int b) {
+            return a > b ? b : a;
+        }
+
+        public static float Max (float a, float b) {
+            return a > b ? a : b;
+        }
+
+        public static int Max (int a, int b) {
+            return a > b ? a : b;
+        }
+
         /// <summary>
         /// PI/2 approximation.
         /// </summary>
@@ -199,6 +215,96 @@ namespace LeopotamGroup.Math {
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Clamp data value to [min;max] range (inclusive).
+        /// Not faster than Mathf.Clamp, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to clamp.</param>
+        /// <param name="min">Min range border.</param>
+        /// <param name="max">Max range border.</param>
+        public static float Clamp (float data, float min, float max) {
+            if (data < min) {
+                return min;
+            } else {
+                if (data > max) {
+                    return max;
+                }
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Clamp data value to [min;max] range (inclusive).
+        /// Not faster than Mathf.Clamp, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to clamp.</param>
+        /// <param name="min">Min range border.</param>
+        /// <param name="max">Max range border.</param>
+        public static int Clamp (int data, int min, int max) {
+            if (data < min) {
+                return min;
+            } else {
+                if (data > max) {
+                    return max;
+                }
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Clamp data value to [0;1] range (inclusive).
+        /// Not faster than Mathf.Clamp01, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to clamp.</param>
+        public static float Clamp01 (float data) {
+            if (data < 0f) {
+                return 0f;
+            } else {
+                if (data > 1f) {
+                    return 1f;
+                }
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Return data raised to specified power.
+        /// Not faster than Mathf.Pow, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to raise.</param>
+        /// <param name="power">Target power.</param>
+        public static float Pow (float data, int power) {
+            return (float) System.Math.Pow (data, power);
+        }
+
+        /// <summary>
+        /// Linear interpolation between "a"-"b" in factor "t". Factor will be automatically clipped to [0;1] range.
+        /// </summary>
+        /// <param name="a">Interpolate From.</param>
+        /// <param name="b">Interpolate To.</param>
+        /// <param name="t">Factor of interpolation.</param>
+        public static float Lerp (float a, float b, float t) {
+            if (t <= 0f) {
+                return a;
+            } else {
+                if (t >= 1f) {
+                    return b;
+                }
+                return a + (b - a) * t;
+            }
+        }
+
+        /// <summary>
+        /// Linear interpolation between "a"-"b" in factor "t". Factor will not be automatically clipped to [0;1] range.
+        /// Not faster than Mathf.LerpUnclamped, but performance very close.
+        /// </summary>
+        /// <param name="a">Interpolate From.</param>
+        /// <param name="b">Interpolate To.</param>
+        /// <param name="t">Factor of interpolation.</param>
+        public static float LerpUnclamped (float a, float b, float t) {
+            return a + (b - a) * t;
         }
     }
 }
