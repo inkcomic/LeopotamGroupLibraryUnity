@@ -35,7 +35,9 @@ namespace LeopotamGroup.Tweening {
         }
 
         protected override void OnUpdateValue () {
-            Target.localRotation = Quaternion.Euler (Vector3.Lerp (StartValue, EndValue, Value));
+            if ((object) Target != null) {
+                Target.localRotation = Quaternion.Euler (Vector3.Lerp (StartValue, EndValue, Value));
+            }
         }
 
         /// <summary>
