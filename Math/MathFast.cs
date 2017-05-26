@@ -7,8 +7,6 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-// ReSharper disable InconsistentNaming
-
 namespace LeopotamGroup.Math {
     /// <summary>
     /// Holder of extensions / helpers.
@@ -107,6 +105,22 @@ namespace LeopotamGroup.Math {
                 _atan2CacheNNY[i] = _atan2CachePPY[i] - PI;
                 _atan2CacheNNX[i] = -PI_DIV_2 - _atan2CachePPY[i];
             }
+        }
+
+        /// <summary>
+        /// Absolute value of provided data.
+        /// </summary>
+        /// <param name="v">Raw data.</param>
+        public static float Abs (float v) {
+            return v < 0f ? -v : v;
+        }
+
+        /// <summary>
+        /// /// Absolute value of provided data.
+        /// </summary>
+        /// <param name="v">Raw data.</param>
+        public static int Abs (int v) {
+            return v < 0f ? -v : v;
         }
 
         /// <summary>
