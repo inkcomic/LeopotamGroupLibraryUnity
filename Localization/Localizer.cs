@@ -127,7 +127,7 @@ namespace LeopotamGroup.Localization {
         }
 
         /// <summary>
-        /// Add non-unloadable localization source. Can overrides loaded tokens and be removed by UnloadDynamics call.
+        /// Add unloadable localization source. Can overrides loaded tokens and be removed by UnloadDynamics call.
         /// </summary>
         /// <returns>The dynamic source.</returns>
         /// <param name="sourcePath">Source path.</param>
