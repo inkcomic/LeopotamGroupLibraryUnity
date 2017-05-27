@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -92,6 +93,15 @@ namespace LeopotamGroup.Math {
             public int Int;
         }
 
+        [StructLayout (LayoutKind.Explicit)]
+        struct DoubleInt64 {
+            [FieldOffset (0)]
+            public double Double;
+
+            [FieldOffset (0)]
+            public Int64 Int64;
+        }
+
         static MathFast () {
             // Sin/Cos
             _sinCache = new float[SinCosCacheSize];
@@ -109,7 +119,6 @@ namespace LeopotamGroup.Math {
             }
 
             // Atan2
-
             var invAtan2Size = 1f / Atan2Size;
             for (i = 0; i <= Atan2Size; i++) {
                 _atan2CachePPY[i] = (float) System.Math.Atan (i * invAtan2Size);
@@ -270,13 +279,14 @@ namespace LeopotamGroup.Math {
         }
 
         /// <summary>
-        /// Return data raised to specified power.
-        /// Not faster than Mathf.Pow, but performance very close.
+        /// Return E raised to specified power.
+        /// 2x times faster than System.Math.Exp, but gives 1% error.
         /// </summary>
-        /// <param name="data">Data to raise.</param>
         /// <param name="power">Target power.</param>
-        public static float Pow (float data, int power) {
-            return (float) System.Math.Pow (data, power);
+        public static float Exp (float power) {
+            var c = new DoubleInt64 ();
+            c.Int64 = (Int64) (1512775 * power + 1072632447) << 32;
+            return (float) c.Double;
         }
 
         /// <summary>
@@ -305,6 +315,28 @@ namespace LeopotamGroup.Math {
         /// <param name="t">Factor of interpolation.</param>
         public static float LerpUnclamped (float a, float b, float t) {
             return a + (b - a) * t;
+        }
+
+        /// <summary>
+        /// Return data raised to specified power.
+        /// 4x times faster than System.Math.Pow, 6x times faster than System.Math.Pow, but gives 3% error.
+        /// </summary>
+        /// <param name="data">Data to raise.</param>
+        /// <param name="power">Target power.</param>
+        public static float PowInaccurate (float data, float power) {
+            var c = new DoubleInt64 ();
+            c.Double = data;
+            c.Int64 = (Int64) (power * ((c.Int64 >> 32) - 1072632447) + 1072632447) << 32;
+            return (float) c.Double;
+        }
+
+        /// <summary>
+        /// Return data raised to specified power. Not faster than Mathf.Pow, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to raise.</param>
+        /// <param name="power">Target power.</param>
+        public static float Pow (float data, float power) {
+            return (float) System.Math.Pow (data, power);
         }
     }
 }
