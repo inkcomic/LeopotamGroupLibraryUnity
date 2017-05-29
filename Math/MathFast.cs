@@ -4,10 +4,9 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
-
-// ReSharper disable InconsistentNaming
 
 namespace LeopotamGroup.Math {
     /// <summary>
@@ -18,6 +17,22 @@ namespace LeopotamGroup.Math {
         /// PI approximation.
         /// </summary>
         public const float PI = 3.141592654f;
+
+        public static float Min (float a, float b) {
+            return a > b ? b : a;
+        }
+
+        public static int Min (int a, int b) {
+            return a > b ? b : a;
+        }
+
+        public static float Max (float a, float b) {
+            return a > b ? a : b;
+        }
+
+        public static int Max (int a, int b) {
+            return a > b ? a : b;
+        }
 
         /// <summary>
         /// PI/2 approximation.
@@ -78,6 +93,15 @@ namespace LeopotamGroup.Math {
             public int Int;
         }
 
+        [StructLayout (LayoutKind.Explicit)]
+        struct DoubleInt64 {
+            [FieldOffset (0)]
+            public double Double;
+
+            [FieldOffset (0)]
+            public Int64 Int64;
+        }
+
         static MathFast () {
             // Sin/Cos
             _sinCache = new float[SinCosCacheSize];
@@ -95,7 +119,6 @@ namespace LeopotamGroup.Math {
             }
 
             // Atan2
-
             var invAtan2Size = 1f / Atan2Size;
             for (i = 0; i <= Atan2Size; i++) {
                 _atan2CachePPY[i] = (float) System.Math.Atan (i * invAtan2Size);
@@ -107,6 +130,22 @@ namespace LeopotamGroup.Math {
                 _atan2CacheNNY[i] = _atan2CachePPY[i] - PI;
                 _atan2CacheNNX[i] = -PI_DIV_2 - _atan2CachePPY[i];
             }
+        }
+
+        /// <summary>
+        /// Absolute value of provided data.
+        /// </summary>
+        /// <param name="v">Raw data.</param>
+        public static float Abs (float v) {
+            return v < 0f ? -v : v;
+        }
+
+        /// <summary>
+        /// /// Absolute value of provided data.
+        /// </summary>
+        /// <param name="v">Raw data.</param>
+        public static int Abs (int v) {
+            return v < 0f ? -v : v;
         }
 
         /// <summary>
@@ -185,6 +224,119 @@ namespace LeopotamGroup.Math {
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Clamp data value to [min;max] range (inclusive).
+        /// Not faster than Mathf.Clamp, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to clamp.</param>
+        /// <param name="min">Min range border.</param>
+        /// <param name="max">Max range border.</param>
+        public static float Clamp (float data, float min, float max) {
+            if (data < min) {
+                return min;
+            } else {
+                if (data > max) {
+                    return max;
+                }
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Clamp data value to [min;max] range (inclusive).
+        /// Not faster than Mathf.Clamp, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to clamp.</param>
+        /// <param name="min">Min range border.</param>
+        /// <param name="max">Max range border.</param>
+        public static int Clamp (int data, int min, int max) {
+            if (data < min) {
+                return min;
+            } else {
+                if (data > max) {
+                    return max;
+                }
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Clamp data value to [0;1] range (inclusive).
+        /// Not faster than Mathf.Clamp01, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to clamp.</param>
+        public static float Clamp01 (float data) {
+            if (data < 0f) {
+                return 0f;
+            } else {
+                if (data > 1f) {
+                    return 1f;
+                }
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Return E raised to specified power.
+        /// 2x times faster than System.Math.Exp, but gives 1% error.
+        /// </summary>
+        /// <param name="power">Target power.</param>
+        public static float Exp (float power) {
+            var c = new DoubleInt64 ();
+            c.Int64 = (Int64) (1512775 * power + 1072632447) << 32;
+            return (float) c.Double;
+        }
+
+        /// <summary>
+        /// Linear interpolation between "a"-"b" in factor "t". Factor will be automatically clipped to [0;1] range.
+        /// </summary>
+        /// <param name="a">Interpolate From.</param>
+        /// <param name="b">Interpolate To.</param>
+        /// <param name="t">Factor of interpolation.</param>
+        public static float Lerp (float a, float b, float t) {
+            if (t <= 0f) {
+                return a;
+            } else {
+                if (t >= 1f) {
+                    return b;
+                }
+                return a + (b - a) * t;
+            }
+        }
+
+        /// <summary>
+        /// Linear interpolation between "a"-"b" in factor "t". Factor will not be automatically clipped to [0;1] range.
+        /// Not faster than Mathf.LerpUnclamped, but performance very close.
+        /// </summary>
+        /// <param name="a">Interpolate From.</param>
+        /// <param name="b">Interpolate To.</param>
+        /// <param name="t">Factor of interpolation.</param>
+        public static float LerpUnclamped (float a, float b, float t) {
+            return a + (b - a) * t;
+        }
+
+        /// <summary>
+        /// Return data raised to specified power.
+        /// 4x times faster than System.Math.Pow, 6x times faster than System.Math.Pow, but gives 3% error.
+        /// </summary>
+        /// <param name="data">Data to raise.</param>
+        /// <param name="power">Target power.</param>
+        public static float PowInaccurate (float data, float power) {
+            var c = new DoubleInt64 ();
+            c.Double = data;
+            c.Int64 = (Int64) (power * ((c.Int64 >> 32) - 1072632447) + 1072632447) << 32;
+            return (float) c.Double;
+        }
+
+        /// <summary>
+        /// Return data raised to specified power. Not faster than Mathf.Pow, but performance very close.
+        /// </summary>
+        /// <param name="data">Data to raise.</param>
+        /// <param name="power">Target power.</param>
+        public static float Pow (float data, float power) {
+            return (float) System.Math.Pow (data, power);
         }
     }
 }

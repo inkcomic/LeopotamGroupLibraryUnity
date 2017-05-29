@@ -35,7 +35,9 @@ namespace LeopotamGroup.Tweening {
         }
 
         protected override void OnUpdateValue () {
-            Target.localScale = Vector3.Lerp (StartValue, EndValue, Value);
+            if ((object) Target != null) {
+                Target.localScale = Vector3.Lerp (StartValue, EndValue, Value);
+            }
         }
 
         /// <summary>

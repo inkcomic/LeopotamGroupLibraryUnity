@@ -34,16 +34,17 @@ namespace LeopotamGroup.Threading {
         }
 
         /// <summary>
-        /// Should all items in outQueue be processed at on Update event.
-        /// By default, one item per Update event will be processed.
-        /// </summary>
-        protected bool ProcessAllItemsAtUpdate;
-
-        /// <summary>
         /// Length of input data queue.
         /// </summary>
         protected int InputQueueLength {
             get { lock (_inSyncObj) { return _inQueue.Count; } }
+        }
+
+        /// <summary>
+        /// Length of output data queue.
+        /// </summary>
+        protected int OutputQueueLength {
+            get { lock (_outSyncObj) { return _outQueue.Count; } }
         }
 
         bool _isWorkerStarted;
@@ -60,8 +61,24 @@ namespace LeopotamGroup.Threading {
 
         Thread _thread;
 
+        int _itemsAmountToProcessAtForground;
+
+        /// <summary>
+        /// Amount of items to process as result from background worker. Negative / zero values means - all items.
+        /// By default, 1 item will be processed.
+        /// </summary>
+        protected int ItemsAmountToProcessAtForground {
+            get { return _itemsAmountToProcessAtForground; }
+            set {
+                if (_itemsAmountToProcessAtForground != value) {
+                    _itemsAmountToProcessAtForground = value;
+                }
+            }
+        }
+
         protected override void OnConstruct () {
             base.OnConstruct ();
+            _itemsAmountToProcessAtForground = 1;
             _thread = new Thread (OnBackgroundThreadProc);
             _thread.Start ();
         }
@@ -80,6 +97,12 @@ namespace LeopotamGroup.Threading {
         protected virtual void Update () {
             OnWorkerProcessOutQueueAtForeground ();
         }
+
+        protected virtual void OnEnqueueItemAtForeground (T item) {
+            _inQueue.Add (item);
+        }
+
+        protected virtual void OnClearItemAtForeground (T item) { }
 
         /// <summary>
         /// Method for custom reaction on thread start. Important - will be called at background thread!
@@ -108,22 +131,22 @@ namespace LeopotamGroup.Threading {
         /// Method for run processing outQueue. Important - should be called in unity thread!
         /// </summary>
         protected void OnWorkerProcessOutQueueAtForeground () {
+            int count;
             lock (_outSyncObj) {
-                var count = _outQueue.Count;
-                if (count == 0) {
-                    return;
+                count = _outQueue.Count;
+            }
+            if (count > 0) {
+                var maxAmount = ItemsAmountToProcessAtForground;
+                if (maxAmount > 0) {
+                    count = count < maxAmount ? count : maxAmount;
                 }
-                var processAll = ProcessAllItemsAtUpdate;
-                if (!processAll) {
-                    count = 1;
-                }
+                T result;
                 for (var i = 0; i < count; i++) {
-                    OnResultFromWorker (_outQueue[i]);
-                }
-                if (!processAll) {
-                    _outQueue.RemoveAt (0);
-                } else {
-                    _outQueue.Clear ();
+                    lock (_outSyncObj) {
+                        result = _outQueue[0];
+                        _outQueue.RemoveAt (0);
+                    }
+                    OnResultFromWorker (result);
                 }
             }
         }
@@ -167,6 +190,15 @@ namespace LeopotamGroup.Threading {
             OnWorkerStopInBackground ();
         }
 
+        public void ClearInputQueue () {
+            lock (_inSyncObj) {
+                for (var i = _inQueue.Count - 1; i >= 0; i--) {
+                    OnClearItemAtForeground (_inQueue[i]);
+                }
+                _inQueue.Clear ();
+            }
+        }
+
         public bool EnqueueItem (T item) {
             lock (_inSyncObj) {
                 if (!_isWorkerStarted) {
@@ -175,7 +207,7 @@ namespace LeopotamGroup.Threading {
 #endif
                     return false;
                 }
-                _inQueue.Add (item);
+                OnEnqueueItemAtForeground (item);
             }
             return true;
         }

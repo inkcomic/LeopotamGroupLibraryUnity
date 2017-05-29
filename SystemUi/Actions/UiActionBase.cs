@@ -4,6 +4,8 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using LeopotamGroup.Common;
+using LeopotamGroup.Events;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.Actions {
@@ -20,9 +22,14 @@ namespace LeopotamGroup.SystemUi.Actions {
             SetGroup (_group);
         }
 
+        protected virtual void Start () {
+            // Force create eventbus object.
+            Singleton.Get<UnityEventBus> ();
+        }
+
         public void SetGroup (string group) {
             _group = group;
-            GroupId = group != null ? group.GetHashCode () : 0;
+            GroupId = _group.GetUiActionGroupId ();
         }
     }
 }

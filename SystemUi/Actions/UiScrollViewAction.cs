@@ -43,11 +43,13 @@ namespace LeopotamGroup.SystemUi.Actions {
             _scrollView.onValueChanged.AddListener (OnScrollViewValueChanged);
         }
         void OnScrollViewValueChanged (Vector2 value) {
-            var action = new UiScrollViewActionData ();
-            action.GroupId = GroupId;
-            action.Sender = _scrollView;
-            action.Value = value;
-            Singleton.Get<UnityEventBus> ().Publish<UiScrollViewActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiScrollViewActionData ();
+                action.GroupId = GroupId;
+                action.Sender = _scrollView;
+                action.Value = value;
+                Singleton.Get<UnityEventBus> ().Publish<UiScrollViewActionData> (action);
+            }
         }
     }
 }

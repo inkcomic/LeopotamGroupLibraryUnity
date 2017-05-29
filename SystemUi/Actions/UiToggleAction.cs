@@ -43,11 +43,13 @@ namespace LeopotamGroup.SystemUi.Actions {
             _toggle.onValueChanged.AddListener (OnSliderValueChanged);
         }
         void OnSliderValueChanged (bool value) {
-            var action = new UiToggleActionData ();
-            action.GroupId = GroupId;
-            action.Sender = _toggle;
-            action.Value = value;
-            Singleton.Get<UnityEventBus> ().Publish<UiToggleActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiToggleActionData ();
+                action.GroupId = GroupId;
+                action.Sender = _toggle;
+                action.Value = value;
+                Singleton.Get<UnityEventBus> ().Publish<UiToggleActionData> (action);
+            }
         }
     }
 }

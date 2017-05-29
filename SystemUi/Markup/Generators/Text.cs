@@ -18,6 +18,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedFontStyle = "fontStyle".GetStableHashCode ();
 
+        static readonly int HashedAlign = "align".GetStableHashCode ();
+
         static readonly int HashedLocalize = "localize".GetStableHashCode ();
 
         /// <summary>
@@ -34,8 +36,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             string attrValue;
             string font = null;
             var align = TextAnchor.MiddleCenter;
-            var color = Color.black;
             var style = FontStyle.Normal;
+            var size = 24;
 
             attrValue = node.GetAttribute (HashedFontName);
             if (!string.IsNullOrEmpty (attrValue)) {
@@ -44,10 +46,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedFontSize);
             if (!string.IsNullOrEmpty (attrValue)) {
-                int fontSize;
-                if (int.TryParse (attrValue, out fontSize)) {
-                    txt.fontSize = fontSize;
-                }
+                int.TryParse (attrValue, out size);
             }
 
             attrValue = node.GetAttribute (HashedFontStyle);
@@ -65,6 +64,30 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 }
             }
 
+            attrValue = node.GetAttribute (HashedAlign);
+            if (!string.IsNullOrEmpty (attrValue)) {
+                var parts = MarkupUtils.SplitAttrValue (attrValue);
+                var alignHor = 1;
+                var alignVer = 3;
+                for (var i = 0; i < parts.Length; i++) {
+                    switch (parts[i]) {
+                        case "left":
+                            alignHor = 0;
+                            break;
+                        case "right":
+                            alignHor = 2;
+                            break;
+                        case "top":
+                            alignVer = 0;
+                            break;
+                        case "bottom":
+                            alignVer = 6;
+                            break;
+                    }
+                }
+                align = (TextAnchor) (alignHor + alignVer);
+            }
+
             attrValue = node.GetAttribute (HashedLocalize);
             if (!string.IsNullOrEmpty (attrValue)) {
                 widget.gameObject.AddComponent<TextLocalization> ().SetToken (attrValue);
@@ -74,15 +97,17 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             txt.alignment = align;
             txt.font = container.GetFont (font);
-            txt.color = color;
             txt.fontStyle = style;
+            txt.fontSize = size;
 
-            MarkupUtils.SetColor (txt, node);
+            if (!MarkupUtils.SetColor (txt, node)) {
+                txt.color = Color.black;
+            }
             MarkupUtils.SetSize (widget, node);
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
-            txt.raycastTarget = MarkupUtils.ValidateInteractive (widget, node);
+            txt.raycastTarget = MarkupUtils.ValidateInteractive (widget, node, container.DragTreshold);
 
             return widget;
         }

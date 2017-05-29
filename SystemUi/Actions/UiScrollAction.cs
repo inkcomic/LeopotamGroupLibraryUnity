@@ -35,11 +35,13 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiScrollAction : UiActionBase, IScrollHandler {
         void IScrollHandler.OnScroll (PointerEventData eventData) {
-            var action = new UiScrollActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiScrollActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiScrollActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiScrollActionData> (action);
+            }
         }
     }
 }

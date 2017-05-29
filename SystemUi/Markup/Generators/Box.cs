@@ -25,7 +25,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
 
-            if (MarkupUtils.ValidateInteractive (widget, node)) {
+            if (MarkupUtils.ValidateInteractive (widget, node, container.DragTreshold)) {
                 widget.gameObject.AddComponent<NonVisualWidget> ();
             }
 

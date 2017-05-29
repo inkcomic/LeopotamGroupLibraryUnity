@@ -18,6 +18,18 @@ namespace LeopotamGroup.SystemUi.Markup {
     /// Ui markup container. Supports spawning of named xml-schema from Resources folder.
     /// </summary>
     public class MarkupContainer : MonoBehaviour {
+        /// <summary>
+        /// Scale factor relative to "base" resolution.
+        /// </summary>
+        [NonSerialized]
+        public float PixelSize = 1f;
+
+        /// <summary>
+        /// Drag threshold for input events.
+        /// </summary>
+        [NonSerialized]
+        public float DragTreshold = 5f;
+
         public static readonly int HashedName = "name".GetStableHashCode ();
 
         [SerializeField]
@@ -61,11 +73,14 @@ namespace LeopotamGroup.SystemUi.Markup {
             _generators.Add ("align".GetStableHashCode (), AlignNode.Create);
             _generators.Add ("box".GetStableHashCode (), BoxNode.Create);
             _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
+            _generators.Add ("input".GetStableHashCode (), InputNode.Create);
             _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
             _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
             _generators.Add ("mask2d".GetStableHashCode (), Mask2dNode.Create);
             _generators.Add ("scrollView".GetStableHashCode (), ScrollViewNode.Create);
             _generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
+            _generators.Add ("stack".GetStableHashCode (), StackNode.Create);
+            _generators.Add ("fixedTable".GetStableHashCode (), FixedTableNode.Create);
             _generators.Add ("text".GetStableHashCode (), TextNode.Create);
             _generators.Add ("toggle".GetStableHashCode (), ToggleNode.Create);
             _generators.Add ("toggleGroup".GetStableHashCode (), ToggleGroupNode.Create);
@@ -148,11 +163,22 @@ namespace LeopotamGroup.SystemUi.Markup {
         }
 
         /// <summary>
+        /// Clear visuals and set path to new markup schema.
+        /// </summary>
+        /// <param name="markupPath">Path to markup schema.</param>
+        public void SetMarkupPath (string markupPath) {
+            Clear (false);
+            _markupPath = markupPath;
+        }
+
+        /// <summary>
         /// Remove generated widgets from scene.
         /// </summary>
         public void ClearVisuals () {
             _isVisualized = false;
             _canvas = null;
+            PixelSize = 1f;
+            DragTreshold = 5f;
             _namedNodes.Clear ();
             var tr = transform;
             for (var i = tr.childCount - 1; i >= 0; i--) {
@@ -171,7 +197,8 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// <summary>
         /// Full cleanup of container (destroy widgets, unload xml, unregister generators).
         /// </summary>
-        public void Clear () {
+        /// <param name="unregisterGenerators">Unregister generators or not.</param>
+        public void Clear (bool unregisterGenerators = true) {
             ClearVisuals ();
 
             if (_xmlTree != null) {
@@ -179,8 +206,13 @@ namespace LeopotamGroup.SystemUi.Markup {
                 _xmlTree = null;
             }
 
-            _areGeneratorsAttached = false;
-            _generators.Clear ();
+            _defaultFont = null;
+            _defaultTheme = null;
+
+            if (unregisterGenerators) {
+                _areGeneratorsAttached = false;
+                _generators.Clear ();
+            }
         }
 
         /// <summary>

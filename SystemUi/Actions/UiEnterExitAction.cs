@@ -55,19 +55,23 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiEnterExitAction : UiActionBase, IPointerEnterHandler, IPointerExitHandler {
         void IPointerEnterHandler.OnPointerEnter (PointerEventData eventData) {
-            var action = new UiEnterActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiEnterActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiEnterActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiEnterActionData> (action);
+            }
         }
 
         void IPointerExitHandler.OnPointerExit (PointerEventData eventData) {
-            var action = new UiExitActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiExitActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiExitActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiExitActionData> (action);
+            }
         }
     }
 }

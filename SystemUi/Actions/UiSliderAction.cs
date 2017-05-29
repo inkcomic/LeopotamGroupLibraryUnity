@@ -43,11 +43,13 @@ namespace LeopotamGroup.SystemUi.Actions {
             _slider.onValueChanged.AddListener (OnSliderValueChanged);
         }
         void OnSliderValueChanged (float value) {
-            var action = new UiSliderActionData ();
-            action.GroupId = GroupId;
-            action.Sender = _slider;
-            action.Value = value;
-            Singleton.Get<UnityEventBus> ().Publish<UiSliderActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiSliderActionData ();
+                action.GroupId = GroupId;
+                action.Sender = _slider;
+                action.Value = value;
+                Singleton.Get<UnityEventBus> ().Publish<UiSliderActionData> (action);
+            }
         }
     }
 }

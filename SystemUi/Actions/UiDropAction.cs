@@ -35,11 +35,13 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiDropAction : UiActionBase, IDropHandler {
         void IDropHandler.OnDrop (PointerEventData eventData) {
-            var action = new UiDropActionData ();
-            action.GroupId = GroupId;
-            action.Sender = gameObject;
-            action.EventData = eventData;
-            Singleton.Get<UnityEventBus> ().Publish<UiDropActionData> (action);
+            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
+                var action = new UiDropActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                Singleton.Get<UnityEventBus> ().Publish<UiDropActionData> (action);
+            }
         }
     }
 }

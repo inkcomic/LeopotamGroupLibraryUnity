@@ -76,11 +76,13 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 widget.gameObject.AddComponent<Mask> ();
             }
 
-            MarkupUtils.SetColor (img, node);
+            if (!MarkupUtils.SetColor (img, node)) {
+                img.color = Color.white;
+            }
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
-            var isInteractive = MarkupUtils.ValidateInteractive (widget, node);
+            var isInteractive = MarkupUtils.ValidateInteractive (widget, node, container.DragTreshold);
             if (useImg) {
                 img.raycastTarget = isInteractive;
             } else {

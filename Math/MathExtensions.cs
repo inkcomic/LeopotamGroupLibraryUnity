@@ -13,13 +13,6 @@ namespace LeopotamGroup.Math {
     /// Math extensions.
     /// </summary>
     public static class MathExtensions {
-        /// <summary>
-        /// Unified NumberFormatInfo.
-        /// </summary>
-        public static readonly NumberFormatInfo UnifiedNumberFormat = new NumberFormatInfo {
-            NumberDecimalSeparator = "."
-        };
-
         static StringBuilder _floatToStrBuf = new StringBuilder (64);
 
         static string[] _shortNumberOrders = { "", "k", "M", "G", "T", "P", "E" };
@@ -54,16 +47,16 @@ namespace LeopotamGroup.Math {
                 i = _shortNumberOrders.Length - 1;
             }
             var mask = digitsAfterPoint == 2 ? "0.##" : "0." + new string ('#', digitsAfterPoint);
-            return (sign * data / System.Math.Pow (1000, i)).ToString (mask, UnifiedNumberFormat) + _shortNumberOrders[i];
+            return (sign * data / System.Math.Pow (1000, i)).ToString (mask, NumberFormatInfo.InvariantInfo) + _shortNumberOrders[i];
         }
 
         /// <summary>
-        /// Convert string to float.
+        /// Convert string to float with invariant culture.
         /// </summary>
         /// <returns>Float number.</returns>
         /// <param name="text">Source string.</param>
         public static float ToFloat (this string text) {
-            return float.Parse (text, UnifiedNumberFormat);
+            return float.Parse (text, NumberFormatInfo.InvariantInfo);
         }
 
         /// <summary>
@@ -206,6 +199,27 @@ namespace LeopotamGroup.Math {
                 seed = 37 * seed + (int) str[i];
             }
             return seed;
+        }
+
+        /// <summary>
+        /// Fill array with specified value.
+        /// </summary>
+        /// <param name="array">Target array.</param>
+        /// <param name="value">Value.</param>
+        /// <param name="length">Amount.</param>
+        public static void Fill<T> (this T[] array, T value, int length) {
+            if (array == null || array.Length < length) {
+                throw new ArgumentException ();
+            }
+            if (length > 0) {
+                array[0] = value;
+                var lenHalf = length >> 1;
+                int i;
+                for (i = 1; i < lenHalf; i <<= 1) {
+                    Array.Copy (array, 0, array, i, i);
+                }
+                Array.Copy (array, 0, array, i, length - i);
+            }
         }
     }
 }

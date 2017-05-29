@@ -5,8 +5,8 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using LeopotamGroup.Common;
-using LeopotamGroup.Math;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
@@ -80,7 +80,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
                 return null;
             }
             if (obj is IConvertible) {
-                (obj as IConvertible).ToString (customFormatProvider ?? MathExtensions.UnifiedNumberFormat);
+                (obj as IConvertible).ToString (customFormatProvider ?? NumberFormatInfo.InvariantInfo);
             }
             return obj.ToString ();
         }

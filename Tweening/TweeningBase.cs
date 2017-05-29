@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using LeopotamGroup.Common;
 using UnityEngine;
 
@@ -16,6 +17,11 @@ namespace LeopotamGroup.Tweening {
         /// Curve of tweening values.
         /// </summary>
         public AnimationCurve Curve = AnimationCurve.Linear (0f, 0f, 1f, 1f);
+
+        /// <summary>
+        /// Event will be raised on end of tweening.
+        /// </summary>
+        public event Action OnCompleted = delegate { };
 
         /// <summary>
         /// Should tweener ignore time scale or not.
@@ -108,6 +114,7 @@ namespace LeopotamGroup.Tweening {
                 CurrentTimeRaw = 0f;
                 OnUpdateValue ();
                 enabled = false;
+                OnCompleted ();
                 return;
             }
             deltaTime /= TweenTime;
@@ -119,6 +126,7 @@ namespace LeopotamGroup.Tweening {
                 ActualTweenCount--;
                 if (ActualTweenCount == 0) {
                     enabled = false;
+                    OnCompleted ();
                     return;
                 }
                 CurrentTime %= 1f;

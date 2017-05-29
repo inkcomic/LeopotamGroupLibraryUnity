@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using LeopotamGroup.EditorHelpers;
 using UnityEngine;
 
 namespace LeopotamGroup.SystemUi.Markup {
@@ -23,15 +24,19 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _buttonDisabledSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonNormalColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonPressedColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonHighlightedColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _buttonDisabledColor = Color.gray;
 
@@ -44,12 +49,15 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _sliderHandleSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _sliderBackgroundColor = Color.gray;
 
+        [HtmlColor]
         [SerializeField]
         Color _sliderForegroundColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _sliderHandleColor = Color.white;
 
@@ -59,9 +67,11 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _toggleForegroundSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _toggleBackgroundColor = Color.white;
 
+        [HtmlColor]
         [SerializeField]
         Color _toggleForegroundColor = Color.white;
 
@@ -77,14 +87,37 @@ namespace LeopotamGroup.SystemUi.Markup {
         [SerializeField]
         Sprite _scrollbarHandleSprite;
 
+        [HtmlColor]
         [SerializeField]
         Color _scrollbarBackgroundColor = Color.gray;
 
+        [HtmlColor]
         [SerializeField]
         Color _scrollbarHandleColor = Color.white;
 
         [SerializeField]
         float _scrollbarWidth = 16f;
+
+        [SerializeField]
+        Sprite _inputBackgroundSprite;
+
+        [HtmlColor]
+        [SerializeField]
+        Color _inputBackgroundColor = Color.white;
+
+        [HtmlColor]
+        [SerializeField]
+        Color _inputPlaceholderColor = Color.gray;
+
+        [HtmlColor]
+        [SerializeField]
+        Color _inputSelectionColor = new Color32 (168, 206, 255, 192);
+
+        [SerializeField]
+        FontStyle _inputPlaceholderStyle = FontStyle.Italic;
+
+        [SerializeField]
+        float _inputMargin = 10f;
 
         public enum ButtonState {
             Normal,
@@ -107,6 +140,12 @@ namespace LeopotamGroup.SystemUi.Markup {
         public enum ScrollbarState {
             Background,
             Handle
+        }
+
+        public enum InputState {
+            Background,
+            Placeholder,
+            Selection
         }
 
         public string GetName () {
@@ -226,6 +265,31 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public float GetScrollbarWidth () {
             return _scrollbarWidth;
+        }
+
+        public Sprite GetInputSprite () {
+            return _inputBackgroundSprite;
+        }
+
+        public Color GetInputColor (InputState state) {
+            switch (state) {
+                case InputState.Background:
+                    return _inputBackgroundColor;
+                case InputState.Placeholder:
+                    return _inputPlaceholderColor;
+                case InputState.Selection:
+                    return _inputSelectionColor;
+                default:
+                    return Color.black;
+            }
+        }
+
+        public float GetInputMargin () {
+            return _inputMargin;
+        }
+
+        public FontStyle GetInputPlaceholderStyle () {
+            return _inputPlaceholderStyle;
         }
     }
 }

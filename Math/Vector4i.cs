@@ -113,7 +113,7 @@ namespace LeopotamGroup.Math {
         /// Get hash code.
         /// </summary>
         public override int GetHashCode () {
-            return base.GetHashCode ();
+            return x.GetHashCode () ^ y.GetHashCode () << 2 ^ z.GetHashCode () >> 2 ^ w.GetHashCode () >> 1;
         }
 
         /// <summary>

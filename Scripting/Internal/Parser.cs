@@ -34,6 +34,7 @@ class Parser {
 public readonly List<ScriptVar> CallParams = new List<ScriptVar>(8);
 	public int CallParamsOffset;
 	public ScriptVar RetVal;
+	public bool ShowLineInfo = true;
 
 	readonly List<string> _paramList = new List<string>(8);
 	bool _isParsing;
@@ -74,14 +75,14 @@ public readonly List<ScriptVar> CallParams = new List<ScriptVar>(8);
 
 	void SynErr (int n) {
 		if (errDist >= _minErrDist) {
-			Errors.SynErr(la.line, la.col, n);
+			Errors.SynErr(ShowLineInfo, la.line, la.col, n);
 		}
 		errDist = 0;
 	}
 
 	public void SemErr (string msg) {
 		if (errDist >= _minErrDist) {
-			Errors.SemErr(t.line, t.col, msg);
+			Errors.SemErr(ShowLineInfo, t.line, t.col, msg);
 		}
 		errDist = 0;
 	}
@@ -624,7 +625,7 @@ public readonly List<ScriptVar> CallParams = new List<ScriptVar>(8);
 static class Errors {
 	const string ErrFormat = "-- line {0} col {1}: {2}"; // 0=line, 1=column, 2=text
 
-	public static void SynErr (int line, int col, int n) {
+	public static void SynErr (bool showLineInfo, int line, int col, int n) {
 		string s;
 		switch (n) {
 			case 0: s = "EOF expected"; break;
@@ -666,10 +667,10 @@ static class Errors {
 
 			default: s = "error " + n; break;
 		}
-		SemErr(line, col, s);
+		SemErr(showLineInfo, line, col, s);
 	}
 
-	public static void SemErr (int line, int col, string msg) {
-		throw new Exception (string.Format(ErrFormat, line, col, msg));
+	public static void SemErr (bool showLineInfo, int line, int col, string msg) {
+		throw new Exception ( showLineInfo ? string.Format(ErrFormat, line, col, msg) : msg);
 	}
 }}

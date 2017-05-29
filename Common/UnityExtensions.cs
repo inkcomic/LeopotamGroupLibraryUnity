@@ -4,10 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using System;
 using UnityEngine;
-
-// ReSharper disable RedundantCast.0
 
 namespace LeopotamGroup.Common {
     /// <summary>
@@ -61,63 +58,6 @@ namespace LeopotamGroup.Common {
                 }
             }
             return retVal;
-        }
-
-        /// <summary>
-        /// Convert hex string "rrggbb" to Color.
-        /// </summary>
-        /// <returns>Color.</returns>
-        /// <param name="text">"rrggbb" string.</param>
-        public static Color ToColor24 (this string text) {
-            try {
-                var data = Convert.ToInt32 (text.Length > 6 ? text.Substring (0, 6) : text, 16);
-                return new Color (
-                    ((data >> 16) & 0xff) / 255f,
-                    ((data >> 8) & 0xff) / 255f,
-                    (data & 0xff) / 255f,
-                    1f);
-            } catch {
-                return Color.black;
-            }
-        }
-
-        /// <summary>
-        /// Convert hex string "rrggbbaa" to Color.
-        /// </summary>
-        /// <returns>Color.</returns>
-        /// <param name="text">"rrggbbaa" string.</param>
-        public static Color ToColor32 (this string text) {
-            try {
-                var data = Convert.ToInt32 (text.Length > 8 ? text.Substring (0, 8) : text, 16);
-                return new Color (
-                    ((data >> 24) & 0xff) / 255f,
-                    ((data >> 16) & 0xff) / 255f,
-                    ((data >> 8) & 0xff) / 255f,
-                    (data & 0xff) / 255f);
-            } catch {
-                return Color.black;
-            }
-        }
-
-        /// <summary>
-        /// Convert color to hex string "rrggbb".
-        /// </summary>
-        /// <param name="color">Color.</param>
-        public static string ToHexString24 (this Color color) {
-            var data = ((int) (color.r * 255f) << 16) + ((int) (color.g * 255f) << 8) + (int) (color.b * 255f);
-            return data.ToString ("x6");
-        }
-
-        /// <summary>
-        /// Convert color to hex string "rrggbbaa".
-        /// </summary>
-        /// <param name="color">Color.</param>
-        public static string ToHexString32 (this Color color) {
-            var data = ((int) (color.r * 255f) << 24) +
-                    ((int) (color.g * 255f) << 16) +
-                    ((int) (color.b * 255f) << 8) +
-                    (int) (color.a * 255f);
-            return data.ToString ("x8");
         }
     }
 }

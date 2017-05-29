@@ -7,9 +7,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
-using LeopotamGroup.Math;
 
 namespace LeopotamGroup.Serialization {
     /// <summary>
@@ -102,8 +102,7 @@ namespace LeopotamGroup.Serialization {
 
             // number
             if (_numericTypes.Contains (objType)) {
-                // ReSharper disable once PossibleNullReferenceException
-                _sb.Append (((float) Convert.ChangeType (obj, typeof (float))).ToStringFast ());
+                _sb.Append (((float) Convert.ChangeType (obj, typeof (float))).ToString (NumberFormatInfo.InvariantInfo));
                 return;
             }
             // enum
@@ -355,8 +354,7 @@ namespace LeopotamGroup.Serialization {
                             if (objType != null) {
                                 if (v1 != null) {
                                     if (dict != null) {
-                                        // ReSharper disable once AssignNullToNotNullAttribute
-                                        dict.Add (Convert.ChangeType (name, dictTypes[0], MathExtensions.UnifiedNumberFormat), v1);
+                                        dict.Add (Convert.ChangeType (name, dictTypes[0], NumberFormatInfo.InvariantInfo), v1);
                                     } else {
                                         TypesCache.Instance.SetValue (objType, name, v, v1);
                                     }
@@ -398,8 +396,7 @@ namespace LeopotamGroup.Serialization {
                         default:
                             var v1 = ParseByToken (PeekNextToken ());
                             if (itemType != null) {
-                                // ReSharper disable once AssignNullToNotNullAttribute
-                                list.Add (Convert.ChangeType (v1, itemType, MathExtensions.UnifiedNumberFormat));
+                                list.Add (Convert.ChangeType (v1, itemType, NumberFormatInfo.InvariantInfo));
                                 _type = itemType;
                             }
                             break;
@@ -408,8 +405,6 @@ namespace LeopotamGroup.Serialization {
                 object v = null;
                 if (arrType != null) {
                     if (isArray) {
-                        // ReSharper disable once PossibleNullReferenceException
-                        // ReSharper disable once AssignNullToNotNullAttribute
                         v = list.ToArray (itemType);
                     } else {
                         v = Activator.CreateInstance (arrType);
@@ -417,8 +412,6 @@ namespace LeopotamGroup.Serialization {
                         if (vList == null) {
                             throw new Exception (string.Format ("Type '{0}' not compatible with array data", _type.Name));
                         }
-
-                        // ReSharper disable once PossibleNullReferenceException
                         for (var i = 0; i < list.Count; i++) {
                             vList.Add (list[i]);
                         }
@@ -491,7 +484,7 @@ namespace LeopotamGroup.Serialization {
             object ParseNumber () {
                 var numString = GetNextWord ();
                 if (_type != null) {
-                    var n = numString.ToFloatUnchecked ();
+                    var n = float.Parse (numString, NumberFormatInfo.InvariantInfo);
                     if (_type == typeof (float)) {
                         return n;
                     }
@@ -508,7 +501,7 @@ namespace LeopotamGroup.Serialization {
                         return Enum.ToObject (_type, (int) n);
                     } else {
                         var nullableType = Nullable.GetUnderlyingType (_type);
-                        return Convert.ChangeType (n, nullableType ?? _type, MathExtensions.UnifiedNumberFormat);
+                        return Convert.ChangeType (n, nullableType ?? _type, NumberFormatInfo.InvariantInfo);
                     }
                 }
                 return null;
