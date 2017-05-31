@@ -17,11 +17,11 @@ namespace LeopotamGroup.EditorHelpers {
     /// Base class for developer UI console.
     /// </summary>
     [DefaultExecutionOrder (-32768)]
-    internal abstract class DeveloperConsoleBase : UnitySingletonBase {
+    abstract class DeveloperConsoleBase : UnitySingletonBase {
         /// <summary>
         /// Is console was shown.
         /// </summary>
-        public bool IsVisible { get { return _isVisible; } }
+        public bool IsVisible { get; private set; }
 
         const string MarkupSchema = "LeopotamGroup/EditorHelpers/DevConsole";
 
@@ -45,8 +45,6 @@ namespace LeopotamGroup.EditorHelpers {
 
         RectTransform _logScroll;
 
-        bool _isVisible;
-
         string[] _logLines;
 
         int _linesCount;
@@ -66,8 +64,12 @@ namespace LeopotamGroup.EditorHelpers {
             _markup.GetCanvas ().sortingOrder = short.MaxValue;
             _markup.gameObject.SetActive (false);
 
-            _logScroll = _markup.GetNamedNode (MarkupScrollViewName).GetComponent<ScrollRect> ().content;
+            var scrollView = _markup.GetNamedNode (MarkupScrollViewName).GetComponent<ScrollRect> ();
+            _logScroll = scrollView.content;
             _logScroll.pivot = new Vector2 (0.5f, 0f);
+            var pos = _logScroll.localPosition;
+            pos.y -= scrollView.GetComponent<RectTransform> ().sizeDelta.y * 0.5f;
+            _logScroll.localPosition = pos;
             _logText = _markup.GetNamedNode (MarkupLogTextName).GetComponent<Text> ();
             _logText.horizontalOverflow = HorizontalWrapMode.Overflow;
             _logText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -168,10 +170,10 @@ namespace LeopotamGroup.EditorHelpers {
         /// </summary>
         /// <param name="state">New state of visibility.</param>
         public virtual void Show (bool state) {
-            if (state != _isVisible) {
-                _isVisible = state;
-                _markup.gameObject.SetActive (_isVisible);
-                if (_isVisible) {
+            if (state != IsVisible) {
+                IsVisible = state;
+                _markup.gameObject.SetActive (state);
+                if (state) {
                     _inputField.ActivateInputField ();
                 } else {
                     _inputField.text = string.Empty;
