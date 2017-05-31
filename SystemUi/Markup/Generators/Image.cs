@@ -19,6 +19,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedMask = "mask".GetStableHashCode ();
 
+        static readonly int HashedFillCenter = "fillCenter".GetStableHashCode ();
+
         /// <summary>
         /// Create "image" node. If children supported - GameObject container for them should be returned.
         /// </summary>
@@ -34,6 +36,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             string attrValue;
             var useImg = true;
             var ignoreSize = false;
+            var fillCenter = true;
 
             attrValue = node.GetAttribute (HashedRaw);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
@@ -75,6 +78,14 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             attrValue = node.GetAttribute (HashedMask);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
                 widget.gameObject.AddComponent<Mask> ();
+            }
+
+            if (useImg) {
+                attrValue = node.GetAttribute (HashedFillCenter);
+                if (string.CompareOrdinal (attrValue, "false") == 0) {
+                    fillCenter = false;
+                }
+                img.fillCenter = fillCenter;
             }
 
             if (useImg && !MarkupUtils.SetColor (img, node)) {
