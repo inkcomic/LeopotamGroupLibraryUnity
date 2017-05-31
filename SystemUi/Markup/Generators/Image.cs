@@ -41,6 +41,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 tex = widget.gameObject.AddComponent<RawImage> ();
             } else {
                 img = widget.gameObject.AddComponent<Image> ();
+                img.type = Image.Type.Sliced;
             }
 
             attrValue = node.GetAttribute (HashedPath);
@@ -65,7 +66,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 ignoreSize = (object) img.sprite != null && string.CompareOrdinal (attrValue, "true") == 0;
             }
 
-            if (ignoreSize) {
+            if (useImg && ignoreSize) {
                 img.SetNativeSize ();
             } else {
                 MarkupUtils.SetSize (widget, node);
@@ -76,7 +77,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 widget.gameObject.AddComponent<Mask> ();
             }
 
-            if (!MarkupUtils.SetColor (img, node)) {
+            if (useImg && !MarkupUtils.SetColor (img, node)) {
                 img.color = Color.white;
             }
             MarkupUtils.SetRotation (widget, node);
