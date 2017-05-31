@@ -79,9 +79,9 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             attrValue = node.GetAttribute (HashedGroup);
             if (!string.IsNullOrEmpty (attrValue)) {
-                var groupGO = container.GetNamedNode (attrValue);
-                if ((object) groupGO != null) {
-                    toggle.group = groupGO.GetComponent<ToggleGroup> ();
+                var groupGo = container.GetNamedNode (attrValue);
+                if ((object) groupGo != null) {
+                    toggle.group = groupGo.GetComponent<ToggleGroup> ();
                 }
             }
 
@@ -104,6 +104,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
+            MarkupUtils.SetNav (toggle, node, container.UseNavigation);
 
             return rt;
         }

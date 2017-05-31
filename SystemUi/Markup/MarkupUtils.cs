@@ -23,6 +23,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedHidden = "hidden".GetStableHashCode ();
 
+        public static readonly int HashedNav = "nav".GetStableHashCode ();
+
         static readonly int HashedColor = "color".GetStableHashCode ();
 
         static readonly int HashedTheme = "theme".GetStableHashCode ();
@@ -241,10 +243,10 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (percentIdx != -1) {
                         // relative.
                         if (float.TryParse (
-                                amountStr.Substring (0, percentIdx),
-                                NumberStyles.Float,
-                                NumberFormatInfo.InvariantInfo,
-                                out amount)) {
+                            amountStr.Substring (0, percentIdx),
+                            NumberStyles.Float,
+                            NumberFormatInfo.InvariantInfo,
+                            out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.x = 0.5f - amount;
                             anchorMax.x = 0.5f + amount;
@@ -266,10 +268,10 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (percentIdx != -1) {
                         // relative.
                         if (float.TryParse (
-                                amountStr.Substring (0, percentIdx),
-                                NumberStyles.Float,
-                                NumberFormatInfo.InvariantInfo,
-                                out amount)) {
+                            amountStr.Substring (0, percentIdx),
+                            NumberStyles.Float,
+                            NumberFormatInfo.InvariantInfo,
+                            out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.y = 0.5f - amount;
                             anchorMax.y = 0.5f + amount;
@@ -291,6 +293,14 @@ namespace LeopotamGroup.SystemUi.Markup {
             widget.anchorMax = anchorMax;
             widget.offsetMin = offsetMin;
             widget.offsetMax = offsetMax;
+        }
+
+        public static void SetNav (Selectable widget, XmlNode node, bool defaultState) {
+            var attrValue = node.GetAttribute (HashedNav);
+            if (attrValue != null) {
+                defaultState = string.CompareOrdinal (attrValue, "false") != 0;
+            }
+            widget.navigation = defaultState ? Navigation.defaultNavigation : new Navigation { mode = Navigation.Mode.None };
         }
     }
 }

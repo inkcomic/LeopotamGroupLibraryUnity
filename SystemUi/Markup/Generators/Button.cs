@@ -69,6 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
+            MarkupUtils.SetNav (btn, node, container.UseNavigation);
 
             attrValue = node.GetAttribute (HashedDisabled);
             var disabled = string.CompareOrdinal (attrValue, "true") == 0;

@@ -30,6 +30,12 @@ namespace LeopotamGroup.SystemUi.Markup {
         [NonSerialized]
         public float DragTreshold = 5f;
 
+        /// <summary>
+        /// Drag threshold for input events.
+        /// </summary>
+        [NonSerialized]
+        public bool UseNavigation = true;
+
         public static readonly int HashedName = "name".GetStableHashCode ();
 
         [SerializeField]
@@ -49,7 +55,7 @@ namespace LeopotamGroup.SystemUi.Markup {
         Canvas _canvas;
 
         Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> _generators =
-            new Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> (64);
+                new Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> (64);
 
         Dictionary<int, RectTransform> _namedNodes = new Dictionary<int, RectTransform> (128);
 
@@ -179,6 +185,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             _canvas = null;
             PixelSize = 1f;
             DragTreshold = 5f;
+            UseNavigation = true;
             _namedNodes.Clear ();
             var tr = transform;
             for (var i = tr.childCount - 1; i >= 0; i--) {
@@ -339,11 +346,11 @@ namespace LeopotamGroup.SystemUi.Markup {
                 return null;
             }
             var container =
-                new GameObject (
+                    new GameObject (
 #if UNITY_EDITOR
-                    "_MARKUP_" + markupPath
+                        "_MARKUP_" + markupPath
 #endif
-                ).AddComponent<MarkupContainer> ();
+                    ).AddComponent<MarkupContainer> ();
             container._markupPath = markupPath;
             if ((object) parent != null) {
                 container.transform.SetParent (parent, false);

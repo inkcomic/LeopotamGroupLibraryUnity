@@ -16,6 +16,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static readonly int HashedBase = "base".GetStableHashCode ();
 
         static readonly int HashedDragTreshold = "dragTreshold".GetStableHashCode ();
+
         /// <summary>
         /// Create "ui" node. If children supported - GameObject container for them should be returned.
         /// </summary>
@@ -65,8 +66,12 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 }
             }
 
+            attrValue = node.GetAttribute (MarkupUtils.HashedNav);
+            var disableNav = string.CompareOrdinal (attrValue, "false") == 0;
+
             container.PixelSize = pixelSize;
             container.DragTreshold = dragTreshold * pixelSize;
+            container.UseNavigation = !disableNav;
 
             go.AddComponent<GraphicRaycaster> ();
 
