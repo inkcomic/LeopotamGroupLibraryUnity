@@ -21,14 +21,15 @@ namespace LeopotamGroup.Common {
         /// <summary>
         /// Get current screen name.
         /// </summary>
-        public string Current { get; private set; }
+        public string Current {
+            get { return SceneManager.GetActiveScene ().name; }
+        }
 
         readonly Stack<string> _history = new Stack<string> ();
 
         protected override void OnConstruct () {
             DontDestroyOnLoad (gameObject);
             Previous = null;
-            Current = SceneManager.GetActiveScene ().name;
         }
 
         /// <summary>
@@ -42,7 +43,6 @@ namespace LeopotamGroup.Common {
                 _history.Push (Previous);
             }
 
-            Current = screenName;
             SceneManager.LoadScene (screenName);
         }
 
@@ -57,7 +57,6 @@ namespace LeopotamGroup.Common {
             }
 #endif
             if (_history.Count > 0) {
-                Current = _history.Pop ();
                 Previous = _history.Count > 0 ? _history.Peek () : null;
                 SceneManager.LoadScene (Current);
             }
