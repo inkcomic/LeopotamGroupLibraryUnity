@@ -16,7 +16,9 @@ namespace LeopotamGroup.Common {
         /// <summary>
         /// Get previous screen name or null.
         /// </summary>
-        public string Previous { get; private set; }
+        public string Previous {
+            get { return _history.Count > 0 ? _history.Peek () : null; }
+        }
 
         /// <summary>
         /// Get current screen name.
@@ -25,11 +27,10 @@ namespace LeopotamGroup.Common {
             get { return SceneManager.GetActiveScene ().name; }
         }
 
-        readonly Stack<string> _history = new Stack<string> ();
+        readonly Stack<string> _history = new Stack<string> (8);
 
         protected override void OnConstruct () {
             DontDestroyOnLoad (gameObject);
-            Previous = null;
         }
 
         /// <summary>
@@ -38,7 +39,6 @@ namespace LeopotamGroup.Common {
         /// <param name="screenName">Target screen name.</param>
         /// <param name="saveToHistory">Save current screen to history for using NavigateBack later.</param>
         public void NavigateTo (string screenName, bool saveToHistory = false) {
-            Previous = Current;
             if (saveToHistory) {
                 _history.Push (Previous);
             }
@@ -57,8 +57,7 @@ namespace LeopotamGroup.Common {
             }
 #endif
             if (_history.Count > 0) {
-                Previous = _history.Count > 0 ? _history.Peek () : null;
-                SceneManager.LoadScene (Current);
+                SceneManager.LoadScene (_history.Pop ());
             }
         }
 
@@ -67,7 +66,6 @@ namespace LeopotamGroup.Common {
         /// </summary>
         public void ClearHistory () {
             _history.Clear ();
-            Previous = null;
         }
     }
 }
