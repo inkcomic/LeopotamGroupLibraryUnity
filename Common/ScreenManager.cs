@@ -40,7 +40,7 @@ namespace LeopotamGroup.Common {
         /// <param name="saveToHistory">Save current screen to history for using NavigateBack later.</param>
         public void NavigateTo (string screenName, bool saveToHistory = false) {
             if (saveToHistory) {
-                _history.Push (Previous);
+                _history.Push (Current);
             }
 
             SceneManager.LoadScene (screenName);
@@ -50,6 +50,15 @@ namespace LeopotamGroup.Common {
         /// Navigate back through saved in history screens.
         /// </summary>
         public void NavigateBack () {
+#if UNITY_ANDROID
+            if (_history.Count == 0) {
+                Application.Quit ();
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#endif
+                return;
+            }
+#endif
 #if UNITY_EDITOR
             if (_history.Count == 0) {
                 Debug.LogWarning ("Cant navigate back");
