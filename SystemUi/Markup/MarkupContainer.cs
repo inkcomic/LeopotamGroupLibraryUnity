@@ -55,7 +55,7 @@ namespace LeopotamGroup.SystemUi.Markup {
         Canvas _canvas;
 
         protected Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> Generators =
-                new Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> (64);
+            new Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> (64);
 
         Dictionary<int, RectTransform> _namedNodes = new Dictionary<int, RectTransform> (128);
 
@@ -233,6 +233,9 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// Force cleanup / create widgets infrastructure from attached xml-schema.
         /// </summary>
         public void CreateVisuals () {
+            if (_isVisualized) {
+                return;
+            }
             ValidateGenerators ();
             if ((object) _defaultFont == null) {
                 _defaultFont = _fonts.Count > 0 ? _fonts[0] : Resources.GetBuiltinResource<Font> ("Arial.ttf");
@@ -346,11 +349,11 @@ namespace LeopotamGroup.SystemUi.Markup {
                 return null;
             }
             var container =
-                    new GameObject (
+                new GameObject (
 #if UNITY_EDITOR
-                        "_MARKUP_" + markupPath
+                    "_MARKUP_" + markupPath
 #endif
-                    ).AddComponent<MarkupContainer> ();
+                ).AddComponent<MarkupContainer> ();
             container._markupPath = markupPath;
             if ((object) parent != null) {
                 container.transform.SetParent (parent, false);

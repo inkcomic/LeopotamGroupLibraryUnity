@@ -29,7 +29,15 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 #endif
             var go = widget.gameObject;
             var canvas = go.AddComponent<Canvas> ();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            Camera uiCamera = null;
+            if (Application.isPlaying) {
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                uiCamera = MarkupUtils.GetUiCamera ();
+                canvas.worldCamera = uiCamera;
+            } else {
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            }
+            canvas.planeDistance = 0f;
             canvas.pixelPerfect = false;
             var pixelSize = 1f;
             var dragTreshold = 5;
@@ -53,7 +61,11 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 scaler.referenceResolution = new Vector2 (refWidth, refHeight);
                 scaler.matchWidthOrHeight = refBalance;
                 if (Application.isPlaying) {
-                    pixelSize = Mathf.Lerp (Screen.width / (float) refWidth, Screen.height / (float) refHeight, refBalance);
+                    if (refBalance < 1f) {
+                        Debug.LogWarning ("Only height-based balance supported");
+                    }
+                    uiCamera.orthographicSize = refHeight * 0.5f;
+                    pixelSize = MathFast.Lerp (Screen.width / (float) refWidth, Screen.height / (float) refHeight, refBalance);
                 } else {
                     pixelSize = 1f;
                 }

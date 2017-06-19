@@ -49,6 +49,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         static readonly int _uiLayer = LayerMask.NameToLayer ("UI");
 
+        static readonly Camera[] _camerasCache = new Camera[8];
+
         /// <summary>
         /// Create GameObject holder - compatible with UI.
         /// </summary>
@@ -61,6 +63,39 @@ namespace LeopotamGroup.SystemUi.Markup {
             go.layer = _uiLayer;
             rt.SetParent (root, false);
             return rt;
+        }
+
+        /// <summary>
+        /// Get exists camera for Ui rendering or create new one.
+        /// </summary>
+        public static Camera GetUiCamera () {
+            Camera cam = null;
+            var count = Camera.GetAllCameras (_camerasCache);
+            var mask = 1 << _uiLayer;
+            var i = count - 1;
+            for (; i >= 0; i--) {
+                if ((_camerasCache[i].cullingMask & mask) != 0) {
+                    cam = _camerasCache[i];
+                    break;
+                }
+            }
+            if (i < 0) {
+                var go = new GameObject ();
+#if UNITY_EDITOR
+                go.name = "UiCamera";
+#endif
+                cam = go.AddComponent<Camera> ();
+                cam.orthographic = true;
+                cam.cullingMask = mask;
+                cam.clearFlags = CameraClearFlags.Depth;
+                cam.depth = 100;
+                cam.nearClipPlane = -128f;
+                cam.farClipPlane = 128f;
+            }
+            for (i = count - 1; i >= 0; i--) {
+                _camerasCache[i] = null;
+            }
+            return cam;
         }
 
         /// <summary>
@@ -243,10 +278,10 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (percentIdx != -1) {
                         // relative.
                         if (float.TryParse (
-                            amountStr.Substring (0, percentIdx),
-                            NumberStyles.Float,
-                            NumberFormatInfo.InvariantInfo,
-                            out amount)) {
+                                amountStr.Substring (0, percentIdx),
+                                NumberStyles.Float,
+                                NumberFormatInfo.InvariantInfo,
+                                out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.x = 0.5f - amount;
                             anchorMax.x = 0.5f + amount;
@@ -268,10 +303,10 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (percentIdx != -1) {
                         // relative.
                         if (float.TryParse (
-                            amountStr.Substring (0, percentIdx),
-                            NumberStyles.Float,
-                            NumberFormatInfo.InvariantInfo,
-                            out amount)) {
+                                amountStr.Substring (0, percentIdx),
+                                NumberStyles.Float,
+                                NumberFormatInfo.InvariantInfo,
+                                out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.y = 0.5f - amount;
                             anchorMax.y = 0.5f + amount;
