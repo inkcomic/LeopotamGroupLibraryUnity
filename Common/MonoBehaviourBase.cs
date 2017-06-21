@@ -6,8 +6,6 @@
 
 using UnityEngine;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.Common {
     /// <summary>
     /// Replacement for MonoBehaviour class with transform caching.
