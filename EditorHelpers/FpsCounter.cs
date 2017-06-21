@@ -43,7 +43,7 @@ namespace LeopotamGroup.EditorHelpers {
 
         Color _color = Color.white;
 
-        Dictionary<int, string> _stringPool = new Dictionary<int, string> (256);
+        readonly StringCache<int> _stringCache = new StringCache<int> (null, null, 256);
 
         protected override void OnConstruct () {
             DontDestroyOnLoad (gameObject);
@@ -68,12 +68,7 @@ namespace LeopotamGroup.EditorHelpers {
             if (Event.current.type != EventType.Repaint) {
                 return;
             }
-            string fpsString;
-            var fps = CurrentFps;
-            if (!_stringPool.TryGetValue (fps, out fpsString)) {
-                fpsString = fps.ToString ();
-                _stringPool[fps] = fpsString;
-            }
+            var fpsString = _stringCache.Get (CurrentFps);
 #if UNITY_EDITOR
             CalculateRect ();
 #endif
