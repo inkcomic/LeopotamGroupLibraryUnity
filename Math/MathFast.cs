@@ -338,5 +338,21 @@ namespace LeopotamGroup.Math {
         public static float Pow (float data, float power) {
             return (float) System.Math.Pow (data, power);
         }
+
+        /// <summary>
+        /// Return largest integer smaller to or equal to data.
+        /// </summary>
+        /// <param name="data">Data to floor.</param>
+        public static float Floor (float data) {
+            return data >= 0f ? (int) data : (int) data - 1;
+        }
+
+        /// <summary>
+        /// Return largest integer smaller to or equal to data.
+        /// </summary>
+        /// <param name="data">Data to floor.</param>
+        public static int FloorToInt (float data) {
+            return data >= 0f ? (int) data : (int) data - 1;
+        }
     }
 }
