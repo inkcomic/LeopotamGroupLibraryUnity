@@ -67,6 +67,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         /// <summary>
         /// Get exists camera for Ui rendering or create new one.
+        /// Important: Ui camera - camera with culling only one layer - "UI".
         /// </summary>
         public static Camera GetUiCamera () {
             Camera cam = null;
@@ -74,7 +75,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             var mask = 1 << _uiLayer;
             var i = count - 1;
             for (; i >= 0; i--) {
-                if ((_camerasCache[i].cullingMask & mask) != 0) {
+                if (_camerasCache[i].cullingMask == mask) {
                     cam = _camerasCache[i];
                     break;
                 }
