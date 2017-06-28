@@ -137,6 +137,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
+            MarkupUtils.SetNav (slider, node, container.UseNavigation);
 
             slider.interactable = useHandle && isInteractive;
 

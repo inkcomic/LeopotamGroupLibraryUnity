@@ -138,7 +138,8 @@ namespace LeopotamGroup.Analytics {
         /// </summary>
         /// <param name="screenName">Custom screen name.</param>
         public void TrackScreen (string screenName) {
-            EnqueueRequest (string.Format ("t=screenview&cd={0}", WWW.EscapeURL (screenName)));
+            // Old version of screen tracking: EnqueueRequest (string.Format ("t=screenview&cd={0}", WWW.EscapeURL (screenName)));
+            EnqueueRequest (string.Format ("t=pageview&dp={0}", WWW.EscapeURL (screenName)));
         }
 
         /// <summary>
@@ -165,7 +166,7 @@ namespace LeopotamGroup.Analytics {
                 WWW.EscapeURL (value)
             ));
         }
-        
+
         /// <summary>
         /// Track transaction for e-commerce, in-app purchases.
         /// </summary>
@@ -174,8 +175,8 @@ namespace LeopotamGroup.Analytics {
         /// <param name="sku">Product code.</param>
         /// <param name="price">Product price.</param>      
         /// <param name="currency">ISO currency code, 3 letters. USD by default</param> 
-        public void TrackTransaction (string transaction, string name, string sku, decimal price, string currency = "USD") {     
-            transaction = (transaction.Length <= 100) ? transaction : transaction.Substring(0, 100);   
+        public void TrackTransaction (string transaction, string name, string sku, decimal price, string currency = "USD") {
+            transaction = (transaction.Length <= 100) ? transaction : transaction.Substring (0, 100);
             EnqueueRequest (string.Format ("t=transaction&ti={0}&tr={1}&cu={2}&ts=0&tt=0",
                 WWW.EscapeURL (transaction),
                 price,
@@ -187,8 +188,8 @@ namespace LeopotamGroup.Analytics {
                 WWW.EscapeURL (sku),
                 price,
                 WWW.EscapeURL (currency)
-            ));            
-    }    
+            ));
+        }
 
         /// <summary>
         /// Track exception event.

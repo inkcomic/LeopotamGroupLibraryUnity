@@ -28,22 +28,22 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             var btn = widget.gameObject.AddComponent<Button> ();
             var img = widget.gameObject.AddComponent<Image> ();
             string attrValue;
-            var transition = Button.Transition.ColorTint;
+            var transition = Selectable.Transition.ColorTint;
 
             attrValue = node.GetAttribute (HashedBlend);
             switch (attrValue) {
                 case "sprites":
-                    transition = Button.Transition.SpriteSwap;
+                    transition = Selectable.Transition.SpriteSwap;
                     break;
                 case "none":
-                    transition = Button.Transition.None;
+                    transition = Selectable.Transition.None;
                     break;
             }
 
             var theme = MarkupUtils.GetTheme (node, container);
 
             switch (transition) {
-                case Button.Transition.ColorTint:
+                case Selectable.Transition.ColorTint:
                     var colors = btn.colors;
                     colors.normalColor = theme.GetButtonColor (MarkupTheme.ButtonState.Normal);
                     colors.pressedColor = theme.GetButtonColor (MarkupTheme.ButtonState.Pressed);
@@ -51,7 +51,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                     colors.disabledColor = theme.GetButtonColor (MarkupTheme.ButtonState.Disabled);
                     btn.colors = colors;
                     break;
-                case Button.Transition.SpriteSwap:
+                case Selectable.Transition.SpriteSwap:
                     var sprites = btn.spriteState;
                     sprites.pressedSprite = theme.GetButtonSprite (MarkupTheme.ButtonState.Pressed);
                     sprites.highlightedSprite = theme.GetButtonSprite (MarkupTheme.ButtonState.Highlighted);
@@ -69,6 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
+            MarkupUtils.SetNav (btn, node, container.UseNavigation);
 
             attrValue = node.GetAttribute (HashedDisabled);
             var disabled = string.CompareOrdinal (attrValue, "true") == 0;

@@ -158,6 +158,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             MarkupUtils.SetRotation (widget, node);
             MarkupUtils.SetOffset (widget, node);
             MarkupUtils.SetHidden (widget, node);
+            MarkupUtils.SetNav (input, node, container.UseNavigation);
 
             attrValue = node.GetAttribute (HashedOnChange);
             if (!string.IsNullOrEmpty (attrValue)) {

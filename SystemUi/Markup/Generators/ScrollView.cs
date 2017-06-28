@@ -121,9 +121,11 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
             if (needHorScroll) {
                 horScroll = CreateScrollbar (widget, theme, true);
+                MarkupUtils.SetNav (horScroll, node, container.UseNavigation);
             }
             if (needVerScroll) {
                 verScroll = CreateScrollbar (widget, theme, false);
+                MarkupUtils.SetNav (verScroll, node, container.UseNavigation);
             }
 
             attrValue = node.GetAttribute (HashedOnChange);
@@ -153,6 +155,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
         static Scrollbar CreateScrollbar (RectTransform widget, MarkupTheme theme, bool isHorizontal) {
             Image img;
             var width = theme.GetScrollbarWidth ();
+
             // background.
             var rt = MarkupUtils.CreateUiObject (null, widget);
             var sb = rt.gameObject.AddComponent<Scrollbar> ();

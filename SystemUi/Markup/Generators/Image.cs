@@ -19,6 +19,8 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
 
         static readonly int HashedMask = "mask".GetStableHashCode ();
 
+        static readonly int HashedFillCenter = "fillCenter".GetStableHashCode ();
+
         /// <summary>
         /// Create "image" node. If children supported - GameObject container for them should be returned.
         /// </summary>
@@ -34,6 +36,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
             string attrValue;
             var useImg = true;
             var ignoreSize = false;
+            var fillCenter = true;
 
             attrValue = node.GetAttribute (HashedRaw);
             if (string.CompareOrdinal (attrValue, "true") == 0) {
@@ -41,6 +44,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 tex = widget.gameObject.AddComponent<RawImage> ();
             } else {
                 img = widget.gameObject.AddComponent<Image> ();
+                img.type = Image.Type.Sliced;
             }
 
             attrValue = node.GetAttribute (HashedPath);
@@ -65,7 +69,7 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 ignoreSize = (object) img.sprite != null && string.CompareOrdinal (attrValue, "true") == 0;
             }
 
-            if (ignoreSize) {
+            if (useImg && ignoreSize) {
                 img.SetNativeSize ();
             } else {
                 MarkupUtils.SetSize (widget, node);
@@ -76,7 +80,15 @@ namespace LeopotamGroup.SystemUi.Markup.Generators {
                 widget.gameObject.AddComponent<Mask> ();
             }
 
-            if (!MarkupUtils.SetColor (img, node)) {
+            if (useImg) {
+                attrValue = node.GetAttribute (HashedFillCenter);
+                if (string.CompareOrdinal (attrValue, "false") == 0) {
+                    fillCenter = false;
+                }
+                img.fillCenter = fillCenter;
+            }
+
+            if (useImg && !MarkupUtils.SetColor (img, node)) {
                 img.color = Color.white;
             }
             MarkupUtils.SetRotation (widget, node);

@@ -80,9 +80,9 @@ namespace LeopotamGroup.Common {
     }
 
     public static class Singleton {
-        static Dictionary<Type, object> _instancesPool = new Dictionary<Type, object> (32, new KeysComparer ());
+        static readonly Dictionary<int, object> _instancesPool = new Dictionary<int, object> (64);
 
-        static List<Type> _removeCache = new List<Type> (32);
+        static readonly List<int> _removeCache = new List<int> (64);
 
         /// <summary>
         /// Get count of registered singletons.
@@ -116,7 +116,7 @@ namespace LeopotamGroup.Common {
         /// </summary>
         /// <param name="type">Type for check.</param>
         public static bool IsTypeRegistered (Type type) {
-            return type != null && _instancesPool.ContainsKey (type);
+            return type != null && _instancesPool.ContainsKey (type.GetHashCode ());
         }
 
         /// <summary>
@@ -125,8 +125,9 @@ namespace LeopotamGroup.Common {
         /// </summary>
         public static T Get<T> () where T : class, new () {
             var type = typeof (T);
+            var hash = type.GetHashCode ();
             object retVal;
-            if (_instancesPool.TryGetValue (type, out retVal)) {
+            if (_instancesPool.TryGetValue (hash, out retVal)) {
                 return (T) retVal;
             }
 
@@ -138,7 +139,7 @@ namespace LeopotamGroup.Common {
                         string.Format ("Singleton<{0}> can be used only with exists / loaded asset of this type", type.Name));
                 }
                 var obj = list[0] as T;
-                _instancesPool[type] = obj;
+                _instancesPool[hash] = obj;
                 return obj;
             }
 
@@ -162,10 +163,10 @@ namespace LeopotamGroup.Common {
 #endif
                 ).AddComponent (type);
             } else {
-                _instancesPool[type] = new T ();
+                _instancesPool[hash] = new T ();
             }
 
-            return (T) _instancesPool[type];
+            return (T) _instancesPool[hash];
         }
 
         /// <summary>
@@ -182,6 +183,7 @@ namespace LeopotamGroup.Common {
             }
             var instanceType = instance.GetType ();
             targetType = targetType ?? instanceType;
+            var targetHash = targetType.GetHashCode ();
 
             if (instanceType != targetType && !instanceType.IsSubclassOf (targetType)) {
                 throw new UnityException (string.Format (
@@ -196,12 +198,12 @@ namespace LeopotamGroup.Common {
                 }
 
                 // special case for unity components.
-                var oldObject = _instancesPool[targetType] as UnitySingletonBase;
+                var oldObject = _instancesPool[targetHash] as UnitySingletonBase;
                 if ((object) oldObject != null) {
                     UnityEngine.Object.DestroyImmediate (oldObject.gameObject);
                 }
             }
-            _instancesPool[targetType] = instance;
+            _instancesPool[targetHash] = instance;
         }
 
         /// <summary>
@@ -222,15 +224,6 @@ namespace LeopotamGroup.Common {
             }
             _removeCache.Clear ();
         }
-
-        class KeysComparer : IEqualityComparer<Type> {
-            public bool Equals (Type x, Type y) {
-                return x == y;
-            }
-
-            public int GetHashCode (Type obj) {
-                return obj.GetHashCode ();
-            }
-        }
     }
+
 }

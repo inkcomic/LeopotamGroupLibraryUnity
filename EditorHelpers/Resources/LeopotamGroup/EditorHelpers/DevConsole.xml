@@ -1,4 +1,4 @@
-<ui base="1024;768;1">
+<ui base="1024;768;1" nav="false">
     <align side="top">
         <image color="#1f1f1fee" size=",400" offset=",-200">
             <scrollView name="logScroll" size=",400" contentSize="100%,400" clamp="true" onChange="DeveloperConsole">

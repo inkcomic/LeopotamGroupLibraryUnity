@@ -16,19 +16,21 @@ namespace LeopotamGroup.Common {
         /// <summary>
         /// Get previous screen name or null.
         /// </summary>
-        public string Previous { get; private set; }
+        public string Previous {
+            get { return _history.Count > 0 ? _history.Peek () : null; }
+        }
 
         /// <summary>
         /// Get current screen name.
         /// </summary>
-        public string Current { get; private set; }
+        public string Current {
+            get { return SceneManager.GetActiveScene ().name; }
+        }
 
-        readonly Stack<string> _history = new Stack<string> ();
+        readonly Stack<string> _history = new Stack<string> (8);
 
         protected override void OnConstruct () {
             DontDestroyOnLoad (gameObject);
-            Previous = null;
-            Current = SceneManager.GetActiveScene ().name;
         }
 
         /// <summary>
@@ -37,12 +39,10 @@ namespace LeopotamGroup.Common {
         /// <param name="screenName">Target screen name.</param>
         /// <param name="saveToHistory">Save current screen to history for using NavigateBack later.</param>
         public void NavigateTo (string screenName, bool saveToHistory = false) {
-            Previous = Current;
             if (saveToHistory) {
-                _history.Push (Previous);
+                _history.Push (Current);
             }
 
-            Current = screenName;
             SceneManager.LoadScene (screenName);
         }
 
@@ -50,6 +50,15 @@ namespace LeopotamGroup.Common {
         /// Navigate back through saved in history screens.
         /// </summary>
         public void NavigateBack () {
+#if UNITY_ANDROID
+            if (_history.Count == 0) {
+                Application.Quit ();
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#endif
+                return;
+            }
+#endif
 #if UNITY_EDITOR
             if (_history.Count == 0) {
                 Debug.LogWarning ("Cant navigate back");
@@ -57,9 +66,7 @@ namespace LeopotamGroup.Common {
             }
 #endif
             if (_history.Count > 0) {
-                Current = _history.Pop ();
-                Previous = _history.Count > 0 ? _history.Peek () : null;
-                SceneManager.LoadScene (Current);
+                SceneManager.LoadScene (_history.Pop ());
             }
         }
 
@@ -68,7 +75,6 @@ namespace LeopotamGroup.Common {
         /// </summary>
         public void ClearHistory () {
             _history.Clear ();
-            Previous = null;
         }
     }
 }

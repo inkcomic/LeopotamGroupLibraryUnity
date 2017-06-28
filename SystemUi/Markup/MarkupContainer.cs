@@ -30,6 +30,12 @@ namespace LeopotamGroup.SystemUi.Markup {
         [NonSerialized]
         public float DragTreshold = 5f;
 
+        /// <summary>
+        /// Drag threshold for input events.
+        /// </summary>
+        [NonSerialized]
+        public bool UseNavigation = true;
+
         public static readonly int HashedName = "name".GetStableHashCode ();
 
         [SerializeField]
@@ -48,7 +54,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         Canvas _canvas;
 
-        Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> _generators =
+        protected Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> Generators =
             new Dictionary<int, Func<RectTransform, XmlNode, MarkupContainer, RectTransform>> (64);
 
         Dictionary<int, RectTransform> _namedNodes = new Dictionary<int, RectTransform> (128);
@@ -63,28 +69,28 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         void ValidateGenerators () {
             if (!_areGeneratorsAttached) {
-                _generators.Clear ();
+                Generators.Clear ();
                 AttachGenerators ();
                 _areGeneratorsAttached = true;
             }
         }
 
         protected virtual void AttachGenerators () {
-            _generators.Add ("align".GetStableHashCode (), AlignNode.Create);
-            _generators.Add ("box".GetStableHashCode (), BoxNode.Create);
-            _generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
-            _generators.Add ("input".GetStableHashCode (), InputNode.Create);
-            _generators.Add ("grid".GetStableHashCode (), GridNode.Create);
-            _generators.Add ("image".GetStableHashCode (), ImageNode.Create);
-            _generators.Add ("mask2d".GetStableHashCode (), Mask2dNode.Create);
-            _generators.Add ("scrollView".GetStableHashCode (), ScrollViewNode.Create);
-            _generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
-            _generators.Add ("stack".GetStableHashCode (), StackNode.Create);
-            _generators.Add ("fixedTable".GetStableHashCode (), FixedTableNode.Create);
-            _generators.Add ("text".GetStableHashCode (), TextNode.Create);
-            _generators.Add ("toggle".GetStableHashCode (), ToggleNode.Create);
-            _generators.Add ("toggleGroup".GetStableHashCode (), ToggleGroupNode.Create);
-            _generators.Add ("ui".GetStableHashCode (), UiNode.Create);
+            Generators.Add ("align".GetStableHashCode (), AlignNode.Create);
+            Generators.Add ("box".GetStableHashCode (), BoxNode.Create);
+            Generators.Add ("button".GetStableHashCode (), ButtonNode.Create);
+            Generators.Add ("input".GetStableHashCode (), InputNode.Create);
+            Generators.Add ("grid".GetStableHashCode (), GridNode.Create);
+            Generators.Add ("image".GetStableHashCode (), ImageNode.Create);
+            Generators.Add ("mask2d".GetStableHashCode (), Mask2dNode.Create);
+            Generators.Add ("scrollView".GetStableHashCode (), ScrollViewNode.Create);
+            Generators.Add ("slider".GetStableHashCode (), SliderNode.Create);
+            Generators.Add ("stack".GetStableHashCode (), StackNode.Create);
+            Generators.Add ("fixedTable".GetStableHashCode (), FixedTableNode.Create);
+            Generators.Add ("text".GetStableHashCode (), TextNode.Create);
+            Generators.Add ("toggle".GetStableHashCode (), ToggleNode.Create);
+            Generators.Add ("toggleGroup".GetStableHashCode (), ToggleGroupNode.Create);
+            Generators.Add ("ui".GetStableHashCode (), UiNode.Create);
         }
 
         static XmlNode LoadXml (string markupPath) {
@@ -116,7 +122,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
             Func<RectTransform, XmlNode, MarkupContainer, RectTransform> generator;
 
-            var isFound = _generators.TryGetValue (xmlTree.NameHash, out generator);
+            var isFound = Generators.TryGetValue (xmlTree.NameHash, out generator);
             if (!isFound) {
                 generator = BoxNode.Create;
             }
@@ -179,6 +185,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             _canvas = null;
             PixelSize = 1f;
             DragTreshold = 5f;
+            UseNavigation = true;
             _namedNodes.Clear ();
             var tr = transform;
             for (var i = tr.childCount - 1; i >= 0; i--) {
@@ -211,7 +218,7 @@ namespace LeopotamGroup.SystemUi.Markup {
 
             if (unregisterGenerators) {
                 _areGeneratorsAttached = false;
-                _generators.Clear ();
+                Generators.Clear ();
             }
         }
 
@@ -226,6 +233,9 @@ namespace LeopotamGroup.SystemUi.Markup {
         /// Force cleanup / create widgets infrastructure from attached xml-schema.
         /// </summary>
         public void CreateVisuals () {
+            if (_isVisualized) {
+                return;
+            }
             ValidateGenerators ();
             if ((object) _defaultFont == null) {
                 _defaultFont = _fonts.Count > 0 ? _fonts[0] : Resources.GetBuiltinResource<Font> ("Arial.ttf");

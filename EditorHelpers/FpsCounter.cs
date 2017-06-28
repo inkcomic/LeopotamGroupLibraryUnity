@@ -4,6 +4,7 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System.Collections.Generic;
 using LeopotamGroup.Common;
 using UnityEngine;
 
@@ -16,134 +17,72 @@ namespace LeopotamGroup.EditorHelpers {
 
         const float InvUpdatesPerSecond = 1 / (float) UpdateFrequency;
 
-        const string ShaderName = "Hidden/LeopotamGroup/EditorHelpers/FpsCounter";
-
         const float BaseFontSize = 16 / 768f;
-        /* fixformat ignore:start */
-        byte[] _fontData = {
-            0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, // 0-4
-            1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, // 5-9
-
-            1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, // 0-4
-            1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, // 5-9
-
-            1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, // 0-4
-            1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, // 5-9
-
-            1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, // 0-4
-            0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, // 5-9
-
-            0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, // 0-4
-            1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, // 5-9
-        };
-        /* fixformat ignore:end */
 
         int _frameCount;
 
         float _lastTime;
 
-        int _cameraIndex;
+        [SerializeField]
+        bool _drawShadow = true;
 
+        [SerializeField]
         float _xOffset;
 
+        [SerializeField]
         float _yOffset;
 
-        float _fontSize;
+        [SerializeField]
+        TextAnchor _anchor = TextAnchor.LowerLeft;
 
-        Texture2D _tex;
+        GUIStyle _style;
 
-        Material _mtrl;
+        Rect _rect;
+
+        Rect _rectShadow;
+
+        Color _color = Color.white;
+
+        readonly StringCache<int> _stringCache = new StringCache<int> (null, null, 256);
 
         protected override void OnConstruct () {
             DontDestroyOnLoad (gameObject);
+            useGUILayout = false;
 
-            _tex = new Texture2D (40, 5, TextureFormat.ARGB32, false);
-            _tex.hideFlags = HideFlags.DontSave;
-            _tex.filterMode = FilterMode.Point;
-            _tex.wrapMode = TextureWrapMode.Clamp;
-            var pixels = new Color32[_fontData.Length];
-            var pix0 = new Color32 (0, 0, 0, 0);
-            var pix1 = new Color32 (255, 255, 255, 255);
-            for (var i = _fontData.Length - 1; i >= 0; i--) {
-                pixels[i] = _fontData[i] > 0 ? pix1 : pix0;
-            }
-            _tex.SetPixels32 (pixels);
-            _tex.Apply (false, true);
+            _style = new GUIStyle ();
+            _style.normal.textColor = Color.white;
 
-            _mtrl = new Material (Shader.Find (ShaderName));
-            _mtrl.hideFlags = HideFlags.DontSave;
-            _mtrl.mainTexture = _tex;
-#if !UNITY_EDITOR
-            _fontSize = Screen.height * BaseFontSize;
-#endif
+            _style.alignment = _anchor;
+
+            CalculateRect ();
         }
 
-        protected override void OnDestruct () {
-            Destroy (_mtrl);
-            _mtrl = null;
-            Destroy (_tex);
-            _tex = null;
-            base.OnDestruct ();
+        void CalculateRect () {
+            _rect = new Rect (_xOffset, _yOffset, Screen.width, Screen.height);
+            _rectShadow = new Rect (_xOffset + 1, _yOffset + 1, Screen.width, Screen.height);
+            var fontSize = (int) (BaseFontSize * Screen.height);
+            _style.fontSize = fontSize;
         }
 
-        void OnRenderObject () {
-            if (Camera.current.gameObject.scene.IsValid ()) {
-                _cameraIndex++;
+        void OnGUI () {
+            if (Event.current.type != EventType.Repaint) {
+                return;
             }
-
-            if (_cameraIndex == Camera.allCamerasCount) {
+            var fpsString = _stringCache.Get (CurrentFps);
 #if UNITY_EDITOR
-                _fontSize = Screen.height * BaseFontSize;
+            CalculateRect ();
 #endif
-                GL.PushMatrix ();
-                GL.LoadPixelMatrix ();
-                _mtrl.SetPass (0);
-                GL.Color (Color.white);
-                GL.Begin (GL.QUADS);
-                _xOffset = 0;
-                _yOffset = Screen.height;
-
-                var v0 = CurrentFps;
-                var v1 = 0;
-                var count = 0;
-                while (v0 > 0) {
-                    count++;
-                    v1 = v1 * 10 + (v0 % 10);
-                    v0 /= 10;
-                }
-                if (count == 0) {
-                    count++;
-                }
-
-                int charId;
-                for (var i = count - 1; i >= 0; i--) {
-                    charId = v1 % 10;
-
-                    GL.TexCoord2 (charId * 0.1f, 1f);
-                    GL.Vertex3 (_xOffset, _yOffset - _fontSize, 0f);
-
-                    GL.TexCoord2 (charId * 0.1f, 0f);
-                    GL.Vertex3 (_xOffset, _yOffset, 0f);
-
-                    GL.TexCoord2 ((charId + 1) * 0.1f, 0f);
-                    GL.Vertex3 (_xOffset + _fontSize, _yOffset, 0f);
-
-                    GL.TexCoord2 ((charId + 1) * 0.1f, 1f);
-                    GL.Vertex3 (_xOffset + _fontSize, _yOffset - _fontSize, 0f);
-
-                    _xOffset += _fontSize + 1;
-                    v1 /= 10;
-                }
-
-                GL.End ();
-                GL.PopMatrix ();
+            if (_drawShadow) {
+                GUI.color = Color.black;
+                GUI.Label (_rectShadow, fpsString, _style);
             }
+            GUI.color = _color;
+            GUI.Label (_rect, fpsString, _style);
         }
 
-        void LateUpdate () {
-            _cameraIndex = 0;
+        void Update () {
             var currTime = Time.realtimeSinceStartup;
-            if ((currTime - _lastTime) > InvUpdatesPerSecond) {
+            if (currTime - _lastTime > InvUpdatesPerSecond) {
                 CurrentFps = _frameCount * UpdateFrequency;
                 _frameCount = 1;
                 _lastTime = currTime;
@@ -153,9 +92,37 @@ namespace LeopotamGroup.EditorHelpers {
         }
 
         /// <summary>
+        /// Set draw shadow state.
+        /// </summary>
+        /// <param name="state">Draw shadow or not.</param>
+        public void SetDrawShadowState (bool state) {
+            _drawShadow = state;
+        }
+
+        /// <summary>
+        /// Set fps label color.
+        /// </summary>
+        /// <param name="color">Target color.</param>
+        public void SetColor (Color color) {
+            _color = color;
+        }
+
+        /// <summary>
+        /// Set position of fps label.
+        /// </summary>
+        /// <param name="xOffset">OffsetX from anchor position.</param>
+        /// <param name="yOffset">OffsetY from anchor position.</param>
+        /// <param name="anchor">Base anchor position.</param>
+        public void SetPosition (float xOffset, float yOffset, TextAnchor anchor) {
+            _xOffset = xOffset;
+            _yOffset = yOffset;
+            _style.alignment = anchor;
+            CalculateRect ();
+        }
+
+        /// <summary>
         /// Get current fps.
         /// </summary>
-        /// <value>The current fps.</value>
         public int CurrentFps { get; private set; }
     }
 }

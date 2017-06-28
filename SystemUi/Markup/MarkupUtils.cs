@@ -23,6 +23,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         public static readonly int HashedHidden = "hidden".GetStableHashCode ();
 
+        public static readonly int HashedNav = "nav".GetStableHashCode ();
+
         static readonly int HashedColor = "color".GetStableHashCode ();
 
         static readonly int HashedTheme = "theme".GetStableHashCode ();
@@ -47,6 +49,8 @@ namespace LeopotamGroup.SystemUi.Markup {
 
         static readonly int _uiLayer = LayerMask.NameToLayer ("UI");
 
+        static readonly Camera[] _camerasCache = new Camera[8];
+
         /// <summary>
         /// Create GameObject holder - compatible with UI.
         /// </summary>
@@ -59,6 +63,40 @@ namespace LeopotamGroup.SystemUi.Markup {
             go.layer = _uiLayer;
             rt.SetParent (root, false);
             return rt;
+        }
+
+        /// <summary>
+        /// Get exists camera for Ui rendering or create new one.
+        /// Important: Ui camera - camera with culling only one layer - "UI".
+        /// </summary>
+        public static Camera GetUiCamera () {
+            Camera cam = null;
+            var count = Camera.GetAllCameras (_camerasCache);
+            var mask = 1 << _uiLayer;
+            var i = count - 1;
+            for (; i >= 0; i--) {
+                if (_camerasCache[i].cullingMask == mask) {
+                    cam = _camerasCache[i];
+                    break;
+                }
+            }
+            if (i < 0) {
+                var go = new GameObject ();
+#if UNITY_EDITOR
+                go.name = "UiCamera";
+#endif
+                cam = go.AddComponent<Camera> ();
+                cam.orthographic = true;
+                cam.cullingMask = mask;
+                cam.clearFlags = CameraClearFlags.Depth;
+                cam.depth = 100;
+                cam.nearClipPlane = -128f;
+                cam.farClipPlane = 128f;
+            }
+            for (i = count - 1; i >= 0; i--) {
+                _camerasCache[i] = null;
+            }
+            return cam;
         }
 
         /// <summary>
@@ -291,6 +329,14 @@ namespace LeopotamGroup.SystemUi.Markup {
             widget.anchorMax = anchorMax;
             widget.offsetMin = offsetMin;
             widget.offsetMax = offsetMax;
+        }
+
+        public static void SetNav (Selectable widget, XmlNode node, bool defaultState) {
+            var attrValue = node.GetAttribute (HashedNav);
+            if (attrValue != null) {
+                defaultState = string.CompareOrdinal (attrValue, "false") != 0;
+            }
+            widget.navigation = defaultState ? Navigation.defaultNavigation : new Navigation { mode = Navigation.Mode.None };
         }
     }
 }
