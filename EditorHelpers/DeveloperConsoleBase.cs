@@ -111,6 +111,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="value">Script code.</param>
         protected virtual void ExecuteCommand (string value) {
             if (!string.IsNullOrEmpty (value)) {
+                AppendLine (LogType.Log, value);
                 var err = _vm.Load (string.Format ("function _devConsoleMain(){{return {0};}}", value));
                 if (!string.IsNullOrEmpty (err)) {
                     AppendLine (LogType.Warning, err);
