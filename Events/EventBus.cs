@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using LeopotamGroup.Collections;
 using UnityEngine;
 
 namespace LeopotamGroup.Events {
