@@ -91,18 +91,16 @@ namespace LeopotamGroup.EditorHelpers {
             return 30;
         }
 
-        bool OnInputEnd (UiInputEndActionData arg) {
+        void OnInputEnd (UiInputEndActionData arg) {
             if (arg.GroupId == _onDevConsoleId && Input.GetButton ("Submit")) {
                 ExecuteCommand (arg.Value);
                 _inputField.text = "";
                 _inputField.ActivateInputField ();
             }
-            return false;
         }
 
-        bool OnClose (UiClickActionData arg) {
+        void OnClose (UiClickActionData arg) {
             Show (false);
-            return false;
         }
 
         /// <summary>
