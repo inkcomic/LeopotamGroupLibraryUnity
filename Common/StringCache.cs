@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using UnityEngine;
 
 namespace LeopotamGroup.Common {
     /// <summary>

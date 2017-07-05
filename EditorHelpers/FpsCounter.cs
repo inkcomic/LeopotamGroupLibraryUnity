@@ -4,7 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using LeopotamGroup.Common;
 using UnityEngine;
 

@@ -4,7 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using System;
 using LeopotamGroup.Common;
 
 namespace LeopotamGroup.Events {
