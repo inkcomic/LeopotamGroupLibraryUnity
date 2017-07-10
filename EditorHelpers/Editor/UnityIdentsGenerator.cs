@@ -22,16 +22,12 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         [Flags]
         public enum Options {
             Layers = 1,
-
             Tags = 2,
-
             Scenes = 4,
-
             Animators = 8,
-
             Axes = 16,
-
-            Shaders = 32
+            Shaders = 32,
+            SortingLayers = 64
         }
 
         const string Title = "Unity idents generator";
@@ -74,6 +70,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string AxisName = "{0}public const string Axis{1} = \"{2}\";";
 
         const string ShaderName = "{0}public static readonly int Shader{1} = Shader.PropertyToID (\"{2}\");";
+
+        const string SortingLayerName = "{0}public const int SortingLayer{1} = {2};";
 
         GenerationSettings _settings;
 
@@ -227,6 +225,14 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     }
                 }
                 uniquesList.Clear ();
+            }
+
+            // sorting layers
+            if ((int) (options & Options.SortingLayers) != 0) {
+                foreach (var sortLayer in SortingLayer.layers) {
+                    Debug.LogFormat ("{0} {1}", SortingLayer.layers[0].id, SortingLayer.layers[0].name);
+                    lines.Add (string.Format (SortingLayerName, indent, CleanupName (sortLayer.name), sortLayer.id));
+                }
             }
 
             lines.Sort ();
