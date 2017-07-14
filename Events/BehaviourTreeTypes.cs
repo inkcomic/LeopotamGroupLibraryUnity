@@ -13,9 +13,7 @@ namespace LeopotamGroup.Events {
     /// </summary>
     public enum BehaviourTreeResult {
         Success,
-
         Fail,
-
         Pending
     }
 

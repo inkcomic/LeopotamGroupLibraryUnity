@@ -21,9 +21,9 @@ namespace LeopotamGroup.Collections {
 
         int _count;
 
-        bool _isNullable;
+        readonly bool _isNullable;
 
-        EqualityComparer<T> _comparer;
+        readonly EqualityComparer<T> _comparer;
 
         bool _useObjectCastComparer;
 
@@ -55,9 +55,7 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Get items count.
         /// </summary>
-        public int Count {
-            get { return _count; }
-        }
+        public int Count { get { return _count; } }
 
         /// <summary>
         /// Clear collection without release memory for performance optimization.

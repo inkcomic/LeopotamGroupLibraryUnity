@@ -39,9 +39,9 @@ namespace LeopotamGroup.Localization {
 
         const string OnLocalizeMethodName = "OnLocalize";
 
-        static Dictionary<string, string[]> _statics = new Dictionary<string, string[]> (64);
+        static readonly Dictionary<string, string[]> _statics = new Dictionary<string, string[]> (64);
 
-        static Dictionary<string, string[]> _dynamics = new Dictionary<string, string[]> (64);
+        static readonly Dictionary<string, string[]> _dynamics = new Dictionary<string, string[]> (64);
 
         static string[] _header;
 

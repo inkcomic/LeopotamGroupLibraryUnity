@@ -52,9 +52,7 @@ namespace LeopotamGroup.Tweening {
         /// Gets tweened value at current time.
         /// </summary>
         /// <value>The value.</value>
-        public float Value {
-            get { return Curve.Evaluate (CurrentTime); }
-        }
+        public float Value { get { return Curve.Evaluate (CurrentTime); } }
 
         /// <summary>
         /// Internal state of tween count.

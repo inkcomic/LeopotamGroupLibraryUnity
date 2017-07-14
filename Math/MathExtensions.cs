@@ -13,11 +13,11 @@ namespace LeopotamGroup.Math {
     /// Math extensions.
     /// </summary>
     public static class MathExtensions {
-        static StringBuilder _floatToStrBuf = new StringBuilder (64);
+        static readonly StringBuilder _floatToStrBuf = new StringBuilder (64);
 
-        static string[] _shortNumberOrders = { "", "k", "M", "G", "T", "P", "E" };
+        static readonly string[] _shortNumberOrders = {"", "k", "M", "G", "T", "P", "E"};
 
-        static float _invLog1K = 1 / (float) System.Math.Log (1000);
+        static readonly float _invLog1K = 1 / (float) System.Math.Log (1000);
 
         /// <summary>
         /// Convert number to string with "kilo-million-billion" suffix with rounding.
@@ -196,7 +196,7 @@ namespace LeopotamGroup.Math {
             }
             var seed = 173;
             for (int i = offset, iMax = offset + len; i < iMax; i++) {
-                seed = 37 * seed + (int) str[i];
+                seed = 37 * seed + str[i];
             }
             return seed;
         }

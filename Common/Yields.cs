@@ -24,7 +24,7 @@ namespace LeopotamGroup.Common {
         /// </summary>
         public static readonly WaitForFixedUpdate WaitForFixedUpdate = new WaitForFixedUpdate ();
 
-        static Dictionary<float, FastList<IEnumerator>> _waitForSeconds = new Dictionary<float, FastList<IEnumerator>> (4);
+        static readonly Dictionary<float, FastList<IEnumerator>> _waitForSeconds = new Dictionary<float, FastList<IEnumerator>> (4);
 
         /// <summary>
         /// Get WaitForSeconds yield instruction.

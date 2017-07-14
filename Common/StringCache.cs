@@ -27,7 +27,7 @@ namespace LeopotamGroup.Common {
         /// <param name="capacity">Init capacity for storage. If not specified - 128 will be used.</param>
         public StringCache (string format = null, IFormatProvider formatter = null, int capacity = 128) {
             _format = string.IsNullOrEmpty (format) ? "{0}" : format;
-            _formatter = formatter == null ? NumberFormatInfo.InvariantInfo : formatter;
+            _formatter = formatter ?? NumberFormatInfo.InvariantInfo;
             _cache = new Dictionary<T, string> (capacity);
         }
 

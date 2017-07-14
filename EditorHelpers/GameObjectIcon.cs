@@ -42,9 +42,7 @@ namespace LeopotamGroup.EditorHelpers {
 
     public static class GameObjectIcon {
 #if UNITY_EDITOR
-        static List<Texture2D> _icons;
-
-        const int IconTypeCount = 3;
+        static readonly List<Texture2D> _icons;
 
         const string SetIconMethodName = "SetIconForObject";
 
@@ -56,9 +54,9 @@ namespace LeopotamGroup.EditorHelpers {
 
         const string ImageIconLargeSuffix = "_pix16_gizmo";
 
-        static MethodInfo _setIcon;
+        static readonly MethodInfo _setIcon;
 
-        static object[] _setIconArgs;
+        static readonly object[] _setIconArgs;
 
         static GameObjectIcon () {
             _setIconArgs = new object[2];

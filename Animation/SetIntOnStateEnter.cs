@@ -12,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetIntOnStateEnter : StateMachineBehaviour {
         [SerializeField]
-        string _intName = null;
+        string _intName;
 
         [SerializeField]
-        int _intValue = 0;
+        int _intValue;
 
         int _fieldHash = -1;
 

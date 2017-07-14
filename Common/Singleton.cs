@@ -43,7 +43,7 @@ namespace LeopotamGroup.Common {
                 var i = attrs.Length - 1;
                 for (; i >= 0; i--) {
                     if (System.Text.RegularExpressions.Regex.IsMatch (
-                            sceneName, ((UnitySingletonSceneFilterAttribute) attrs[i]).Name)) {
+                        sceneName, ((UnitySingletonSceneFilterAttribute) attrs[i]).Name)) {
                         break;
                     }
                 }
@@ -88,9 +88,7 @@ namespace LeopotamGroup.Common {
         /// Get count of registered singletons.
         /// </summary>
         /// <value>The count.</value>
-        public static int Count {
-            get { return _instancesPool.Count; }
-        }
+        public static int Count { get { return _instancesPool.Count; } }
 
         /// <summary>
         /// Safe check for instance-as-singleton availability.
@@ -225,5 +223,4 @@ namespace LeopotamGroup.Common {
             _removeCache.Clear ();
         }
     }
-
 }

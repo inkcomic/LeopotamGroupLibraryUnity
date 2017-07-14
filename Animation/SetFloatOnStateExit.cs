@@ -12,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetFloatOnStateExit : StateMachineBehaviour {
         [SerializeField]
-        string _floatName = null;
+        string _floatName;
 
         [SerializeField]
-        float _floatValue = 0f;
+        float _floatValue;
 
         int _fieldHash = -1;
 

@@ -16,16 +16,12 @@ namespace LeopotamGroup.Common {
         /// <summary>
         /// Get previous screen name or null.
         /// </summary>
-        public string Previous {
-            get { return _history.Count > 0 ? _history.Peek () : null; }
-        }
+        public string Previous { get { return _history.Count > 0 ? _history.Peek () : null; } }
 
         /// <summary>
         /// Get current screen name.
         /// </summary>
-        public string Current {
-            get { return SceneManager.GetActiveScene ().name; }
-        }
+        public string Current { get { return SceneManager.GetActiveScene ().name; } }
 
         readonly Stack<string> _history = new Stack<string> (8);
 

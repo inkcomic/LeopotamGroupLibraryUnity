@@ -14,7 +14,7 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public sealed class MusicOnStart : MonoBehaviour {
         [SerializeField]
-        string _music = null;
+        string _music;
 
         [SerializeField]
         bool _isLooped = true;

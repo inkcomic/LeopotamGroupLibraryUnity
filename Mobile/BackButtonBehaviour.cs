@@ -15,7 +15,7 @@ namespace LeopotamGroup.Mobile {
         /// <summary>
         /// List of reactions on event.
         /// </summary>
-        public UnityEvent OnBackPressed = null;
+        public UnityEvent OnBackPressed;
 
         void FixedUpdate () {
             if (Input.GetKeyDown (KeyCode.Escape)) {

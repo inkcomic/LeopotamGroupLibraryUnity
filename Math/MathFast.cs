@@ -56,9 +56,9 @@ namespace LeopotamGroup.Math {
 
         const int SinCosIndexMask = ~(-1 << 12);
 
-        static float[] _sinCache;
+        static readonly float[] _sinCache;
 
-        static float[] _cosCache;
+        static readonly float[] _cosCache;
 
         const float SinCosIndexFactor = SinCosCacheSize / PI_2;
 

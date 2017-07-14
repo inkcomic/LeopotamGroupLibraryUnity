@@ -17,7 +17,7 @@ namespace LeopotamGroup.Common {
         /// <param name="method">Method name.</param>
         /// <param name="data">Optional data.</param>
         public static void BroadcastToAll (string method, object data = null) {
-            var list = UnityEngine.Object.FindObjectsOfType<MonoBehaviour> ();
+            var list = Object.FindObjectsOfType<MonoBehaviour> ();
             for (var i = list.Length - 1; i >= 0; i--) {
                 list[i].SendMessage (method, data, SendMessageOptions.DontRequireReceiver);
             }

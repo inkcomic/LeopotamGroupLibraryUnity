@@ -21,7 +21,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
     /// </summary>
     [ExecuteInEditMode]
     sealed class ScreenCapturer : MonoBehaviour {
-        static List<Vector2i> _resList = new List<Vector2i> {
+        static readonly List<Vector2i> _resList = new List<Vector2i> {
             new Vector2i (800, 480),
             new Vector2i (960, 640),
             new Vector2i (1024, 768),
@@ -136,7 +136,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
                 _gvsInstance = instanceProp.GetValue (null, null);
 
                 var gvsType = typeof (Editor).Assembly.GetType ("UnityEditor.GameViewSize");
-                _gvsCtor = gvsType.GetConstructor (new [] { typeof (int), typeof (int), typeof (int), typeof (string) });
+                _gvsCtor = gvsType.GetConstructor (new[] {typeof (int), typeof (int), typeof (int), typeof (string)});
             }
 
             static object GetCurrentGroup () {
@@ -154,13 +154,13 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
 
             public static int AddCustomPreset (int width, int height, string text) {
                 var grp = GetCurrentGroup ();
-                var newSize = _gvsCtor.Invoke (new object[] { 1, width, height, text });
-                _gvgAddCustomSize.Invoke (grp, new [] { newSize });
+                var newSize = _gvsCtor.Invoke (new object[] {1, width, height, text});
+                _gvgAddCustomSize.Invoke (grp, new[] {newSize});
                 return (int) _gvgGetTotalCount.Invoke (grp, null) - 1;
             }
 
             public static void RemoveCustomPreset (int id) {
-                _gvgRemoveCustomSize.Invoke (GetCurrentGroup (), new object[] { id });
+                _gvgRemoveCustomSize.Invoke (GetCurrentGroup (), new object[] {id});
             }
         }
     }

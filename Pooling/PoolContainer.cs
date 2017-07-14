@@ -19,7 +19,7 @@ namespace LeopotamGroup.Pooling {
         [SerializeField]
         Transform _itemsRoot;
 
-        FastStack<IPoolObject> _store = new FastStack<IPoolObject> (32);
+        readonly FastStack<IPoolObject> _store = new FastStack<IPoolObject> (32);
 
         UnityEngine.Object _cachedAsset;
 
@@ -78,9 +78,7 @@ namespace LeopotamGroup.Pooling {
                 obj = _store.Pop ();
                 isNew = false;
             } else {
-                obj = _needToAddPoolObject ?
-                    (IPoolObject) ((GameObject) Instantiate (_cachedAsset)).AddComponent (_overridedType) :
-                    (IPoolObject) Instantiate (_cachedAsset);
+                obj = _needToAddPoolObject ? (IPoolObject) ((GameObject) Instantiate (_cachedAsset)).AddComponent (_overridedType) : (IPoolObject) Instantiate (_cachedAsset);
                 obj.PoolContainer = this;
                 var tr = obj.PoolTransform;
                 if ((object) tr != null) {
@@ -117,13 +115,11 @@ namespace LeopotamGroup.Pooling {
         }
 
         /// <summary>
-        /// /// Creates new pool container for specified prefab.
+        /// /// Creates new pool container for specified prefab and support for custom IPoolObject type.
         /// </summary>
         /// <returns>Created pool container.</returns>
         /// <param name="prefabPath">Prefab path at Resources folder.</param>
         /// <param name="itemsRoot">Root for new items.</param>
-        /// <param name="overridedType">Overrided type of pool object.
-        /// If null - PoolObject-type will be used or exist IPool component on prefab.</param>
         public static PoolContainer CreatePool<T> (string prefabPath, Transform itemsRoot = null) where T : IPoolObject {
             return CreatePool (prefabPath, itemsRoot, typeof (T));
         }
@@ -136,7 +132,7 @@ namespace LeopotamGroup.Pooling {
         /// <param name="itemsRoot">Root for new items.</param>
         /// <param name="overridedType">Overrided type of pool object.
         /// If null - PoolObject-type will be used or exist IPool component on prefab.</param>
-        public static PoolContainer CreatePool (string prefabPath, Transform itemsRoot = null, System.Type overridedType = null) {
+        public static PoolContainer CreatePool (string prefabPath, Transform itemsRoot = null, Type overridedType = null) {
             if (string.IsNullOrEmpty (prefabPath)) {
                 return null;
             }

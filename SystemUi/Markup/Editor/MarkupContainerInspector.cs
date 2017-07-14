@@ -15,15 +15,14 @@ namespace LeopotamGroup.SystemUi.Markup.UnityEditors {
             DrawDefaultInspector ();
 
             if (!Application.isPlaying) {
+                MarkupContainer container;
                 if (GUILayout.Button ("Remove visuals")) {
-                    MarkupContainer container;
                     foreach (var item in targets) {
                         container = item as MarkupContainer;
                         container.Clear ();
                     }
                 }
                 if (GUILayout.Button ("Create visuals")) {
-                    MarkupContainer container;
                     foreach (var item in targets) {
                         container = item as MarkupContainer;
                         container.Clear ();

@@ -14,14 +14,14 @@ namespace LeopotamGroup.Serialization {
     /// Csv serialization. Supports deserialization only.
     /// </summary>
     public sealed class CsvSerialization {
-        static readonly Regex CsvRegex = new Regex ("(?<=^|,)(\"(?:[^\"]|\"\")*\"|[^,]*)");
+        static readonly Regex _csvRegex = new Regex ("(?<=^|,)(\"(?:[^\"]|\"\")*\"|[^,]*)");
 
         readonly List<string> _tokens = new List<string> (8);
 
         void ParseLine (string data) {
             _tokens.Clear ();
 
-            foreach (Match m in CsvRegex.Matches (data)) {
+            foreach (Match m in _csvRegex.Matches (data)) {
                 var part = m.Value.Trim ();
                 if (part.Length > 0) {
                     if (part[0] == '"' && part[part.Length - 1] == '"') {
