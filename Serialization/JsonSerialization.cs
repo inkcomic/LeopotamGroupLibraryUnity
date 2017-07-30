@@ -600,7 +600,7 @@ namespace LeopotamGroup.Serialization {
 
             readonly Dictionary<Type, TypeDesc> _types = new Dictionary<Type, TypeDesc> (32);
 
-            static readonly object SyncLock = new object ();
+            static readonly object _syncLock = new object ();
 
             public void SetValue (Type type, string name, object instance, object val) {
                 var desc = GetCache (type);
@@ -632,14 +632,14 @@ namespace LeopotamGroup.Serialization {
             }
 
             public void Clear () {
-                lock (SyncLock) {
+                lock (_syncLock) {
                     _types.Clear ();
                 }
             }
 
             public TypeDesc GetCache (Type type) {
                 TypeDesc desc;
-                lock (SyncLock) {
+                lock (_syncLock) {
                     if (!_types.ContainsKey (type)) {
                         desc = new TypeDesc ();
                         var ignoreType = typeof (JsonIgnoreAttribute);

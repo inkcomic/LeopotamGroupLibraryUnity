@@ -17,16 +17,12 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Get items count.
         /// </summary>
-        public int Count {
-            get { return _count; }
-        }
+        public int Count { get { return _count; } }
 
         /// <summary>
         /// Get collection capacity.
         /// </summary>
-        public int Capacity {
-            get { return _capacity; }
-        }
+        public int Capacity { get { return _capacity; } }
 
         /// <summary>
         /// Get / set item at specified index.
@@ -49,7 +45,7 @@ namespace LeopotamGroup.Collections {
 
         const int InitCapacity = 8;
 
-        bool _isNullable;
+        readonly bool _isNullable;
 
         T[] _items;
 
@@ -57,13 +53,13 @@ namespace LeopotamGroup.Collections {
 
         int _capacity;
 
-        EqualityComparer<T> _comparer;
+        readonly EqualityComparer<T> _comparer;
 
         bool _useObjectCastComparer;
 
-        ///<summary>
+        /// <summary>
         /// Default constructor.
-        ///</summary>
+        /// </summary>
         public FastList () : this (null) { }
 
         /// <summary>
@@ -79,7 +75,7 @@ namespace LeopotamGroup.Collections {
         /// <param name="comparer">Comparer. If null - default comparer will be used.</param>
         public FastList (int capacity, EqualityComparer<T> comparer = null) {
             var type = typeof (T);
-            _isNullable = !type.IsValueType || (Nullable.GetUnderlyingType (type) != null);
+            _isNullable = !type.IsValueType || Nullable.GetUnderlyingType (type) != null;
             _capacity = capacity > InitCapacity ? capacity : InitCapacity;
             _count = 0;
             _comparer = comparer;
@@ -250,9 +246,7 @@ namespace LeopotamGroup.Collections {
         /// <summary>
         /// Is collection readonly (for compatibility to IList).
         /// </summary>
-        public bool IsReadOnly {
-            get { return false; }
-        }
+        public bool IsReadOnly { get { return false; } }
 
         /// <summary>
         /// Get internal data, use it on your own risk!

@@ -14,7 +14,7 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public sealed class SoundOnStart : MonoBehaviour {
         [SerializeField]
-        AudioClip _sound = null;
+        AudioClip _sound;
 
         [SerializeField]
         SoundFxChannel _channel = SoundFxChannel.First;
@@ -22,7 +22,7 @@ namespace LeopotamGroup.Fx {
         /// <summary>
         /// Should new FX force interrupts FX at channel or not.
         /// </summary>
-        public bool IsInterrupt = false;
+        public bool IsInterrupt;
 
         IEnumerator Start () {
             yield return null;

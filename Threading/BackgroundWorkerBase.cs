@@ -20,7 +20,9 @@ namespace LeopotamGroup.Threading {
         /// Is background thread started and inited.
         /// </summary>
         public bool IsWorkerStarted {
-            get { lock (_inSyncObj) { return _isWorkerStarted; } }
+            get {
+                lock (_inSyncObj) { return _isWorkerStarted; }
+            }
         }
 
         /// <summary>
@@ -29,56 +31,55 @@ namespace LeopotamGroup.Threading {
         /// Disable by default.
         /// </summary>
         protected bool DontSleepAfterItemProcess {
-            get { lock (_inSyncObj) { return _dontSleepAfterItemProcess; } }
-            set { lock (_inSyncObj) { _dontSleepAfterItemProcess = value; } }
+            get {
+                lock (_inSyncObj) { return _dontSleepAfterItemProcess; }
+            }
+            set {
+                lock (_inSyncObj) { _dontSleepAfterItemProcess = value; }
+            }
         }
 
         /// <summary>
         /// Length of input data queue.
         /// </summary>
         protected int InputQueueLength {
-            get { lock (_inSyncObj) { return _inQueue.Count; } }
+            get {
+                lock (_inSyncObj) { return _inQueue.Count; }
+            }
         }
 
         /// <summary>
         /// Length of output data queue.
         /// </summary>
         protected int OutputQueueLength {
-            get { lock (_outSyncObj) { return _outQueue.Count; } }
+            get {
+                lock (_outSyncObj) { return _outQueue.Count; }
+            }
         }
 
         bool _isWorkerStarted;
 
         bool _dontSleepAfterItemProcess;
 
-        object _inSyncObj = new object ();
+        readonly object _inSyncObj = new object ();
 
-        object _outSyncObj = new object ();
+        readonly object _outSyncObj = new object ();
 
-        List<T> _inQueue = new List<T> (64);
+        readonly List<T> _inQueue = new List<T> (64);
 
-        List<T> _outQueue = new List<T> (64);
+        readonly List<T> _outQueue = new List<T> (64);
 
         Thread _thread;
-
-        int _itemsAmountToProcessAtForground;
 
         /// <summary>
         /// Amount of items to process as result from background worker. Negative / zero values means - all items.
         /// By default, 1 item will be processed.
         /// </summary>
-        protected int ItemsAmountToProcessAtForground {
-            get { return _itemsAmountToProcessAtForground; }
-            set {
-                if (_itemsAmountToProcessAtForground != value) {
-                    _itemsAmountToProcessAtForground = value;
-                }
-            }
-        }
+        protected int ItemsAmountToProcessAtForground;
 
         protected override void OnConstruct () {
             base.OnConstruct ();
-            _itemsAmountToProcessAtForground = 1;
+            ItemsAmountToProcessAtForground = 1;
             _thread = new Thread (OnBackgroundThreadProc);
             _thread.Start ();
         }

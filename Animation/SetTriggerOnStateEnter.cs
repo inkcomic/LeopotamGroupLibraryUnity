@@ -12,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetTriggerOnStateEnter : StateMachineBehaviour {
         [SerializeField]
-        string _triggerName = null;
+        string _triggerName;
 
         [SerializeField]
-        bool _triggerValue = false;
+        bool _triggerValue;
 
         int _fieldHash = -1;
 

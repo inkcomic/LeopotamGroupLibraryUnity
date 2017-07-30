@@ -34,8 +34,7 @@ namespace LeopotamGroup.Tutorials {
 
         void LoadData () {
             try {
-                _sceneMasks =
-                        Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
+                _sceneMasks = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
             } catch {
                 _sceneMasks = null;
             }

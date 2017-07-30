@@ -82,15 +82,16 @@ namespace LeopotamGroup.Serialization {
 
         int _valueLength;
 
-        List<XmlAttribute> _attributes = new List<XmlAttribute> (4);
+        readonly List<XmlAttribute> _attributes = new List<XmlAttribute> (4);
 
-        static FastList<XmlNode> _pool = new FastList<XmlNode> (128);
+        static readonly FastList<XmlNode> _pool = new FastList<XmlNode> (128);
 
         /// <summary>
         /// Get xml node instance from pool. For internal use only.
         /// </summary>
         /// <param name="source">Xml source.</param>
         /// <param name="offset">Offset from start of xml source.</param>
+        /// <param name="useHashesForNames">Should names of nodes be hashed (faster) or not.</param>
         public static XmlNode Get (string source, ref int offset, bool useHashesForNames) {
             XmlNode item;
             if (_pool.Count > 0) {
@@ -143,7 +144,7 @@ namespace LeopotamGroup.Serialization {
                 // parse children.
                 while (xmlSource[i + 1] != '/') {
                     i++;
-                    Children.Add (XmlNode.Get (xmlSource, ref i, useHashesForNames));
+                    Children.Add (Get (xmlSource, ref i, useHashesForNames));
                     XmlUtils.SkipWhitespace (xmlSource, ref i);
                     if (i >= xmlSource.Length) {
                         return;
@@ -163,9 +164,7 @@ namespace LeopotamGroup.Serialization {
             }
             i++;
             XmlUtils.SkipWhitespace (xmlSource, ref i);
-            var isValid = useHashesForNames ?
-                XmlUtils.GetHashedValue (xmlSource, ref i, '>', '\0', true) == NameHash :
-                XmlUtils.GetValue (xmlSource, ref i, '>', '\0', true) == Name;
+            var isValid = useHashesForNames ? XmlUtils.GetHashedValue (xmlSource, ref i, '>', '\0', true) == NameHash : XmlUtils.GetValue (xmlSource, ref i, '>', '\0', true) == Name;
             if (!isValid) {
                 throw new Exception ("Start/end tag name mismatch at " + i);
             }
@@ -196,7 +195,7 @@ namespace LeopotamGroup.Serialization {
         /// <summary>
         /// Get value of hashed attribute. Returns null if no attribute with specified nameHash or "UseHashesForNames" is false.
         /// </summary>
-        /// <param name="name">Attribute name.</param>
+        /// <param name="nameHash">Hash of attribute name.</param>
         public string GetAttribute (int nameHash) {
             if (!UseHashesForNames) {
                 return null;
@@ -210,6 +209,7 @@ namespace LeopotamGroup.Serialization {
             return null;
         }
     }
+
     namespace XmlInternal {
         /// <summary>
         /// For internal use.

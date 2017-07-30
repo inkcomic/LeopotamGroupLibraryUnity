@@ -91,18 +91,16 @@ namespace LeopotamGroup.EditorHelpers {
             return 30;
         }
 
-        bool OnInputEnd (UiInputEndActionData arg) {
+        void OnInputEnd (UiInputEndActionData arg) {
             if (arg.GroupId == _onDevConsoleId && Input.GetButton ("Submit")) {
                 ExecuteCommand (arg.Value);
                 _inputField.text = "";
                 _inputField.ActivateInputField ();
             }
-            return false;
         }
 
-        bool OnClose (UiClickActionData arg) {
+        void OnClose (UiClickActionData arg) {
             Show (false);
-            return false;
         }
 
         /// <summary>
@@ -111,6 +109,7 @@ namespace LeopotamGroup.EditorHelpers {
         /// <param name="value">Script code.</param>
         protected virtual void ExecuteCommand (string value) {
             if (!string.IsNullOrEmpty (value)) {
+                AppendLine (LogType.Log, value);
                 var err = _vm.Load (string.Format ("function _devConsoleMain(){{return {0};}}", value));
                 if (!string.IsNullOrEmpty (err)) {
                     AppendLine (LogType.Warning, err);

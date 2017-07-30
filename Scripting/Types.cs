@@ -70,23 +70,17 @@ namespace LeopotamGroup.Scripting {
         /// <summary>
         /// Is variable type is ScriptVarType.Undefined.
         /// </summary>
-        public bool IsUndefined {
-            get { return Type == ScriptVarType.Undefined; }
-        }
+        public bool IsUndefined { get { return Type == ScriptVarType.Undefined; } }
 
         /// <summary>
         /// Is variable type is ScriptVarType.Number.
         /// </summary>
-        public bool IsNumber {
-            get { return Type == ScriptVarType.Number; }
-        }
+        public bool IsNumber { get { return Type == ScriptVarType.Number; } }
 
         /// <summary>
         /// Is variable type is ScriptVarType.String.
         /// </summary>
-        public bool IsString {
-            get { return Type == ScriptVarType.String; }
-        }
+        public bool IsString { get { return Type == ScriptVarType.String; } }
 
         /// <summary>
         /// Set variable as ScriptVarType.Undefined.

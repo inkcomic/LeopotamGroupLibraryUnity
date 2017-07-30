@@ -12,10 +12,10 @@ namespace LeopotamGroup.Animation {
     /// </summary>
     public sealed class SetBoolOnStateExit : StateMachineBehaviour {
         [SerializeField]
-        string _boolName = null;
+        string _boolName;
 
         [SerializeField]
-        bool _boolValue = false;
+        bool _boolValue;
 
         int _fieldHash = -1;
 

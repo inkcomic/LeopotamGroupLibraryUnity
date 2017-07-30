@@ -13,14 +13,11 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public enum SoundFxChannel {
         First = 0,
-
         Second = 1,
-
         Third = 2,
-
         Fourth = 3,
-
-        Max = Fourth
+        Fifth = 4,
+        Max = Fifth
     }
 
     /// <summary>
@@ -42,10 +39,7 @@ namespace LeopotamGroup.Fx {
         /// <summary>
         /// Music volume.
         /// </summary>
-        public float MusicVolume {
-            get { return _music.volume; }
-            set { _music.volume = value; }
-        }
+        public float MusicVolume { get { return _music.volume; } set { _music.volume = value; } }
 
         /// <summary>
         /// Name of last played music.

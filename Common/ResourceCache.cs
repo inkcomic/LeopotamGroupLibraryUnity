@@ -22,7 +22,7 @@ namespace LeopotamGroup.Common {
         public T Load<T> (string path) where T : Object {
             Object asset;
             if (!_cache.TryGetValue (path, out asset)) {
-                asset = Resources.Load<T> (path) as Object;
+                asset = Resources.Load<T> (path);
                 if (asset != null) {
                     _cache[path] = asset;
                 }

@@ -39,9 +39,9 @@ namespace LeopotamGroup.Localization {
 
         const string OnLocalizeMethodName = "OnLocalize";
 
-        static Dictionary<string, string[]> _statics = new Dictionary<string, string[]> (64);
+        static readonly Dictionary<string, string[]> _statics = new Dictionary<string, string[]> (64);
 
-        static Dictionary<string, string[]> _dynamics = new Dictionary<string, string[]> (64);
+        static readonly Dictionary<string, string[]> _dynamics = new Dictionary<string, string[]> (64);
 
         static string[] _header;
 
@@ -105,13 +105,53 @@ namespace LeopotamGroup.Localization {
         /// Get localization for token.
         /// </summary>
         /// <param name="token">Localization token.</param>
-        public static string Get (string token) {
+        /// <param name="returnTokenOnFail">Should token value be returned as result if no data was found or null otherwise.</param>
+        public static string Get (string token, bool returnTokenOnFail = true) {
             if (_langId == -1) {
                 return token;
             }
-            return _dynamics.ContainsKey (token) ?
-                _dynamics[token][_langId] :
-                (_statics.ContainsKey (token) ? _statics[token][_langId] : token);
+            string[] retVals;
+            if (_dynamics.TryGetValue (token, out retVals)) {
+                return retVals[_langId];
+            }
+            if (_statics.TryGetValue (token, out retVals)) {
+                return retVals[_langId];
+            }
+            return returnTokenOnFail ? token : null;
+        }
+
+        /// <summary>
+        /// Get pluralized string of count value.
+        /// One / Two / Many pluralized versions are supported through
+        /// "{token}-plural-one" / "{token}-plural-two" / "{token}-plural-many" naming schemas.
+        /// If no data will be found - fallback to Get(token) call.
+        /// </summary>
+        /// <param name="count">Value to pluralize.</param>
+        /// <param name="token">Base token of pluralization.</param>
+        public static string GetPlural (int count, string token) {
+            if (count < 0) {
+                count = -count;
+            }
+            string retVal;
+            if (count == 1) {
+                retVal = Get (string.Format ("{0}-plural-one", token), false);
+                if (retVal != null) {
+                    return retVal;
+                }
+            }
+            if (count > 1 && count < 5) {
+                retVal = Get (string.Format ("{0}-plural-two", token), false);
+                if (retVal != null) {
+                    return retVal;
+                }
+            }
+            if (count == 0 || count >= 5) {
+                retVal = Get (string.Format ("{0}-plural-many", token), false);
+                if (retVal != null) {
+                    return retVal;
+                }
+            }
+            return Get (token);
         }
 
         /// <summary>

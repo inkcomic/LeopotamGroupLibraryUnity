@@ -13,7 +13,7 @@ namespace LeopotamGroup.Fx {
     /// </summary>
     public sealed class SoundOnEnable : MonoBehaviour {
         [SerializeField]
-        AudioClip _sound = null;
+        AudioClip _sound;
 
         [SerializeField]
         SoundFxChannel _channel = SoundFxChannel.First;
@@ -22,7 +22,7 @@ namespace LeopotamGroup.Fx {
         /// Should new FX force interrupts FX at channel or not.
         /// </summary>
         [SerializeField]
-        bool _isInterrupt = false;
+        bool _isInterrupt;
 
         void OnEnable () {
             Singleton.Get<SoundManager> ().PlayFx (_sound, _channel, _isInterrupt);

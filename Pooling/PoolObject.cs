@@ -32,9 +32,7 @@ namespace LeopotamGroup.Pooling {
     public class PoolObject : MonoBehaviourBase, IPoolObject {
         public virtual PoolContainer PoolContainer { get; set; }
 
-        public virtual Transform PoolTransform {
-            get { return transform; }
-        }
+        public virtual Transform PoolTransform { get { return transform; } }
 
         public virtual void PoolRecycle () {
             if ((object) PoolContainer != null) {

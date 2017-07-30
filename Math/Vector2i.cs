@@ -116,9 +116,7 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Return square of vector length.
         /// </summary>
-        public int SqrMagnitude {
-            get { return x * x + y * y; }
-        }
+        public int SqrMagnitude { get { return x * x + y * y; } }
 
         /// <summary>
         /// Get hash code.
