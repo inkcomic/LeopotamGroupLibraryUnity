@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,13 +41,11 @@ namespace LeopotamGroup.SystemUi.Actions {
             _scrollView.onValueChanged.AddListener (OnScrollViewValueChanged);
         }
         void OnScrollViewValueChanged (Vector2 value) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiScrollViewActionData ();
-                action.GroupId = GroupId;
-                action.Sender = _scrollView;
-                action.Value = value;
-                Singleton.Get<UnityEventBus> ().Publish<UiScrollViewActionData> (action);
-            }
+            var action = new UiScrollViewActionData ();
+            action.GroupId = GroupId;
+            action.Sender = _scrollView;
+            action.Value = value;
+            SendActionData (action);
         }
     }
 }

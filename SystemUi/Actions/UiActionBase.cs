@@ -24,7 +24,13 @@ namespace LeopotamGroup.SystemUi.Actions {
 
         protected virtual void Start () {
             // Force create eventbus object.
-            Singleton.Get<UnityEventBus> ();
+            Services.Get<UnityEventBus> (true);
+        }
+
+        protected void SendActionData<T> (T data) {
+            if (Services.IsTypeRegistered<UnityEventBus> ()) {
+                Services.Get<UnityEventBus> ().Publish<T> (data);
+            }
         }
 
         public void SetGroup (string group) {

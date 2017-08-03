@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -55,23 +53,19 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiPressReleaseAction : UiActionBase, IPointerDownHandler, IPointerUpHandler {
         void IPointerDownHandler.OnPointerDown (PointerEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiPressActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiPressActionData> (action);
-            }
+            var action = new UiPressActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
 
         void IPointerUpHandler.OnPointerUp (PointerEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiReleaseActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiReleaseActionData> (action);
-            }
+            var action = new UiReleaseActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
     }
 }

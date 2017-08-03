@@ -12,7 +12,7 @@ namespace LeopotamGroup.Common {
     /// <summary>
     /// Screen / scene manager, provides api for navigation with history rollback support.
     /// </summary>
-    sealed class ScreenManager : UnitySingletonBase {
+    sealed class ScreenManager : UnityServiceBase {
         /// <summary>
         /// Get previous screen name or null.
         /// </summary>
@@ -25,9 +25,11 @@ namespace LeopotamGroup.Common {
 
         readonly Stack<string> _history = new Stack<string> (8);
 
-        protected override void OnConstruct () {
+        protected override void OnCreateService () {
             DontDestroyOnLoad (gameObject);
         }
+
+        protected override void OnDestroyService () { }
 
         /// <summary>
         /// Navigate to new screen.

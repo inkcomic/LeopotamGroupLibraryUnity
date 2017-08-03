@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -39,13 +37,11 @@ namespace LeopotamGroup.SystemUi.Actions {
 
         void IPointerClickHandler.OnPointerClick (PointerEventData eventData) {
             if ((eventData.pressPosition - eventData.position).sqrMagnitude < DragTreshold * DragTreshold) {
-                if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                    var action = new UiClickActionData ();
-                    action.GroupId = GroupId;
-                    action.Sender = gameObject;
-                    action.EventData = eventData;
-                    Singleton.Get<UnityEventBus> ().Publish<UiClickActionData> (action);
-                }
+                var action = new UiClickActionData ();
+                action.GroupId = GroupId;
+                action.Sender = gameObject;
+                action.EventData = eventData;
+                SendActionData (action);
             }
         }
     }

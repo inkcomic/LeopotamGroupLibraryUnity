@@ -23,7 +23,7 @@ namespace LeopotamGroup.Fx {
     /// <summary>
     /// Sound manager.
     /// </summary>
-    sealed class SoundManager : UnitySingletonBase {
+    sealed class SoundManager : UnityServiceBase {
         /// <summary>
         /// FX-es volume.
         /// </summary>
@@ -52,7 +52,7 @@ namespace LeopotamGroup.Fx {
 
         AudioSource[] _fxes;
 
-        protected override void OnConstruct () {
+        protected override void OnCreateService () {
             DontDestroyOnLoad (gameObject);
 
             _music = gameObject.AddComponent<AudioSource> ();
@@ -70,6 +70,8 @@ namespace LeopotamGroup.Fx {
                 item.playOnAwake = false;
             }
         }
+
+        protected override void OnDestroyService () { }
 
         /// <summary>
         /// Play music.

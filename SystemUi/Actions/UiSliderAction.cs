@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,13 +41,11 @@ namespace LeopotamGroup.SystemUi.Actions {
             _slider.onValueChanged.AddListener (OnSliderValueChanged);
         }
         void OnSliderValueChanged (float value) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiSliderActionData ();
-                action.GroupId = GroupId;
-                action.Sender = _slider;
-                action.Value = value;
-                Singleton.Get<UnityEventBus> ().Publish<UiSliderActionData> (action);
-            }
+            var action = new UiSliderActionData ();
+            action.GroupId = GroupId;
+            action.Sender = _slider;
+            action.Value = value;
+            SendActionData (action);
         }
     }
 }

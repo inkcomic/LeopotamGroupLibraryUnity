@@ -56,7 +56,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         void Load () {
             try {
-                _items = Singleton.Get<JsonSerialization> ()
+                _items = Services.Get<JsonSerialization> (true)
                     .Deserialize<List<RecordInfo>> (ProjectPrefs.GetString (ProjectPrefsKey, "{}"));
                 if (_items == null) {
                     throw new Exception ();
@@ -68,7 +68,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         void Save () {
             if (_items != null && _items.Count > 0) {
-                ProjectPrefs.SetString (ProjectPrefsKey, Singleton.Get<JsonSerialization> ().Serialize (_items));
+                ProjectPrefs.SetString (ProjectPrefsKey, Services.Get<JsonSerialization> (true).Serialize (_items));
             } else {
                 ProjectPrefs.DeleteKey (ProjectPrefsKey);
             }
@@ -165,7 +165,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static string ConvertToDictJson (string data) {
             var sb = new StringBuilder (data.Length * 2);
-            var list = Singleton.Get<CsvSerialization> ().Deserialize (data);
+            var list = Services.Get<CsvSerialization> ().Deserialize (data);
             if (list.Count < 2) {
                 throw new Exception ("Invalid header data: first line should contains field names, second line - pair of wrapping chars.");
             }
@@ -220,7 +220,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static string ConvertToArrayJson (string data) {
             var sb = new StringBuilder (data.Length * 2);
-            var list = Singleton.Get<CsvSerialization> ().DeserializeAsArray (data);
+            var list = Services.Get<CsvSerialization> ().DeserializeAsArray (data);
             if (list.Count < 2) {
                 throw new Exception ("Invalid header data: first line should contains field names, second line - pair of wrapping chars.");
             }

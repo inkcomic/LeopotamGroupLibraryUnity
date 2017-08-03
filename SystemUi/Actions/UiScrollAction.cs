@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -35,13 +33,11 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiScrollAction : UiActionBase, IScrollHandler {
         void IScrollHandler.OnScroll (PointerEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiScrollActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiScrollActionData> (action);
-            }
+            var action = new UiScrollActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
     }
 }

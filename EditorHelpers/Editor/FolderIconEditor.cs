@@ -63,13 +63,14 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             if ((object) _folderIconBack == null) {
                 _folderIconBack = EditorGUIUtility.Load (FolderIconName) as Texture2D;
             }
+            Services.Get<JsonSerialization> (true);
             LoadInfo ();
             SaveInfo ();
         }
 
         static void LoadInfo () {
             try {
-                _allDescs = Singleton.Get<JsonSerialization> ()
+                _allDescs = Services.Get<JsonSerialization> ()
                     .Deserialize<Dictionary<string, FolderIconDesc>> (
                         ProjectPrefs.GetString (StorageKey, "{}"));
                 if (_allDescs == null) {
@@ -83,7 +84,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         static void SaveInfo () {
             if (_allDescs.Count > 0) {
                 try {
-                    ProjectPrefs.SetString (StorageKey, Singleton.Get<JsonSerialization> ().Serialize (_allDescs));
+                    ProjectPrefs.SetString (StorageKey, Services.Get<JsonSerialization> ().Serialize (_allDescs));
                 } catch (Exception ex) {
                     Debug.LogWarning ("FolderIconEditor.SaveInfo: " + ex.Message);
                 }

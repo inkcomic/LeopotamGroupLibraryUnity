@@ -9,9 +9,9 @@ using UnityEngine;
 
 namespace LeopotamGroup.EditorHelpers {
     /// <summary>
-    /// Fps counter.
+    /// Fps counter service.
     /// </summary>
-    sealed class FpsCounter : UnitySingletonBase {
+    sealed class FpsCounter : UnityServiceBase {
         const int UpdateFrequency = 2;
 
         const float InvUpdatesPerSecond = 1 / (float) UpdateFrequency;
@@ -44,17 +44,16 @@ namespace LeopotamGroup.EditorHelpers {
 
         readonly StringCache<int> _stringCache = new StringCache<int> (null, null, 256);
 
-        protected override void OnConstruct () {
+        protected override void OnCreateService () {
             DontDestroyOnLoad (gameObject);
             useGUILayout = false;
-
             _style = new GUIStyle ();
             _style.normal.textColor = Color.white;
-
             _style.alignment = _anchor;
-
             CalculateRect ();
         }
+
+        protected override void OnDestroyService () { }
 
         void CalculateRect () {
             _rect = new Rect (_xOffset, _yOffset, Screen.width, Screen.height);

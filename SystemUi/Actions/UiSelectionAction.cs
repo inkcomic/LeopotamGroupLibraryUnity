@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -55,23 +53,19 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiSelectionAction : UiActionBase, ISelectHandler, IDeselectHandler {
         void IDeselectHandler.OnDeselect (BaseEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiDeselectActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiDeselectActionData> (action);
-            }
+            var action = new UiDeselectActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
 
         void ISelectHandler.OnSelect (BaseEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiSelectActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiSelectActionData> (action);
-            }
+            var action = new UiSelectActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
     }
 }

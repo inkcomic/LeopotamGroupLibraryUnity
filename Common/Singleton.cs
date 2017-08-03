@@ -12,6 +12,7 @@ namespace LeopotamGroup.Common {
     /// <summary>
     /// Attribute for locking usage of UnitySingletonBase-classes at specified scenes only.
     /// </summary>
+    [Obsolete("Use UnityServiceFilter instead")]
     [AttributeUsage (AttributeTargets.Class, AllowMultiple = true)]
     [System.Diagnostics.Conditional ("UNITY_EDITOR")]
     sealed class UnitySingletonSceneFilterAttribute : Attribute {
@@ -26,6 +27,7 @@ namespace LeopotamGroup.Common {
     /// Base class for singleton pattern, unity version.
     /// Warning: You cant touch singleton instance at any Awake() method!
     /// </summary>
+    [Obsolete("Use UnityServiceBase instead")]
     public abstract class UnitySingletonBase : MonoBehaviour {
         void Awake () {
             var type = GetType ();
@@ -79,6 +81,7 @@ namespace LeopotamGroup.Common {
         protected virtual void OnDestruct () { }
     }
 
+    [Obsolete("Use Services instead")]
     public static class Singleton {
         static readonly Dictionary<int, object> _instancesPool = new Dictionary<int, object> (64);
 
