@@ -14,7 +14,7 @@ namespace LeopotamGroup.Tutorials {
     /// <summary>
     /// Tutorial stages processing. Progress will be autosaved to PlayerPrefs.
     /// </summary>
-    sealed class TutorialManager : UnityServiceBase {
+    sealed class TutorialManager : MonoBehaviourService<TutorialManager> {
         /// <summary>
         /// Will be raised on stage changes.
         /// </summary>
@@ -28,8 +28,7 @@ namespace LeopotamGroup.Tutorials {
 
         protected override void OnCreateService () {
             DontDestroyOnLoad (gameObject);
-            Services.Get<JsonSerialization> (true);
-            Services.Get<ScreenManager> (true);
+            Service<ScreenManager>.Get ();
             LoadData ();
             SaveData ();
         }
@@ -38,7 +37,7 @@ namespace LeopotamGroup.Tutorials {
 
         void LoadData () {
             try {
-                _sceneMasks = Services.Get<JsonSerialization> ().Deserialize<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
+                _sceneMasks = Service<JsonSerialization>.Get ().Deserialize<Dictionary<string, int>> (PlayerPrefs.GetString (TutorialKey));
             } catch {
                 _sceneMasks = null;
             }
@@ -55,7 +54,7 @@ namespace LeopotamGroup.Tutorials {
                 foreach (var item in _sceneMasks) {
                     copy.Add (item.Key, item.Value);
                 }
-                PlayerPrefs.SetString (TutorialKey, Services.Get<JsonSerialization> ().Serialize (copy));
+                PlayerPrefs.SetString (TutorialKey, Service<JsonSerialization>.Get ().Serialize (copy));
             } catch (Exception ex) {
                 Debug.LogWarning (ex);
             }
@@ -78,10 +77,12 @@ namespace LeopotamGroup.Tutorials {
         /// </summary>
         /// <param name="mask">Mask.</param>
         public bool ValidateMask (TutorialMask mask) {
-            var scene = Services.Get<ScreenManager> ().Current;
+            if (Service<ScreenManager>.IsRegistered) {
+                var scene = Service<ScreenManager>.Get ().Current;
 
-            if (_sceneMasks.ContainsKey (scene)) {
-                return (_sceneMasks[scene] & (int) mask) == (int) mask;
+                if (_sceneMasks.ContainsKey (scene)) {
+                    return (_sceneMasks[scene] & (int) mask) == (int) mask;
+                }
             }
             return false;
         }
@@ -90,9 +91,12 @@ namespace LeopotamGroup.Tutorials {
         /// Get mask for current screen.
         /// </summary>
         public TutorialMask GetMask () {
-            var scene = Services.Get<ScreenManager> ().Current;
+            if (Service<ScreenManager>.IsRegistered) {
+                var scene = Service<ScreenManager>.Get ().Current;
 
-            return (TutorialMask) (_sceneMasks.ContainsKey (scene) ? _sceneMasks[scene] : 0);
+                return (TutorialMask) (_sceneMasks.ContainsKey (scene) ? _sceneMasks[scene] : 0);
+            }
+            return (TutorialMask) 0;
         }
 
         /// <summary>
@@ -101,19 +105,21 @@ namespace LeopotamGroup.Tutorials {
         /// <param name="mask">Masked bits.</param>
         /// <param name="state">New state.</param>
         public void SetMask (TutorialMask mask, bool state = true) {
-            var scene = Services.Get<ScreenManager> ().Current;
+            if (Service<ScreenManager>.IsRegistered) {
+                var scene = Service<ScreenManager>.Get ().Current;
 
-            var data = _sceneMasks.ContainsKey (scene) ? _sceneMasks[scene] : 0;
-            var newData = data;
-            if (state) {
-                newData |= (int) mask;
-            } else {
-                newData &= ~(int) mask;
-            }
-            if (newData != data) {
-                _sceneMasks[scene] = newData;
-                SaveData ();
-                OnTutorialUpdated ();
+                var data = _sceneMasks.ContainsKey (scene) ? _sceneMasks[scene] : 0;
+                var newData = data;
+                if (state) {
+                    newData |= (int) mask;
+                } else {
+                    newData &= ~(int) mask;
+                }
+                if (newData != data) {
+                    _sceneMasks[scene] = newData;
+                    SaveData ();
+                    OnTutorialUpdated ();
+                }
             }
         }
 
@@ -122,15 +128,17 @@ namespace LeopotamGroup.Tutorials {
         /// </summary>
         /// <param name="state">New state.</param>
         public void SetAll (bool state) {
-            var scene = Services.Get<ScreenManager> ().Current;
-            if (state) {
-                _sceneMasks[scene] = (1 << MaxKeyAmount) - 1;
-            } else {
-                if (_sceneMasks.ContainsKey (scene)) {
-                    _sceneMasks.Remove (scene);
+            if (Service<ScreenManager>.IsRegistered) {
+                var scene = Service<ScreenManager>.Get ().Current;
+                if (state) {
+                    _sceneMasks[scene] = (1 << MaxKeyAmount) - 1;
+                } else {
+                    if (_sceneMasks.ContainsKey (scene)) {
+                        _sceneMasks.Remove (scene);
+                    }
                 }
+                SaveData ();
             }
-            SaveData ();
         }
 
         /// <summary>

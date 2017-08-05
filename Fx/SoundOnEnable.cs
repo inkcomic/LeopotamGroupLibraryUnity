@@ -25,7 +25,7 @@ namespace LeopotamGroup.Fx {
         bool _isInterrupt;
 
         void OnEnable () {
-            Services.Get<SoundManager> (true).PlayFx (_sound, _channel, _isInterrupt);
+            Service<SoundManager>.Get ().PlayFx (_sound, _channel, _isInterrupt);
         }
     }
 }

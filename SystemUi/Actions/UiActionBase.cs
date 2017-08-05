@@ -24,12 +24,12 @@ namespace LeopotamGroup.SystemUi.Actions {
 
         protected virtual void Start () {
             // Force create eventbus object.
-            Services.Get<UnityEventBus> (true);
+            Service<UnityEventBus>.Get ();
         }
 
         protected void SendActionData<T> (T data) {
-            if (Services.IsTypeRegistered<UnityEventBus> ()) {
-                Services.Get<UnityEventBus> ().Publish<T> (data);
+            if (Service<UnityEventBus>.IsRegistered) {
+                Service<UnityEventBus>.Get ().Publish<T> (data);
             }
         }
 

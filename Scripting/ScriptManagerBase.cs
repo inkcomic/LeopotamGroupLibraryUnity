@@ -12,7 +12,7 @@ namespace LeopotamGroup.Scripting {
     /// <summary>
     /// Script manager base class. Wrapper around ScriptVm instance, provides api from it.
     /// </summary>
-    abstract class ScriptManagerBase : UnityServiceBase {
+    abstract class ScriptManagerBase : MonoBehaviourService<ScriptManagerBase> {
         struct TimeoutPair {
             public float Time;
 

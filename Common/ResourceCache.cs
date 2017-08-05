@@ -11,7 +11,7 @@ namespace LeopotamGroup.Common {
     /// <summary>
     /// Helper for cache Resources.Load calls with 2x performance boost.
     /// </summary>
-    sealed class ResourceCache : UnityServiceBase {
+    sealed class ResourceCache : MonoBehaviourService<ResourceCache> {
         readonly Dictionary<string, Object> _cache = new Dictionary<string, Object> (512);
 
         /// <summary>

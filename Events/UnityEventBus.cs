@@ -10,7 +10,7 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Event bus service, local for current scene.
     /// </summary>
-    public class UnityEventBus : UnityServiceBase {
+    public class UnityEventBus : MonoBehaviourService<UnityEventBus> {
         protected EventBus EventBus;
 
         protected override void OnCreateService () {

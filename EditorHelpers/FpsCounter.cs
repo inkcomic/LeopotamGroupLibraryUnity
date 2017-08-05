@@ -11,7 +11,7 @@ namespace LeopotamGroup.EditorHelpers {
     /// <summary>
     /// Fps counter service.
     /// </summary>
-    sealed class FpsCounter : UnityServiceBase {
+    sealed class FpsCounter : MonoBehaviourService<FpsCounter> {
         const int UpdateFrequency = 2;
 
         const float InvUpdatesPerSecond = 1 / (float) UpdateFrequency;

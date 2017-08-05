@@ -12,7 +12,7 @@ namespace LeopotamGroup.Common {
     /// <summary>
     /// Screen / scene manager, provides api for navigation with history rollback support.
     /// </summary>
-    sealed class ScreenManager : UnityServiceBase {
+    sealed class ScreenManager : MonoBehaviourService<ScreenManager> {
         /// <summary>
         /// Get previous screen name or null.
         /// </summary>

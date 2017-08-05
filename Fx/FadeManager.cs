@@ -12,7 +12,7 @@ namespace LeopotamGroup.Fx {
     /// <summary>
     /// Fade manager service.
     /// </summary>
-    sealed class FadeManager : UnityServiceBase {
+    sealed class FadeManager : MonoBehaviourService<FadeManager> {
         Color _fadeFrom;
 
         Color _fadeTo;

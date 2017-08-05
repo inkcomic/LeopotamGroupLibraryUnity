@@ -15,7 +15,7 @@ namespace LeopotamGroup.Threading {
     /// <summary>
     /// Base class for processing data at background thread, singleton based.
     /// </summary>
-    public abstract class BackgroundWorkerBase<T> : UnityServiceBase {
+    public abstract class BackgroundWorkerBase<T> : MonoBehaviourService<BackgroundWorkerBase<T>> {
         /// <summary>
         /// Is background thread started and inited.
         /// </summary>

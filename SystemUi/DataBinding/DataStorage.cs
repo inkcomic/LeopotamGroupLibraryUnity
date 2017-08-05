@@ -15,7 +15,7 @@ namespace LeopotamGroup.SystemUi.DataBinding {
     /// <summary>
     /// Data binding control center, route events to IDataBinder-s.
     /// </summary>
-    public sealed class DataStorage : UnityServiceBase {
+    public sealed class DataStorage : MonoBehaviourService<DataStorage> {
         readonly FastList<BindedSourceInfo> _sourcesList = new FastList<BindedSourceInfo> (128);
 
         BindedSourceInfo[] _sourcesData;

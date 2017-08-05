@@ -87,7 +87,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             _settings = null;
             try {
                 _settings =
-                    Services.Get<JsonSerialization> (true).Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
+                    Service<JsonSerialization>.Get ().Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
             } catch { }
             if (_settings == null) {
                 _settings = new GenerationSettings ();
@@ -117,7 +117,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 Repaint ();
             }
             if (GUILayout.Button ("Save settings & generate")) {
-                ProjectPrefs.SetString (SettingsKey, Services.Get<JsonSerialization> (true).Serialize (_settings));
+                ProjectPrefs.SetString (SettingsKey, Service<JsonSerialization>.Get ().Serialize (_settings));
                 var res = Generate (_settings);
                 EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }

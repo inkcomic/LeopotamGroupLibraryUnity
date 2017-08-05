@@ -23,7 +23,7 @@ namespace LeopotamGroup.Fx {
     /// <summary>
     /// Sound manager.
     /// </summary>
-    sealed class SoundManager : UnityServiceBase {
+    sealed class SoundManager : MonoBehaviourService<SoundManager> {
         /// <summary>
         /// FX-es volume.
         /// </summary>

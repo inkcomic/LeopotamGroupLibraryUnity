@@ -101,7 +101,7 @@ namespace LeopotamGroup.SystemUi.Markup {
             }
             XmlNode xmlTree = null;
             try {
-                xmlTree = Services.Get<XmlSerialization> (true).Deserialize (asset.text, true);
+                xmlTree = Service<XmlSerialization>.Get ().Deserialize (asset.text, true);
             } catch (Exception ex) {
                 Debug.LogWarning (ex);
             }

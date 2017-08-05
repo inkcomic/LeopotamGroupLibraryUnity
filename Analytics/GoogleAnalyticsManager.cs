@@ -17,7 +17,7 @@ namespace LeopotamGroup.Analytics {
     /// <summary>
     /// Simple GoogleAnalytics manager. Supports tracking of events, screens.
     /// </summary>
-    sealed class GoogleAnalyticsManager : UnityServiceBase {
+    sealed class GoogleAnalyticsManager : MonoBehaviourService<GoogleAnalyticsManager> {
         [SerializeField]
         string _trackerId;
 
@@ -130,7 +130,7 @@ namespace LeopotamGroup.Analytics {
         /// Track current screen.
         /// </summary>
         public void TrackScreen () {
-            TrackScreen (Services.Get<ScreenManager> ().Current);
+            TrackScreen (Service<ScreenManager>.Get ().Current);
         }
 
         /// <summary>

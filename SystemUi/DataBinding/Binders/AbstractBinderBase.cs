@@ -102,7 +102,7 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
 
         void Subscribe () {
             if (!string.IsNullOrEmpty (_source) && !string.IsNullOrEmpty (_property)) {
-                var storage = Services.Get<DataStorage> (true);
+                var storage = Service<DataStorage>.Get ();
                 storage.Subscribe (this);
                 enabled = ProcessEventsOnlyWhenEnabled;
                 if (!ProcessEventsOnlyWhenEnabled) {
@@ -113,8 +113,8 @@ namespace LeopotamGroup.SystemUi.DataBinding.Binders {
 
         void Unsubscribe () {
             if (!string.IsNullOrEmpty (_source) && !string.IsNullOrEmpty (_property)) {
-                if (Services.IsTypeRegistered<DataStorage> ()) {
-                    Services.Get<DataStorage> ().Unsubscribe (this);
+                if (Service<DataStorage>.IsRegistered) {
+                    Service<DataStorage>.Get ().Unsubscribe (this);
                 }
             }
         }

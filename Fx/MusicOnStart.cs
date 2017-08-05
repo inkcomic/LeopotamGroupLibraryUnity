@@ -21,7 +21,7 @@ namespace LeopotamGroup.Fx {
 
         IEnumerator Start () {
             yield return null;
-            var sm = Services.Get<SoundManager> (true);
+            var sm = Service<SoundManager>.Get ();
             if (sm.MusicVolume <= 0f) {
                 sm.StopMusic ();
             }

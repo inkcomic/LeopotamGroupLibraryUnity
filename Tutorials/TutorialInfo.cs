@@ -65,13 +65,13 @@ namespace LeopotamGroup.Tutorials {
         public TutorialMask ShowChildrenOnMask = 0;
 
         void OnEnable () {
-            Services.Get<TutorialManager> (true).OnTutorialUpdated += OnTutorialUpdated;
+            Service<TutorialManager>.Get ().OnTutorialUpdated += OnTutorialUpdated;
             OnTutorialUpdated ();
         }
 
         void OnDisable () {
-            if (Services.IsTypeRegistered<TutorialManager> ()) {
-                Services.Get<TutorialManager> ().OnTutorialUpdated -= OnTutorialUpdated;
+            if (Service<TutorialManager>.IsRegistered) {
+                Service<TutorialManager>.Get ().OnTutorialUpdated -= OnTutorialUpdated;
             }
         }
 
@@ -79,10 +79,10 @@ namespace LeopotamGroup.Tutorials {
             var isProcessed = false;
             var result = false;
 
-            if ((int) HideChildrenOnMask != 0 && Services.Get<TutorialManager> (true).ValidateMask (HideChildrenOnMask)) {
+            if ((int) HideChildrenOnMask != 0 && Service<TutorialManager>.Get ().ValidateMask (HideChildrenOnMask)) {
                 isProcessed = true;
             }
-            if (!isProcessed && (int) ShowChildrenOnMask != 0 && Services.Get<TutorialManager> (true).ValidateMask (ShowChildrenOnMask)) {
+            if (!isProcessed && (int) ShowChildrenOnMask != 0 && Service<TutorialManager>.Get ().ValidateMask (ShowChildrenOnMask)) {
                 isProcessed = true;
                 result = true;
             }

@@ -74,7 +74,7 @@ namespace LeopotamGroup.Localization {
         }
 
         static void LoadData (string data, Dictionary<string, string[]> storage) {
-            Services.Get<CsvSerialization> (true).Deserialize (data, storage);
+            Service<CsvSerialization>.Get ().Deserialize (data, storage);
             if (!storage.ContainsKey (HeaderToken)) {
                 storage.Clear ();
                 return;

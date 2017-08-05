@@ -17,7 +17,7 @@ namespace LeopotamGroup.EditorHelpers {
     /// Base class for developer UI console.
     /// </summary>
     [DefaultExecutionOrder (-32768)]
-    abstract class DeveloperConsoleBase : UnityServiceBase {
+    abstract class DeveloperConsoleBase : MonoBehaviourService<DeveloperConsoleBase> {
         /// <summary>
         /// Is console was shown.
         /// </summary>
@@ -79,7 +79,7 @@ namespace LeopotamGroup.EditorHelpers {
             inputTr.offsetMax = offset;
             _inputField = inputTr.GetComponent<InputField> ();
 
-            var ueb = Services.Get<UnityEventBus> (true);
+            var ueb = Service<UnityEventBus>.Get ();
             ueb.Subscribe<UiInputEndActionData> (OnInputEnd);
             ueb.Subscribe<UiClickActionData> (OnClose);
         }

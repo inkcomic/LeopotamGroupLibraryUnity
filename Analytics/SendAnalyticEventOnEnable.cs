@@ -20,7 +20,7 @@ namespace LeopotamGroup.Analytics {
 
         void OnEnable () {
             if (!string.IsNullOrEmpty (_category) && !string.IsNullOrEmpty (_event)) {
-                Services.Get<GoogleAnalyticsManager> (true).TrackEvent (_category, _event);
+                Service<GoogleAnalyticsManager>.Get ().TrackEvent (_category, _event);
             }
         }
     }

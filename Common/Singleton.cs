@@ -81,7 +81,7 @@ namespace LeopotamGroup.Common {
         protected virtual void OnDestruct () { }
     }
 
-    [Obsolete("Use Services instead")]
+    [Obsolete("Use Service<T> instead")]
     public static class Singleton {
         static readonly Dictionary<int, object> _instancesPool = new Dictionary<int, object> (64);
 
