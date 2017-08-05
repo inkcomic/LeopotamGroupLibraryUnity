@@ -62,13 +62,13 @@ namespace LeopotamGroup.Common {
         }
 
         /// <summary>
-        /// Replacement of Awake method, will be raised only once for singleton.
+        /// Replacement of Awake method, will be raised only once for service.
         /// Dont use Awake method in inherited classes!
         /// </summary>
         protected abstract void OnCreateService ();
 
         /// <summary>
-        /// Replacement of OnDestroy method, will be raised only once for singleton.
+        /// Replacement of OnDestroy method, will be raised only once for service.
         /// Dont use OnDestroy method in inherited classes!
         /// </summary>
         protected abstract void OnDestroyService ();
@@ -111,7 +111,7 @@ namespace LeopotamGroup.Common {
                 throw new UnityException (string.Format ("\"{0}\" - invalid type, should be inherited from MonoBehaviourService", type.Name));
             }
 #endif
-            // Special case for UnitySingletonBase components.
+            // Special case for MonoBehaviourService<T> components.
             if (type.IsSubclassOf (typeof (MonoBehaviourService<T>))) {
 #if UNITY_EDITOR
                 if (!Application.isPlaying) {
@@ -141,7 +141,6 @@ namespace LeopotamGroup.Common {
             if (instance == null) {
                 throw new UnityException ("Cant register null instance as service");
             }
-            var type = instance.GetType ();
             _instance = instance;
         }
 
