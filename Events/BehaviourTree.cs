@@ -9,7 +9,7 @@ namespace LeopotamGroup.Events {
     /// Behaviour tree.
     /// </summary>
     public sealed class BehaviourTree<T> where T : class, new () {
-        readonly BehaviourTreeSequence _root;
+        readonly BehaviourTreeSequence _root = new BehaviourTreeSequence ();
 
         readonly T _store;
 
@@ -19,11 +19,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="store">Store logic instance.</param>
         public BehaviourTree (T store = null) {
-            _root = new BehaviourTreeSequence ();
-            if (store == null) {
-                store = new T ();
-            }
-            _store = store;
+            _store = store ?? new T ();
         }
 
         /// <summary>
