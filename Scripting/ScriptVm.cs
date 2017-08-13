@@ -97,23 +97,18 @@ namespace LeopotamGroup.Scripting {
             var id = 0;
             var max = func.Params != null ? func.Params.Length : 0;
             if (param1 != null && id < max) {
-                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param1.Value);
             }
             if (param2 != null && id < max) {
-                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param2.Value);
             }
             if (param3 != null && id < max) {
-                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param3.Value);
             }
             if (param4 != null && id < max) {
-                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id++], param4.Value);
             }
             for (; id < max; id++) {
-                // ReSharper disable once PossibleNullReferenceException
                 _parser.Vars.RegisterVar (func.Params[id], undef);
             }
             var err = _parser.CallFunction ();

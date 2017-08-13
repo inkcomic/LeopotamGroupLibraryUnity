@@ -125,7 +125,6 @@ namespace LeopotamGroup.Math {
                         v0++;
                     }
                 } else {
-                    // ReSharper disable once CompareOfFloatsByEqualityOperator
                     if (diff == 0.5f && (v1 == 0 || (v1 & 1) != 0)) {
                         v1++;
                     }

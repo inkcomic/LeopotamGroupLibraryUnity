@@ -7,8 +7,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     /// <summary>
     /// Data binding of enable / disable toggle state for any Toggle component.

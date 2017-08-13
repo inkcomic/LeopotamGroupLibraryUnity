@@ -11,7 +11,6 @@ namespace LeopotamGroup.Common {
     /// Replacement for MonoBehaviour class with transform caching.
     /// </summary>
     public abstract class MonoBehaviourBase : MonoBehaviour {
-        // ReSharper disable once InconsistentNaming
         /// <summary>
         /// Patched transform, gains 2x performance boost compare to standard.
         /// </summary>

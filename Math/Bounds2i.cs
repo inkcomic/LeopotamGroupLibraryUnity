@@ -7,7 +7,6 @@
 using System;
 
 namespace LeopotamGroup.Math {
-    // ReSharper disable once InconsistentNaming
     /// <summary>
     /// Axis-aligned 2d bounding box with integer coords.
     /// </summary>

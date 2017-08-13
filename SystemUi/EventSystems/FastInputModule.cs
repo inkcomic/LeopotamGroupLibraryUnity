@@ -7,12 +7,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-// ReSharper disable InconsistentNaming
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.SystemUi.EventSystems {
 #if UNITY_EDITOR
-
     [AddComponentMenu ("Event/LeopotamGroup/Fast Input Module")]
 #endif
     [RequireComponent (typeof (EventSystem))]
@@ -268,7 +264,7 @@ namespace LeopotamGroup.SystemUi.EventSystems {
 
             if (leftButtonData.buttonData.scrollDelta.sqrMagnitude > float.Epsilon) {
                 var scrollHandler =
-                        ExecuteEvents.GetEventHandler<IScrollHandler> (leftButtonData.buttonData.pointerCurrentRaycast.gameObject);
+                    ExecuteEvents.GetEventHandler<IScrollHandler> (leftButtonData.buttonData.pointerCurrentRaycast.gameObject);
                 ExecuteEvents.ExecuteHierarchy (scrollHandler, leftButtonData.buttonData, ExecuteEvents.scrollHandler);
             }
         }
