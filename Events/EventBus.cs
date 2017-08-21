@@ -16,8 +16,8 @@ namespace LeopotamGroup.Events {
         /// <summary>
         /// Prototype for subscribers action.
         /// </summary>
-        /// <param name="eventAction">Callback on event.</param>
-        public delegate void EventHandler<T> (T eventAction);
+        /// <param name="eventData">Event data.</param>
+        public delegate void EventHandler<T> (T eventData);
 
         const int MaxCallDepth = 5;
 
