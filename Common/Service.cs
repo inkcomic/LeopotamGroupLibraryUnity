@@ -27,14 +27,14 @@ namespace LeopotamGroup.Common {
     /// </summary>
     public abstract class MonoBehaviourService<T> : MonoBehaviour where T : class {
         void Awake () {
-            var type = GetType ();
             if (Service<T>.IsRegistered) {
                 DestroyImmediate (this);
                 return;
             }
 #if UNITY_EDITOR
+            var type = GetType ();
             // check for allowed scenes if possible.
-            var attrs = GetType ().GetCustomAttributes (typeof (MonoBehaviourServiceFilterAttribute), true);
+            var attrs = type.GetCustomAttributes (typeof (MonoBehaviourServiceFilterAttribute), true);
             if (attrs.Length > 0) {
                 var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
                 var i = attrs.Length - 1;
