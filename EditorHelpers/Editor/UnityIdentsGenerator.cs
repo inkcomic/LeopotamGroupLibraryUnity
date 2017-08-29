@@ -87,7 +87,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             _settings = null;
             try {
                 _settings =
-                    Singleton.Get<JsonSerialization> ().Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
+                    Service<JsonSerialization>.Get ().Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
             } catch { }
             if (_settings == null) {
                 _settings = new GenerationSettings ();
@@ -117,7 +117,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 Repaint ();
             }
             if (GUILayout.Button ("Save settings & generate")) {
-                ProjectPrefs.SetString (SettingsKey, Singleton.Get<JsonSerialization> ().Serialize (_settings));
+                ProjectPrefs.SetString (SettingsKey, Service<JsonSerialization>.Get ().Serialize (_settings));
                 var res = Generate (_settings);
                 EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }
@@ -230,7 +230,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             // sorting layers
             if ((int) (options & Options.SortingLayers) != 0) {
                 foreach (var sortLayer in SortingLayer.layers) {
-                    Debug.LogFormat ("{0} {1}", SortingLayer.layers[0].id, SortingLayer.layers[0].name);
                     lines.Add (string.Format (SortingLayerName, indent, CleanupName (sortLayer.name), sortLayer.id));
                 }
             }

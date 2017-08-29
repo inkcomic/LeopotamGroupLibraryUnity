@@ -7,8 +7,6 @@
 using System;
 using UnityEngine;
 
-// ReSharper disable InconsistentNaming
-
 namespace LeopotamGroup.Math {
     /// <summary>
     /// Vector4 struct with int32 fields.

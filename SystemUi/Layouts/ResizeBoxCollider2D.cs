@@ -6,8 +6,6 @@
 
 using UnityEngine;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.SystemUi.Layouts {
     /// <summary>
     /// Resizer of BoxCollider2D size for follow to RectTransform size.

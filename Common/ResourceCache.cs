@@ -11,7 +11,7 @@ namespace LeopotamGroup.Common {
     /// <summary>
     /// Helper for cache Resources.Load calls with 2x performance boost.
     /// </summary>
-    sealed class ResourceCache : UnitySingletonBase {
+    sealed class ResourceCache : MonoBehaviourService<ResourceCache> {
         readonly Dictionary<string, Object> _cache = new Dictionary<string, Object> (512);
 
         /// <summary>
@@ -42,9 +42,10 @@ namespace LeopotamGroup.Common {
             }
         }
 
-        protected override void OnDestruct () {
+        protected override void OnCreateService () { }
+
+        protected override void OnDestroyService () {
             _cache.Clear ();
-            base.OnDestruct ();
         }
     }
 }

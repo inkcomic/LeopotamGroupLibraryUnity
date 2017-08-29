@@ -12,7 +12,7 @@ namespace LeopotamGroup.Scripting {
     /// <summary>
     /// Script manager base class. Wrapper around ScriptVm instance, provides api from it.
     /// </summary>
-    abstract class ScriptManagerBase : UnitySingletonBase {
+    abstract class ScriptManagerBase : MonoBehaviourService<ScriptManagerBase> {
         struct TimeoutPair {
             public float Time;
 
@@ -31,14 +31,12 @@ namespace LeopotamGroup.Scripting {
 
         readonly List<TimeoutPair> _timeoutListeners = new List<TimeoutPair> (16);
 
-        protected override void OnConstruct () {
-            base.OnConstruct ();
+        protected override void OnCreateService () {
             OnAttachHostFunctions (_vm);
         }
 
-        protected override void OnDestruct () {
+        protected override void OnDestroyService () {
             OnResetEvents ();
-            base.OnDestruct ();
         }
 
         /// <summary>
@@ -133,8 +131,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public string CallFunction (string funcName, out ScriptVar result,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+            ScriptVar? param1 = null, ScriptVar ? param2 = null,
+            ScriptVar? param3 = null, ScriptVar ? param4 = null) {
             return _vm.CallFunction (funcName, out result, param1, param2, param3, param4);
         }
 
@@ -149,8 +147,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public string CallFunctionOrSkip (string funcName, out ScriptVar result,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+            ScriptVar? param1 = null, ScriptVar ? param2 = null,
+            ScriptVar? param3 = null, ScriptVar ? param4 = null) {
             if (!_vm.IsFunctionExists (funcName)) {
                 result = new ScriptVar ();
                 return null;
@@ -168,15 +166,15 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public void CallFunctionWithDelay (string funcName, float timeout,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+            ScriptVar? param1 = null, ScriptVar ? param2 = null,
+            ScriptVar? param3 = null, ScriptVar ? param4 = null) {
             var pair = new TimeoutPair {
-                Event = funcName,
-                Time = Time.time + timeout,
-                Param1 = param1,
-                Param2 = param2,
-                Param3 = param3,
-                Param4 = param4
+            Event = funcName,
+            Time = Time.time + timeout,
+            Param1 = param1,
+            Param2 = param2,
+            Param3 = param3,
+            Param4 = param4
             };
             _timeoutListeners.Add (pair);
         }
@@ -191,8 +189,8 @@ namespace LeopotamGroup.Scripting {
         /// <param name="param3">Optional parameter to function.</param>
         /// <param name="param4">Optional parameter to function.</param>
         public void CallFunctionWithDelayOrSkip (string funcName, float timeout,
-            ScriptVar? param1 = null, ScriptVar? param2 = null,
-            ScriptVar? param3 = null, ScriptVar? param4 = null) {
+            ScriptVar? param1 = null, ScriptVar ? param2 = null,
+            ScriptVar? param3 = null, ScriptVar ? param4 = null) {
             if (!_vm.IsFunctionExists (funcName)) {
                 return;
             }

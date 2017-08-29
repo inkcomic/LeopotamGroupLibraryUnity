@@ -8,19 +8,17 @@ using LeopotamGroup.Common;
 
 namespace LeopotamGroup.Events {
     /// <summary>
-    /// Event bus singleton, local for unity scene.
+    /// Event bus service, local for current scene.
     /// </summary>
-    public class UnityEventBus : UnitySingletonBase {
+    public class UnityEventBus : MonoBehaviourService<UnityEventBus> {
         protected EventBus EventBus;
 
-        protected override void OnConstruct () {
-            base.OnConstruct ();
+        protected override void OnCreateService () {
             EventBus = new EventBus ();
         }
 
-        protected override void OnDestruct () {
+        protected override void OnDestroyService () {
             UnsubscribeAndClearAllEvents ();
-            base.OnDestruct ();
         }
 
         /// <summary>

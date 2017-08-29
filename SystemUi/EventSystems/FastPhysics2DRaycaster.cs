@@ -8,11 +8,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-// ReSharper disable InconsistentNaming
-
 namespace LeopotamGroup.SystemUi.EventSystems {
 #if UNITY_EDITOR
-
     [AddComponentMenu ("Event/LeopotamGroup/Fast Physics 2D Raycaster")]
 #endif
     [RequireComponent (typeof (Camera))]

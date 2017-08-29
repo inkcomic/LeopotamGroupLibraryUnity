@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,13 +41,11 @@ namespace LeopotamGroup.SystemUi.Actions {
             _toggle.onValueChanged.AddListener (OnSliderValueChanged);
         }
         void OnSliderValueChanged (bool value) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiToggleActionData ();
-                action.GroupId = GroupId;
-                action.Sender = _toggle;
-                action.Value = value;
-                Singleton.Get<UnityEventBus> ().Publish<UiToggleActionData> (action);
-            }
+            var action = new UiToggleActionData ();
+            action.GroupId = GroupId;
+            action.Sender = _toggle;
+            action.Value = value;
+            SendActionData (action);
         }
     }
 }

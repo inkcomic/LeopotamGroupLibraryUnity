@@ -17,7 +17,7 @@ namespace LeopotamGroup.EditorHelpers {
     /// Base class for developer UI console.
     /// </summary>
     [DefaultExecutionOrder (-32768)]
-    abstract class DeveloperConsoleBase : UnitySingletonBase {
+    abstract class DeveloperConsoleBase : MonoBehaviourService<DeveloperConsoleBase> {
         /// <summary>
         /// Is console was shown.
         /// </summary>
@@ -51,8 +51,7 @@ namespace LeopotamGroup.EditorHelpers {
 
         int _onDevConsoleId;
 
-        protected override void OnConstruct () {
-            base.OnConstruct ();
+        protected override void OnCreateService () {
             _logLines = new string[GetMaxLines ()];
             _vm = new ScriptVm ();
             _vm.ShowLineInfo (false);
@@ -80,9 +79,12 @@ namespace LeopotamGroup.EditorHelpers {
             inputTr.offsetMax = offset;
             _inputField = inputTr.GetComponent<InputField> ();
 
-            Singleton.Get<UnityEventBus> ().Subscribe<UiInputEndActionData> (OnInputEnd);
-            Singleton.Get<UnityEventBus> ().Subscribe<UiClickActionData> (OnClose);
+            var ueb = Service<UnityEventBus>.Get ();
+            ueb.Subscribe<UiInputEndActionData> (OnInputEnd);
+            ueb.Subscribe<UiClickActionData> (OnClose);
         }
+
+        protected override void OnDestroyService () { }
 
         /// <summary>
         /// Get max amount of lines in log. Should be constant during all calls!

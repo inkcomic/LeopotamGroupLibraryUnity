@@ -6,8 +6,6 @@
 
 using UnityEngine;
 
-// ReSharper disable RedundantCast
-
 namespace LeopotamGroup.Pooling {
     /// <summary>
     /// Recycle instance after time (if it was spawned from pool).

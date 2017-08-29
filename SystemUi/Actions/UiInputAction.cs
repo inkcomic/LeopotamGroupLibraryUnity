@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -65,23 +63,19 @@ namespace LeopotamGroup.SystemUi.Actions {
         }
 
         void OnInputValueChanged (string value) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiInputChangeActionData ();
-                action.GroupId = GroupId;
-                action.Sender = _input;
-                action.Value = value;
-                Singleton.Get<UnityEventBus> ().Publish<UiInputChangeActionData> (action);
-            }
+            var action = new UiInputChangeActionData ();
+            action.GroupId = GroupId;
+            action.Sender = _input;
+            action.Value = value;
+            SendActionData (action);
         }
 
         void OnInputEnded (string value) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiInputEndActionData ();
-                action.GroupId = GroupId;
-                action.Sender = _input;
-                action.Value = value;
-                Singleton.Get<UnityEventBus> ().Publish<UiInputEndActionData> (action);
-            }
+            var action = new UiInputEndActionData ();
+            action.GroupId = GroupId;
+            action.Sender = _input;
+            action.Value = value;
+            SendActionData (action);
         }
     }
 }

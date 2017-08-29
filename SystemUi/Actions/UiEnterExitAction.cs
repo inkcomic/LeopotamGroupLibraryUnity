@@ -4,8 +4,6 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
-using LeopotamGroup.Common;
-using LeopotamGroup.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -55,23 +53,19 @@ namespace LeopotamGroup.SystemUi.Actions {
     /// </summary>
     public sealed class UiEnterExitAction : UiActionBase, IPointerEnterHandler, IPointerExitHandler {
         void IPointerEnterHandler.OnPointerEnter (PointerEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiEnterActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiEnterActionData> (action);
-            }
+            var action = new UiEnterActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
 
         void IPointerExitHandler.OnPointerExit (PointerEventData eventData) {
-            if (Singleton.IsTypeRegistered<UnityEventBus> ()) {
-                var action = new UiExitActionData ();
-                action.GroupId = GroupId;
-                action.Sender = gameObject;
-                action.EventData = eventData;
-                Singleton.Get<UnityEventBus> ().Publish<UiExitActionData> (action);
-            }
+            var action = new UiExitActionData ();
+            action.GroupId = GroupId;
+            action.Sender = gameObject;
+            action.EventData = eventData;
+            SendActionData (action);
         }
     }
 }

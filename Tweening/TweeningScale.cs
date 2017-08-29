@@ -6,8 +6,6 @@
 
 using UnityEngine;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.Tweening {
     /// <summary>
     /// Tweening scale.

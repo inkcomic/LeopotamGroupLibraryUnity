@@ -15,17 +15,18 @@ namespace LeopotamGroup.SystemUi.DataBinding {
     /// <summary>
     /// Data binding control center, route events to IDataBinder-s.
     /// </summary>
-    public sealed class DataStorage : UnitySingletonBase {
-        protected override void OnConstruct () {
-            base.OnConstruct ();
+    public sealed class DataStorage : MonoBehaviourService<DataStorage> {
+        readonly FastList<BindedSourceInfo> _sourcesList = new FastList<BindedSourceInfo> (128);
+
+        BindedSourceInfo[] _sourcesData;
+
+        int _sourcesCount;
+
+        protected override void OnCreateService () {
             _sourcesData = _sourcesList.GetData (out _sourcesCount);
         }
 
-        FastList<BindedSourceInfo> _sourcesList = new FastList<BindedSourceInfo> (128);
-
-        BindedSourceInfo [] _sourcesData;
-
-        int _sourcesCount;
+        protected override void OnDestroyService () { }
 
         void OnDataChanged (IDataSource source, string property) {
             if (source == null || string.IsNullOrEmpty (property)) {
@@ -34,15 +35,15 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
             BindedPropertyInfo propInfo;
             int listenerCount;
-            IDataBinder [] listeners;
+            IDataBinder[] listeners;
             for (var i = _sourcesCount - 1; i >= 0; i--) {
-                if (_sourcesData [i].Source == source) {
-                    if (_sourcesData [i].Properties.TryGetValue (property, out propInfo)) {
+                if (_sourcesData[i].Source == source) {
+                    if (_sourcesData[i].Properties.TryGetValue (property, out propInfo)) {
                         listeners = propInfo.Listeners.GetData (out listenerCount);
                         if (listenerCount > 0) {
-                            var data = GetData (_sourcesData [i].Name, property);
+                            var data = GetData (_sourcesData[i].Name, property);
                             for (var j = listenerCount - 1; j >= 0; j--) {
-                                listeners [j].OnBindedDataChanged (data);
+                                listeners[j].OnBindedDataChanged (data);
                             }
                         }
                     }
@@ -52,8 +53,8 @@ namespace LeopotamGroup.SystemUi.DataBinding {
 
         BindedSourceInfo GetSource (string sourceName, bool createNew = false) {
             for (var i = _sourcesCount - 1; i >= 0; i--) {
-                if (string.CompareOrdinal (_sourcesData [i].Name, sourceName) == 0) {
-                    return _sourcesData [i];
+                if (string.CompareOrdinal (_sourcesData[i].Name, sourceName) == 0) {
+                    return _sourcesData[i];
                 }
             }
             if (!createNew) {
@@ -85,7 +86,7 @@ namespace LeopotamGroup.SystemUi.DataBinding {
             BindedPropertyInfo propInfo;
             if (!holder.Properties.TryGetValue (binder.BindedProperty, out propInfo)) {
                 propInfo = new BindedPropertyInfo ();
-                holder.Properties [binder.BindedProperty] = propInfo;
+                holder.Properties[binder.BindedProperty] = propInfo;
             }
             if (!propInfo.Listeners.Contains (binder)) {
                 propInfo.Listeners.Add (binder);

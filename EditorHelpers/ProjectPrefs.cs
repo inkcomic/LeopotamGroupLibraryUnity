@@ -25,6 +25,10 @@ namespace LeopotamGroup.EditorHelpers {
 
         static Dictionary<string, string> _data;
 
+        static ProjectPrefs () {
+            Service<JsonSerialization>.Get ();
+        }
+
         static void LoadData () {
             if (_storeFile == null) {
                 _storeFile = string.Format (StorePath, Application.dataPath);
@@ -34,7 +38,7 @@ namespace LeopotamGroup.EditorHelpers {
             }
             try {
                 var content = File.ReadAllText (_storeFile);
-                _data = Singleton.Get<JsonSerialization> ().Deserialize<Dictionary<string, string>> (content);
+                _data = Service<JsonSerialization>.Get ().Deserialize<Dictionary<string, string>> (content);
                 if (_data == null) {
                     throw new UnityException ();
                 }
@@ -46,7 +50,7 @@ namespace LeopotamGroup.EditorHelpers {
         static void SaveData () {
             try {
                 if (_data.Count > 0) {
-                    File.WriteAllText (_storeFile, Singleton.Get<JsonSerialization> ().Serialize (_data));
+                    File.WriteAllText (_storeFile, Service<JsonSerialization>.Get ().Serialize (_data));
                 } else {
                     if (File.Exists (_storeFile)) {
                         File.Delete (_storeFile);

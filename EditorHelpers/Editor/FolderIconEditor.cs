@@ -69,7 +69,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static void LoadInfo () {
             try {
-                _allDescs = Singleton.Get<JsonSerialization> ()
+                _allDescs = Service<JsonSerialization>.Get ()
                     .Deserialize<Dictionary<string, FolderIconDesc>> (
                         ProjectPrefs.GetString (StorageKey, "{}"));
                 if (_allDescs == null) {
@@ -83,7 +83,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         static void SaveInfo () {
             if (_allDescs.Count > 0) {
                 try {
-                    ProjectPrefs.SetString (StorageKey, Singleton.Get<JsonSerialization> ().Serialize (_allDescs));
+                    ProjectPrefs.SetString (StorageKey, Service<JsonSerialization>.Get ().Serialize (_allDescs));
                 } catch (Exception ex) {
                     Debug.LogWarning ("FolderIconEditor.SaveInfo: " + ex.Message);
                 }

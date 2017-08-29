@@ -7,8 +7,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// ReSharper disable RedundantCast.0
-
 namespace LeopotamGroup.SystemUi.DataBinding.Binders {
     /// <summary>
     /// Data binding of sprite for any Image component.

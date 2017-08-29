@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace LeopotamGroup.Fx {
     /// <summary>
-    /// Fade manager.
+    /// Fade manager service.
     /// </summary>
-    sealed class FadeManager : UnitySingletonBase {
+    sealed class FadeManager : MonoBehaviourService<FadeManager> {
         Color _fadeFrom;
 
         Color _fadeTo;
@@ -23,9 +23,11 @@ namespace LeopotamGroup.Fx {
 
         Action _callback;
 
-        protected override void OnConstruct () {
+        protected override void OnCreateService () {
             useGUILayout = false;
         }
+
+        protected override void OnDestroyService () { }
 
         void OnGUI () {
             if (_invFadeTime <= 0f) {

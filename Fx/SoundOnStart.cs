@@ -26,7 +26,7 @@ namespace LeopotamGroup.Fx {
 
         IEnumerator Start () {
             yield return null;
-            Singleton.Get<SoundManager> ().PlayFx (_sound, _channel, IsInterrupt);
+            Service<SoundManager>.Get ().PlayFx (_sound, _channel, IsInterrupt);
         }
     }
 }

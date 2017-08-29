@@ -15,7 +15,7 @@ namespace LeopotamGroup.Threading {
     /// <summary>
     /// Base class for processing data at background thread, singleton based.
     /// </summary>
-    public abstract class BackgroundWorkerBase<T> : UnitySingletonBase {
+    public abstract class BackgroundWorkerBase<T> : MonoBehaviourService<BackgroundWorkerBase<T>> {
         /// <summary>
         /// Is background thread started and inited.
         /// </summary>
@@ -77,14 +77,13 @@ namespace LeopotamGroup.Threading {
         /// </summary>
         protected int ItemsAmountToProcessAtForground;
 
-        protected override void OnConstruct () {
-            base.OnConstruct ();
+        protected override void OnCreateService () {
             ItemsAmountToProcessAtForground = 1;
             _thread = new Thread (OnBackgroundThreadProc);
             _thread.Start ();
         }
 
-        protected override void OnDestruct () {
+        protected override void OnDestroyService () {
             try {
                 if (_thread != null) {
                     _thread.Interrupt ();
@@ -92,7 +91,6 @@ namespace LeopotamGroup.Threading {
                 }
             } catch (Exception ex) { Debug.LogError (ex); }
             _thread = null;
-            base.OnDestruct ();
         }
 
         protected virtual void Update () {
