@@ -71,13 +71,8 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
                 GameViewResolution.SetPreset (tempPreset);
                 yield return waiter;
                 try {
-#if UNITY_2017
                     ScreenCapture.CaptureScreenshot (
                         Path.Combine (path, string.Format (FileNameMask, platform, res.x, res.y)));
-#else
-                    Application.CaptureScreenshot (
-                        Path.Combine (path, string.Format (FileNameMask, platform, res.x, res.y)));
-#endif
                 } catch (Exception ex) {
                     err = ex.ToString ();
                     break;
@@ -136,7 +131,7 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
                 _gvsInstance = instanceProp.GetValue (null, null);
 
                 var gvsType = typeof (Editor).Assembly.GetType ("UnityEditor.GameViewSize");
-                _gvsCtor = gvsType.GetConstructor (new[] {typeof (int), typeof (int), typeof (int), typeof (string)});
+                _gvsCtor = gvsType.GetConstructor (new [] { typeof (int), typeof (int), typeof (int), typeof (string) });
             }
 
             static object GetCurrentGroup () {
@@ -154,13 +149,13 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
 
             public static int AddCustomPreset (int width, int height, string text) {
                 var grp = GetCurrentGroup ();
-                var newSize = _gvsCtor.Invoke (new object[] {1, width, height, text});
-                _gvgAddCustomSize.Invoke (grp, new[] {newSize});
+                var newSize = _gvsCtor.Invoke (new object[] { 1, width, height, text });
+                _gvgAddCustomSize.Invoke (grp, new [] { newSize });
                 return (int) _gvgGetTotalCount.Invoke (grp, null) - 1;
             }
 
             public static void RemoveCustomPreset (int id) {
-                _gvgRemoveCustomSize.Invoke (GetCurrentGroup (), new object[] {id});
+                _gvgRemoveCustomSize.Invoke (GetCurrentGroup (), new object[] { id });
             }
         }
     }

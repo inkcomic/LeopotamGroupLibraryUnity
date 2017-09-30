@@ -1,7 +1,13 @@
 # LeopotamGroupLibraryUnity
 LeopotamGroup library for unity3d engine.
 
-#### Unity tested version: 5.6.1 / (2017.1.0b6).
+#### Unity tested version: 2017.1.0f3.
+
+----------------------------------------------------------------------------
+
+> Examples moved to [separate repository](https://github.com/Leopotam/LeopotamGroupLibraryUnity.Examples/)
+
+----------------------------------------------------------------------------
 
 ## CODE STRUCTURE
 
@@ -66,12 +72,6 @@ Additional types, 'mersenne twister'-based RNG, fast xor-shift RNG, etc.
 
 ----------------------------------------------------------------------------
 
-* Mobile
-
-Helpers for mobiles only.
-
-----------------------------------------------------------------------------
-
 * Pooling
 
 Pooling support for any prefabs.
@@ -117,7 +117,7 @@ Background worker (except WebGl).
 
 * Tutorials
 
-Step by step behaviour helpers, useful for creating tutorial or any
+Step by step behaviour helpers, useful for creating ingame tutorial or any
 other behaviour with ordered / dependent execution. Progress can be saved.
 
 ----------------------------------------------------------------------------
@@ -125,10 +125,6 @@ other behaviour with ordered / dependent execution. Progress can be saved.
 * Tweening
 
 Simple tweening.
-
-----------------------------------------------------------------------------
-
-Examples moved to [separate repository](https://github.com/Leopotam/LeopotamGroupLibraryUnity.Examples/)
 
 ----------------------------------------------------------------------------
 
