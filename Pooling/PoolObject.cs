@@ -23,20 +23,23 @@ namespace LeopotamGroup.Pooling {
         /// <summary>
         /// Recycle this instance.
         /// </summary>
-        void PoolRecycle ();
+        /// <param name="checkForDoubleRecycle">Check if instance already was recycled. Use false for performance boost.</param>
+        void PoolRecycle (bool checkForDoubleRecycle = true);
     }
 
     /// <summary>
     /// Helper for PoolContainer.
     /// </summary>
     public class PoolObject : MonoBehaviourBase, IPoolObject {
-        public virtual PoolContainer PoolContainer { get; set; }
+        public virtual PoolContainer PoolContainer { get { return _container; } set { _container = value; } }
 
         public virtual Transform PoolTransform { get { return transform; } }
 
-        public virtual void PoolRecycle () {
-            if ((object) PoolContainer != null) {
-                PoolContainer.Recycle (this);
+        PoolContainer _container;
+
+        public virtual void PoolRecycle (bool checkDoubleRecycles = true) {
+            if ((object) _container != null) {
+                _container.Recycle (this, checkDoubleRecycles);
             }
         }
     }
