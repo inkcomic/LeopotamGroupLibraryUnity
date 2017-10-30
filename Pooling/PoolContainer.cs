@@ -50,6 +50,10 @@ namespace LeopotamGroup.Pooling {
 
             _store.UseCastToObjectComparer (true);
 
+            if ((object) _itemsRoot == null) {
+                _itemsRoot = transform;
+            }
+
             return true;
         }
 
@@ -96,7 +100,13 @@ namespace LeopotamGroup.Pooling {
         /// Recycle specified instance to pool.
         /// </summary>
         /// <param name="obj">Instance to recycle.</param>
-        public void Recycle (IPoolObject obj) {
+
+        /// <summary>
+        /// Recycle specified instance to pool.
+        /// </summary>
+        /// <param name="obj">Instance to recycle.</param>
+        /// <param name="checkForDoubleRecycle">Check if instance already was recycled. Use false for performance boost.</param>
+        public void Recycle (IPoolObject obj, bool checkForDoubleRecycle = true) {
             if ((object) obj != null) {
 #if UNITY_EDITOR
                 if ((object) obj.PoolContainer != (object) this) {
@@ -107,9 +117,18 @@ namespace LeopotamGroup.Pooling {
                 var tr = obj.PoolTransform;
                 if ((object) tr != null) {
                     tr.gameObject.SetActive (false);
+                    if ((object) tr.parent != (object) _itemsRoot) {
+                        tr.SetParent (_itemsRoot, true);
+                    }
                 }
-                if (!_store.Contains (obj)) {
-                    _store.Push (obj);
+                if (checkForDoubleRecycle) {
+                    if (!_store.Contains (obj)) {
+                        _store.Push (obj);
+                    } else {
+#if UNITY_EDITOR
+                        Debug.LogWarning ("Object already was recycled", (UnityEngine.Object) obj);
+#endif
+                    }
                 }
             }
         }

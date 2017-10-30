@@ -4,13 +4,13 @@
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
 // ----------------------------------------------------------------------------
 
+#if !UNITY_WEBGL
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using LeopotamGroup.Common;
 using UnityEngine;
 
-#if !UNITY_WEBGL
 namespace LeopotamGroup.Threading {
     /// <summary>
     /// Base class for processing data at background thread, singleton based.
