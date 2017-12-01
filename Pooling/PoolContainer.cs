@@ -121,14 +121,12 @@ namespace LeopotamGroup.Pooling {
                         tr.SetParent (_itemsRoot, true);
                     }
                 }
-                if (checkForDoubleRecycle) {
-                    if (!_store.Contains (obj)) {
-                        _store.Push (obj);
-                    } else {
+                if (checkForDoubleRecycle && _store.Contains (obj)) {
 #if UNITY_EDITOR
-                        Debug.LogWarning ("Object already was recycled", (UnityEngine.Object) obj);
+                    Debug.LogWarning ("Object already was recycled", (UnityEngine.Object) obj);
 #endif
-                    }
+                } else {
+                    _store.Push (obj);
                 }
             }
         }
