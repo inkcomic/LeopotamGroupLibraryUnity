@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // The MIT License
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -193,7 +193,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             // axes
             if ((int) (options & Options.Axes) != 0) {
-                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset")[0];
+                var inputManager = AssetDatabase.LoadAllAssetsAtPath ("ProjectSettings/InputManager.asset") [0];
                 var axes = new SerializedObject (inputManager).FindProperty ("m_Axes");
                 for (int i = 0, iMax = axes.arraySize; i < iMax; i++) {
                     var axis = axes.GetArrayElementAtIndex (i).FindPropertyRelative ("m_Name").stringValue;

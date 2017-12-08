@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // The MIT License
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -100,7 +100,7 @@ namespace LeopotamGroup.Math {
             _y = _z;
             _z = _w;
             return min + (int) ((InvMaxIntExOne *
-                                 (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8))))) * (max - min));
+                (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8))))) * (max - min));
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace LeopotamGroup.Math {
             _y = _z;
             _z = _w;
             return (float) ((includeOne ? InvIntMax : InvMaxIntExOne) *
-                            (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))));
+                (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))));
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace LeopotamGroup.Math {
             _y = _z;
             _z = _w;
             return min + (float) ((includeMax ? InvIntMax : InvMaxIntExOne) *
-                                  (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))) * (max - min));
+                (int) (0x7fffffff & (_w = (_w ^ (_w >> 19)) ^ (t ^ (t >> 8)))) * (max - min));
         }
     }
 }

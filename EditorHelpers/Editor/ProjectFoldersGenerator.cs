@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // The MIT License
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -44,11 +44,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static readonly Dictionary<int, List<string>> DefinedPaths = new Dictionary<int, List<string>> {
             {
-                (int) Options.Animations, new List<string> { "Sources", "Controllers" }
+            (int) Options.Animations, new List<string> { "Sources", "Controllers" }
             },
             {
-                (int) Options.Images,
-                new List<string> { "AppIcon", "Ui", "Ui/Sources" }
+            (int) Options.Images,
+            new List<string> { "AppIcon", "Ui", "Ui/Sources" }
             }
         };
 

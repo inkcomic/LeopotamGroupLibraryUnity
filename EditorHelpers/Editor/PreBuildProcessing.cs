@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // The MIT License
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -24,8 +24,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
                 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies ()) {
                     foreach (var type in assembly.GetTypes ()) {
-                        foreach (var method in type.GetMethods (
-                            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
+                        foreach (var method in type.GetMethods (BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
                             var attrs = method.GetCustomAttributes (typeof (PreBuildAttribute), false);
                             if (attrs.Length > 0) {
                                 try {

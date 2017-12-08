@@ -235,8 +235,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (float.TryParse (parts[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                         if (parts.Length > 1) {
                             angles.x = amount;
-                        }
-                        else {
+                        } else {
                             angles.z = amount;
                         }
                     }
@@ -280,19 +279,17 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (percentIdx != -1) {
                         // relative.
                         if (float.TryParse (
-                            amountStr.Substring (0, percentIdx),
-                            NumberStyles.Float,
-                            NumberFormatInfo.InvariantInfo,
-                            out amount)) {
+                                amountStr.Substring (0, percentIdx),
+                                NumberStyles.Float,
+                                NumberFormatInfo.InvariantInfo,
+                                out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.x = 0.5f - amount;
                             anchorMax.x = 0.5f + amount;
                         }
-                    }
-                    else {
+                    } else {
                         // absolute.
-                        if (float.TryParse (amountStr, NumberStyles.Float, NumberFormatInfo.InvariantInfo,
-                            out amount)) {
+                        if (float.TryParse (amountStr, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                             amount *= 0.5f;
                             anchorMin.x = 0.5f;
                             anchorMax.x = 0.5f;
@@ -307,19 +304,17 @@ namespace LeopotamGroup.SystemUi.Markup {
                     if (percentIdx != -1) {
                         // relative.
                         if (float.TryParse (
-                            amountStr.Substring (0, percentIdx),
-                            NumberStyles.Float,
-                            NumberFormatInfo.InvariantInfo,
-                            out amount)) {
+                                amountStr.Substring (0, percentIdx),
+                                NumberStyles.Float,
+                                NumberFormatInfo.InvariantInfo,
+                                out amount)) {
                             amount *= 0.01f * 0.5f;
                             anchorMin.y = 0.5f - amount;
                             anchorMax.y = 0.5f + amount;
                         }
-                    }
-                    else {
+                    } else {
                         // absolute.
-                        if (float.TryParse (amountStr, NumberStyles.Float, NumberFormatInfo.InvariantInfo,
-                            out amount)) {
+                        if (float.TryParse (amountStr, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out amount)) {
                             amount *= 0.5f;
                             anchorMin.y = 0.5f;
                             anchorMax.y = 0.5f;
@@ -342,7 +337,7 @@ namespace LeopotamGroup.SystemUi.Markup {
                 defaultState = string.CompareOrdinal (attrValue, "false") != 0;
             }
             widget.navigation =
-                defaultState ? Navigation.defaultNavigation : new Navigation {mode = Navigation.Mode.None};
+                defaultState ? Navigation.defaultNavigation : new Navigation { mode = Navigation.Mode.None };
         }
     }
 }
