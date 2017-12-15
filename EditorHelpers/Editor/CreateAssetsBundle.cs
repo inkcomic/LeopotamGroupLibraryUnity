@@ -4,7 +4,10 @@
 // Copyright (c) 2017 Mopsicus <immops@gmail.com>
 // ----------------------------------------------------------------------------
 
+using System;
 using System.IO;
+using LeopotamGroup.Common;
+using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,9 +18,20 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 	/// </summary>
 	sealed class CreateAssetsBundle : EditorWindow {
 
-		private string _path = "AssetBundles";
-		private BuildAssetBundleOptions _options = BuildAssetBundleOptions.UncompressedAssetBundle;
-		private BuildTarget _platform = BuildTarget.iOS;
+		public class BuildSettings {
+			[JsonName ("o")]
+			public BuildAssetBundleOptions Options = BuildAssetBundleOptions.UncompressedAssetBundle;
+			[JsonName ("p")]
+			public string Path = "AssetBundles";
+			[JsonName ("t")]
+			public BuildTarget Target = BuildTarget.iOS;
+		}
+		const string Title = "Asset bundles";
+		const string SettingsKey = "lg.build-bundle";
+		const string DefaultPath = "AssetBundles";
+		const BuildAssetBundleOptions DefaultOptions = BuildAssetBundleOptions.UncompressedAssetBundle;
+		const BuildTarget DefaultTarget = BuildTarget.iOS;
+		BuildSettings _settings;
 
 		[MenuItem ("Window/LeopotamGroupLibrary/Build assets bundle...")]
 		public static void OpenEditorWindow () {
@@ -26,7 +40,17 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 			pos.width = 500f;
 			pos.height = 250f;
 			win.position = pos;
-			win.titleContent.text = "Asset bundles";
+		}
+
+		void OnEnable () {
+			titleContent.text = Title;
+			_settings = null;
+			try {
+				_settings = Service<JsonSerialization>.Get ().Deserialize<BuildSettings> (ProjectPrefs.GetString (SettingsKey));
+			} catch { }
+			if (_settings == null) {
+				_settings = new BuildSettings ();
+			}
 		}
 
 		void OnGUI () {
@@ -36,18 +60,20 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 			GUILayout.BeginVertical ();
 
 			GUILayout.BeginHorizontal ();
-			EditorGUILayout.LabelField ("Output Path:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
-			EditorGUILayout.SelectableLabel (_path, EditorStyles.textField, GUILayout.Height (EditorGUIUtility.singleLineHeight));
+			_settings.Path = EditorGUILayout.TextField ("Output Path:", _settings.Path).Trim ();
+			if (string.IsNullOrEmpty (_settings.Path)) {
+				_settings.Path = DefaultPath;
+			}
 			GUILayout.EndHorizontal ();
 
 			GUILayout.BeginHorizontal ();
 			EditorGUILayout.LabelField ("Options:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
-			_options = (BuildAssetBundleOptions) EditorGUILayout.EnumPopup (_options);
+			_settings.Options = (BuildAssetBundleOptions) EditorGUILayout.EnumPopup (DefaultOptions);
 			GUILayout.EndHorizontal ();
 
 			GUILayout.BeginHorizontal ();
 			EditorGUILayout.LabelField ("Platform:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
-			_platform = (BuildTarget) EditorGUILayout.EnumPopup (_platform);
+			_settings.Target = (BuildTarget) EditorGUILayout.EnumPopup (DefaultTarget);
 			GUILayout.EndHorizontal ();
 
 			GUILayout.EndVertical ();
@@ -60,12 +86,35 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 			GUILayout.Space (10f);
 
 			EditorGUILayout.Separator ();
-			if (GUILayout.Button ("Create AssetBundles", GUILayout.Height (50f))) {
-				if (!Directory.Exists (_path))
-					Directory.CreateDirectory (_path);
-				BuildPipeline.BuildAssetBundles (_path, _options, _platform);
-				EditorUtility.RevealInFinder (_path);
+			if (GUILayout.Button ("Save settings & build", GUILayout.Height (50f))) {
+				ProjectPrefs.SetString (SettingsKey, Service<JsonSerialization>.Get ().Serialize (_settings));
+				var res = Generate (_settings);
+				EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
+				if (string.IsNullOrEmpty (res)) {
+					EditorUtility.RevealInFinder (_settings.Path);
+				}
 			}
 		}
+
+		/// <summary>
+		/// Build assets bundle with options
+		/// </summary>
+		/// <returns>Error message or null on success.</returns>
+		/// <param name="settings">Generation settings.</param>
+		public static string Generate (BuildSettings settings) {
+			if (settings == null || string.IsNullOrEmpty (settings.Path)) {
+				return "invalid parameters";
+			}
+			try {
+				if (!Directory.Exists (settings.Path)) {
+					Directory.CreateDirectory (settings.Path);
+				}
+				BuildPipeline.BuildAssetBundles (settings.Path, settings.Options, settings.Target);
+				return null;
+			} catch (Exception ex) {
+				return ex.Message;
+			}
+		}
+
 	}
 }
