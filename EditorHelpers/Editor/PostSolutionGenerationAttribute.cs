@@ -19,8 +19,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             static void OnGeneratedCSProjectFiles () {
                 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies ()) {
                     foreach (var type in assembly.GetTypes ()) {
-                        foreach (var method in type.GetMethods (
-                            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
+                        foreach (var method in type.GetMethods (BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) {
                             var attrs = method.GetCustomAttributes (typeof (PostSolutionGenerationAttribute), false);
                             if (attrs.Length > 0) {
                                 try {

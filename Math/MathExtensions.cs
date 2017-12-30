@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // The MIT License
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -15,7 +15,7 @@ namespace LeopotamGroup.Math {
     public static class MathExtensions {
         static readonly StringBuilder _floatToStrBuf = new StringBuilder (64);
 
-        static readonly string[] _shortNumberOrders = {"", "k", "M", "G", "T", "P", "E"};
+        static readonly string[] _shortNumberOrders = { "", "k", "M", "G", "T", "P", "E" };
 
         static readonly float _invLog1K = 1 / (float) System.Math.Log (1000);
 

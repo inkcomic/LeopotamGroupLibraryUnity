@@ -1,7 +1,7 @@
 # LeopotamGroupLibraryUnity
 LeopotamGroup library for unity3d engine.
 
-#### Unity tested version: 2017.1.0f3.
+#### Unity tested version: 2017.3.0f3.
 
 ----------------------------------------------------------------------------
 
@@ -81,12 +81,6 @@ Pooling support for any prefabs.
 * Protection
 
 Protection for Int, Long, Float types from in-memory searching.
-
-----------------------------------------------------------------------------
-
-* Questbook
-
-C# implementation of [Questbook format](https://github.com/Leopotam/questbook).
 
 ----------------------------------------------------------------------------
 

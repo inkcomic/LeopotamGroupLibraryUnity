@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // The MIT License
 // LeopotamGroupLibrary https://github.com/Leopotam/LeopotamGroupLibraryUnity
 // Copyright (c) 2012-2017 Leopotam <leopotam@gmail.com>
@@ -238,8 +238,8 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="bt">BehaviourTree instance.</param>
         /// <param name="condition">Callback of custom node logic for condition checking.</param>
-        public BehaviourTreeCondition (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition)
-            : this (new BehaviourTreeAction<T> (bt, condition)) { }
+        public BehaviourTreeCondition (BehaviourTree<T> bt, Func<BehaviourTree<T>, BehaviourTreeResult> condition):
+            this (new BehaviourTreeAction<T> (bt, condition)) { }
 
         /// <summary>
         /// Initialize new instance of BehaviourTreeCondition node.
