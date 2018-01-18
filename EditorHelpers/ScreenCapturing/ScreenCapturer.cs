@@ -11,7 +11,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using LeopotamGroup.Math;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,15 +20,15 @@ namespace LeopotamGroup.EditorHelpers.ScreenCapturing {
     /// </summary>
     [ExecuteInEditMode]
     sealed class ScreenCapturer : MonoBehaviour {
-        static readonly List<Vector2i> _resList = new List<Vector2i> {
-            new Vector2i (800, 480),
-            new Vector2i (960, 640),
-            new Vector2i (1024, 768),
-            new Vector2i (1136, 640),
-            new Vector2i (1280, 800),
-            new Vector2i (1920, 1080),
-            new Vector2i (2048, 1536),
-            new Vector2i (2732, 2048),
+        static readonly List<Vector2Int> _resList = new List<Vector2Int> {
+            new Vector2Int (800, 480),
+            new Vector2Int (960, 640),
+            new Vector2Int (1024, 768),
+            new Vector2Int (1136, 640),
+            new Vector2Int (1280, 800),
+            new Vector2Int (1920, 1080),
+            new Vector2Int (2048, 1536),
+            new Vector2Int (2732, 2048),
         };
 
         const string FileNameMask = "Screenshot_{0}_{1}x{2}.png";
