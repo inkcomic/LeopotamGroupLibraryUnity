@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using UnityEngine;
 
 namespace LeopotamGroup.Math {
     /// <summary>
@@ -15,24 +16,22 @@ namespace LeopotamGroup.Math {
         /// <summary>
         /// Min X/Y values of bounds.
         /// </summary>
-        public Vector2i Min;
+        public Vector2Int Min;
 
         /// <summary>
         /// Max X/Y values of bounds.
         /// </summary>
-        public Vector2i Max;
+        public Vector2Int Max;
 
-        public Bounds2i (Vector2i min, Vector2i max) {
+        public Bounds2i (Vector2Int min, Vector2Int max) {
             Min = min;
             Max = max;
             Validate ();
         }
 
         public Bounds2i (int x, int y, int width, int height) {
-            Min.x = x;
-            Min.y = y;
-            Max.x = x + width;
-            Max.y = y + height;
+            Min = new Vector2Int (x, y);
+            Max = new Vector2Int (x + width, y + height);
             Validate ();
         }
 
@@ -40,7 +39,7 @@ namespace LeopotamGroup.Math {
         /// Is specified point contains in bounds.
         /// </summary>
         /// <param name="point">Point</param>
-        public bool Contains (Vector2i point) {
+        public bool Contains (Vector2Int point) {
             return point.x >= Min.x && point.x <= Max.x && point.y >= Min.y && point.y <= Max.y;
         }
 
@@ -67,19 +66,8 @@ namespace LeopotamGroup.Math {
         /// Grow / shrink bounds to include specified point.
         /// </summary>
         /// <param name="point">Point</param>
-        public void Encapsulate (Vector2i point) {
-            if (Min.x > point.x) {
-                Min.x = point.x;
-            }
-            if (Min.y > point.y) {
-                Min.y = point.y;
-            }
-            if (Max.x < point.x) {
-                Max.x = point.x;
-            }
-            if (Max.y < point.y) {
-                Max.y = point.y;
-            }
+        public void Encapsulate (Vector2Int point) {
+            Encapsulate (point.x, point.y);
         }
 
         /// <summary>
@@ -106,12 +94,8 @@ namespace LeopotamGroup.Math {
         /// Grow / shrink bounds to all size with specified offset.
         /// </summary>
         /// <param name="sizeOffset">X/Y size offset</param>
-        public void Expand (Vector2i sizeOffset) {
-            Min.x -= sizeOffset.x;
-            Min.y -= sizeOffset.y;
-            Max.x += sizeOffset.x;
-            Max.y += sizeOffset.y;
-            Validate ();
+        public void Expand (Vector2Int sizeOffset) {
+            Expand (sizeOffset.x, sizeOffset.y);
         }
 
         /// <summary>
@@ -156,14 +140,14 @@ namespace LeopotamGroup.Math {
         /// Return formatted Min/Max values.
         /// </summary>
         public override string ToString () {
-            return string.Format ("[{0};{1}]", Min, Max);
+            return string.Format ("[{0},{1}]", Min, Max);
         }
 
         /// <summary>
         /// Translate bounds with relative offset.
         /// </summary>
         /// <param name="offset">X/Y offset</param>
-        public void Translate (Vector2i offset) {
+        public void Translate (Vector2Int offset) {
             Min.x += offset.x;
             Min.y += offset.y;
             Max.x += offset.x;
