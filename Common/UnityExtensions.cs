@@ -53,7 +53,7 @@ namespace LeopotamGroup.Common {
             Transform retVal = null;
             for (var i = target.childCount - 1; i >= 0; i--) {
                 retVal = target.GetChild (i).FindRecursive (name);
-                if (retVal != null) {
+                if ((object) retVal != null) {
                     break;
                 }
             }
@@ -73,7 +73,7 @@ namespace LeopotamGroup.Common {
             Transform retVal = null;
             for (var i = target.childCount - 1; i >= 0; i--) {
                 retVal = target.GetChild(i).FindRecursiveByTag(tag);
-                if (retVal != null) {
+                if ((object) retVal != null) {
                     break;
                 }
             }
