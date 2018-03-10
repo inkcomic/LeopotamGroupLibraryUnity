@@ -59,5 +59,29 @@ namespace LeopotamGroup.Common {
             }
             return retVal;
         }
+
+        /// <summary>
+        /// Find GameObject with tag in recursive hierarchy.
+        /// </summary>
+        /// <returns>Transform of found GameObject.</returns>
+        /// <param name="target">Root of search.</param>
+        /// <param name="tag">Tag to search.</param>
+        public static Transform FindRecursiveByTag(this Transform target, string tag)
+        {
+            if (target == null || string.CompareOrdinal(target.tag, tag) == 0)
+            {
+                return target;
+            }
+            Transform retVal = null;
+            for (var i = target.childCount - 1; i >= 0; i--)
+            {
+                retVal = target.GetChild(i).FindRecursiveByTag(tag);
+                if (retVal != null)
+                {
+                    break;
+                }
+            }
+            return retVal;
+        }
     }
 }
