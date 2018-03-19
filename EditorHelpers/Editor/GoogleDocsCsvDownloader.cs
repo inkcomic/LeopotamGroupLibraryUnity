@@ -10,7 +10,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEngine;
@@ -29,6 +28,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string ResDefault = "NewCsv.csv";
 
         static readonly Regex CsvMultilineRegex = new Regex ("\"([^\"]|\"\"|\\n)*\"");
+
+        readonly JsonSerialization _serializer = new JsonSerialization ();
 
         List<RecordInfo> _items;
 
@@ -56,8 +57,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         void Load () {
             try {
-                _items = Service<JsonSerialization>.Get ()
-                    .Deserialize<List<RecordInfo>> (ProjectPrefs.GetString (ProjectPrefsKey, "{}"));
+                _items = _serializer.Deserialize<List<RecordInfo>> (ProjectPrefs.GetString (ProjectPrefsKey, "{}"));
                 if (_items == null) {
                     throw new Exception ();
                 }
@@ -68,7 +68,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         void Save () {
             if (_items != null && _items.Count > 0) {
-                ProjectPrefs.SetString (ProjectPrefsKey, Service<JsonSerialization>.Get ().Serialize (_items));
+                ProjectPrefs.SetString (ProjectPrefsKey, _serializer.Serialize (_items));
             } else {
                 ProjectPrefs.DeleteKey (ProjectPrefsKey);
             }
@@ -165,7 +165,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static string ConvertToDictJson (string data) {
             var sb = new StringBuilder (data.Length * 2);
-            var list = Service<CsvSerialization>.Get ().Deserialize (data);
+            var list = new CsvSerialization ().Deserialize (data);
             if (list.Count < 2) {
                 throw new Exception ("Invalid header data: first line should contains field names, second line - pair of wrapping chars.");
             }
@@ -182,6 +182,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             it.MoveNext ();
             var wrapperKey = it.Current.Key;
             var wrapperValue = it.Current.Value;
+
+            if (wrapperKey != "\"\"") {
+                throw new Exception ("Invalid wrapper data: key should be wrapped with \"\".");
+            }
+
             for (var i = 0; i < wrapperValue.Length; i++) {
                 if (!(
                         wrapperValue[i] == string.Empty ||
@@ -191,9 +196,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                         wrapperValue[i] == "\"\"")) {
                     throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field.", headerValue[i]));
                 }
-            }
-            if (wrapperKey != "\"\"") {
-                throw new Exception ("Invalid wrapper data: key should be wrapped with \"\".");
             }
 
             var needComma = false;
@@ -220,7 +222,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         static string ConvertToArrayJson (string data) {
             var sb = new StringBuilder (data.Length * 2);
-            var list = Service<CsvSerialization>.Get ().DeserializeAsArray (data);
+            var list = new CsvSerialization ().DeserializeAsArray (data);
             if (list.Count < 2) {
                 throw new Exception ("Invalid header data: first line should contains field names, second line - pair of wrapping chars.");
             }
