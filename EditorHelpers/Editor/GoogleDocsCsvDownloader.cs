@@ -184,7 +184,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             var wrapperValue = it.Current.Value;
 
             if (wrapperKey != "\"\"") {
-                throw new Exception ("Invalid wrapper data: key should be wrapped with \"\".");
+                throw new Exception (string.Format ("Invalid wrapper data for \"{0}\" field: it should be wrapped with \"\".", headerKey));
             }
 
             for (var i = 0; i < wrapperValue.Length; i++) {
@@ -198,11 +198,12 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 }
             }
 
-            var needComma = false;
+            var needObjectsComma = false;
             string itemValue;
             string wrapChars;
             while (it.MoveNext ()) {
-                sb.AppendFormat ("{0}\"{1}\":{{", needComma ? "," : string.Empty, it.Current.Key);
+                sb.AppendFormat ("{0}\"{1}\":{{", needObjectsComma ? "," : string.Empty, it.Current.Key);
+                var needFieldsComma = false;
                 for (var i = 0; i < headerValue.Length; i++) {
                     wrapChars = wrapperValue[i];
                     if (string.Compare (wrapChars, "IGNORE", true) == 0) {
@@ -210,10 +211,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     }
                     itemValue = wrapChars.Length > 0 ?
                         string.Format ("{0}{1}{2}", wrapChars[0], it.Current.Value[i], wrapChars[1]) : it.Current.Value[i];
-                    sb.AppendFormat ("{0}\"{1}\":{2}", i > 0 ? "," : string.Empty, headerValue[i], itemValue);
+                    sb.AppendFormat ("{0}\"{1}\":{2}", needFieldsComma ? "," : string.Empty, headerValue[i], itemValue);
+                    needFieldsComma = true;
                 }
                 sb.Append ("}");
-                needComma = true;
+                needObjectsComma = true;
             }
 
             sb.Append ("}");
@@ -248,11 +250,12 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 }
             }
 
-            var needComma = false;
+            var needObjectsComma = false;
             string itemValue;
             string wrapChars;
             while (it.MoveNext ()) {
-                sb.AppendFormat ("{0}{{", needComma ? "," : string.Empty);
+                sb.AppendFormat ("{0}{{", needObjectsComma ? "," : string.Empty);
+                var needFieldsComma = false;
                 for (var i = 0; i < headerValue.Length; i++) {
                     wrapChars = wrapperValue[i];
                     if (string.Compare (wrapChars, "IGNORE", true) == 0) {
@@ -260,14 +263,11 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                     }
                     itemValue = wrapChars.Length > 0 ?
                         string.Format ("{0}{1}{2}", wrapChars[0], it.Current[i], wrapChars[1]) : it.Current[i];
-                    sb.AppendFormat (
-                        "{0}\"{1}\":{2}",
-                        i > 0 ? "," : string.Empty,
-                        headerValue[i],
-                        itemValue);
+                    sb.AppendFormat ("{0}\"{1}\":{2}", needFieldsComma ? "," : string.Empty, headerValue[i], itemValue);
+                    needFieldsComma = true;
                 }
                 sb.Append ("}");
-                needComma = true;
+                needObjectsComma = true;
             }
 
             sb.Append ("]");
