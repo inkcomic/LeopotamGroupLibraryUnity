@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using LeopotamGroup.Common;
 using LeopotamGroup.Serialization;
 using UnityEditor;
 using UnityEditorInternal;
@@ -77,6 +76,8 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
         string[] _optionNames;
 
+        readonly JsonSerialization _serializer = new JsonSerialization ();
+
         [MenuItem ("Window/LeopotamGroupLibrary/UnityIdents generator...")]
         static void InitGeneration () {
             GetWindow<UnityIdentsGenerator> (true);
@@ -86,8 +87,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
             titleContent.text = Title;
             _settings = null;
             try {
-                _settings =
-                    Service<JsonSerialization>.Get ().Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
+                _settings = _serializer.Deserialize<GenerationSettings> (ProjectPrefs.GetString (SettingsKey));
             } catch { }
             if (_settings == null) {
                 _settings = new GenerationSettings ();
@@ -117,7 +117,7 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
                 Repaint ();
             }
             if (GUILayout.Button ("Save settings & generate")) {
-                ProjectPrefs.SetString (SettingsKey, Service<JsonSerialization>.Get ().Serialize (_settings));
+                ProjectPrefs.SetString (SettingsKey, _serializer.Serialize (_settings));
                 var res = Generate (_settings);
                 EditorUtility.DisplayDialog (titleContent.text, res ?? "Success", "Close");
             }

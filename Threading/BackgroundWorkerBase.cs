@@ -14,8 +14,10 @@ using UnityEngine;
 namespace LeopotamGroup.Threading {
     /// <summary>
     /// Base class for processing data at background thread, singleton based.
+    /// Base - final inherited type.
+    /// T - Parameter type for exchange data between main and background threads.
     /// </summary>
-    public abstract class BackgroundWorkerBase<T> : MonoBehaviourService<BackgroundWorkerBase<T>> {
+    public abstract class BackgroundWorkerBase<Base, T> : MonoBehaviourService<Base> where Base : class {
         /// <summary>
         /// Is background thread started and inited.
         /// </summary>
