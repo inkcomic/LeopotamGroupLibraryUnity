@@ -17,7 +17,7 @@ namespace LeopotamGroup.EditorHelpers {
     /// Base class for developer UI console.
     /// </summary>
     [DefaultExecutionOrder (-32768)]
-    abstract class DeveloperConsoleBase : MonoBehaviourService<DeveloperConsoleBase> {
+    abstract class DeveloperConsoleBase<T> : MonoBehaviourService<T> where T : class {
         /// <summary>
         /// Is console was shown.
         /// </summary>
