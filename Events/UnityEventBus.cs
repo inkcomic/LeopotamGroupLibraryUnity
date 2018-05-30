@@ -10,11 +10,11 @@ namespace LeopotamGroup.Events {
     /// <summary>
     /// Event bus service, local for current scene.
     /// </summary>
-    public class UnityEventBus : MonoBehaviourService<UnityEventBus> {
-        protected EventBus EventBus;
+    sealed class UnityEventBus : MonoBehaviourService<UnityEventBus> {
+        EventBus _eb;
 
         protected override void OnCreateService () {
-            EventBus = new EventBus ();
+            _eb = new EventBus ();
         }
 
         protected override void OnDestroyService () {
@@ -26,7 +26,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventAction">Callback.</param>
         public void Subscribe<T> (EventBus.EventHandler<T> eventAction) {
-            EventBus.Subscribe (eventAction);
+            _eb.Subscribe (eventAction);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace LeopotamGroup.Events {
         /// <param name="eventAction">Event action.</param>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
         public void Unsubscribe<T> (EventBus.EventHandler<T> eventAction, bool keepEvent = false) {
-            EventBus.Unsubscribe (eventAction, keepEvent);
+            _eb.Unsubscribe (eventAction, keepEvent);
         }
 
         /// <summary>
@@ -43,14 +43,14 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="keepEvent">GC optimization - clear only callback list and keep event for future use.</param>
         public void UnsubscribeAll<T> (bool keepEvent = false) {
-            EventBus.UnsubscribeAll<T> (keepEvent);
+            _eb.UnsubscribeAll<T> (keepEvent);
         }
 
         /// <summary>
         /// Unsubscribe all listeneres and clear all events.
         /// </summary>
         public void UnsubscribeAndClearAllEvents () {
-            EventBus.UnsubscribeAndClearAllEvents ();
+            _eb.UnsubscribeAndClearAllEvents ();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace LeopotamGroup.Events {
         /// </summary>
         /// <param name="eventMessage">Event message.</param>
         public void Publish<T> (T eventMessage) {
-            EventBus.Publish (eventMessage);
+            _eb.Publish (eventMessage);
         }
     }
 }

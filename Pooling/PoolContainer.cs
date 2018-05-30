@@ -39,6 +39,7 @@ namespace LeopotamGroup.Pooling {
             _needToAddPoolObject = (object) _cachedAsset == null;
             if (_needToAddPoolObject) {
                 _cachedAsset = go;
+                _overridedType = typeof (PoolObject);
             } else {
                 if (_cachedAsset.GetType () != _overridedType) {
                     Debug.LogWarning ("Prefab already contains another IPoolObject-component", gameObject);
@@ -165,7 +166,7 @@ namespace LeopotamGroup.Pooling {
                 ).AddComponent<PoolContainer> ();
             container._prefabPath = prefabPath;
             container._itemsRoot = itemsRoot;
-            container._overridedType = overridedType ?? typeof (PoolObject);
+            container._overridedType = overridedType;
             return container;
         }
     }
