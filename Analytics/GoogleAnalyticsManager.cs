@@ -12,6 +12,7 @@ using System.Text;
 using LeopotamGroup.Common;
 using LeopotamGroup.Localization;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace LeopotamGroup.Analytics {
     /// <summary>
@@ -112,8 +113,8 @@ namespace LeopotamGroup.Analytics {
                     Debug.Log ("[GA REQUEST] " + url);
 #endif
 
-                    using (var www = new WWW (url)) {
-                        yield return www;
+                    using (var req = UnityWebRequest.Get (url)) {
+                        yield return req.SendWebRequest ();
                     }
                     url = null;
                 } else {
@@ -138,8 +139,8 @@ namespace LeopotamGroup.Analytics {
         /// </summary>
         /// <param name="screenName">Custom screen name.</param>
         public void TrackScreen (string screenName) {
-            // Old version of screen tracking: EnqueueRequest (string.Format ("t=screenview&cd={0}", WWW.EscapeURL (screenName)));
-            EnqueueRequest (string.Format ("t=pageview&dp={0}", WWW.EscapeURL (screenName)));
+            // Old version of screen tracking: EnqueueRequest (string.Format ("t=screenview&cd={0}", UnityWebRequest.EscapeURL (screenName)));
+            EnqueueRequest (string.Format ("t=pageview&dp={0}", UnityWebRequest.EscapeURL (screenName)));
         }
 
         /// <summary>
@@ -148,7 +149,7 @@ namespace LeopotamGroup.Analytics {
         /// <param name="category">Category name.</param>
         /// <param name="action">Action name.</param>
         public void TrackEvent (string category, string action) {
-            EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}", WWW.EscapeURL (category), WWW.EscapeURL (action)));
+            EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}", UnityWebRequest.EscapeURL (category), UnityWebRequest.EscapeURL (action)));
         }
 
         /// <summary>
@@ -160,10 +161,10 @@ namespace LeopotamGroup.Analytics {
         /// <param name="value">Value.</param>
         public void TrackEvent (string category, string action, string label, string value) {
             EnqueueRequest (string.Format ("t=event&ec={0}&ea={1}&el={2}&ev={3}",
-                WWW.EscapeURL (category),
-                WWW.EscapeURL (action),
-                WWW.EscapeURL (label),
-                WWW.EscapeURL (value)
+                UnityWebRequest.EscapeURL (category),
+                UnityWebRequest.EscapeURL (action),
+                UnityWebRequest.EscapeURL (label),
+                UnityWebRequest.EscapeURL (value)
             ));
         }
 
@@ -178,16 +179,16 @@ namespace LeopotamGroup.Analytics {
         public void TrackTransaction (string transactionId, string productName, string sku, decimal price, string currency = "USD") {
             transactionId = (transactionId.Length <= 100) ? transactionId : transactionId.Substring (0, 100);
             EnqueueRequest (string.Format ("t=transaction&ti={0}&tr={1}&cu={2}&ts=0&tt=0",
-                WWW.EscapeURL (transactionId),
+                UnityWebRequest.EscapeURL (transactionId),
                 price,
-                WWW.EscapeURL (currency)
+                UnityWebRequest.EscapeURL (currency)
             ));
             EnqueueRequest (string.Format ("t=item&ti={0}&in={1}&ic={2}&ip={3}&iq=1&cu={4}",
-                WWW.EscapeURL (transactionId),
-                WWW.EscapeURL (productName),
-                WWW.EscapeURL (sku),
+                UnityWebRequest.EscapeURL (transactionId),
+                UnityWebRequest.EscapeURL (productName),
+                UnityWebRequest.EscapeURL (sku),
                 price,
-                WWW.EscapeURL (currency)
+                UnityWebRequest.EscapeURL (currency)
             ));
         }
 
@@ -197,7 +198,7 @@ namespace LeopotamGroup.Analytics {
         /// <param name="description">Description of exception.</param>
         /// <param name="isFatal">Is exception fatal.</param>
         public void TrackException (string description, bool isFatal) {
-            EnqueueRequest (string.Format ("t=exception&exd={0}&exf={1}", WWW.EscapeURL (description), isFatal ? 1 : 0));
+            EnqueueRequest (string.Format ("t=exception&exd={0}&exf={1}", UnityWebRequest.EscapeURL (description), isFatal ? 1 : 0));
         }
     }
 }
