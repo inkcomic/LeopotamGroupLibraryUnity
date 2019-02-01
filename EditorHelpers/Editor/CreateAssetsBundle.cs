@@ -29,8 +29,6 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
         const string Title = "Asset bundles";
         const string SettingsKey = "lg.build-bundle";
         const string DefaultPath = "AssetBundles";
-        const BuildAssetBundleOptions DefaultOptions = BuildAssetBundleOptions.UncompressedAssetBundle;
-        const BuildTarget DefaultTarget = BuildTarget.iOS;
         BuildSettings _settings;
 
         [MenuItem ("Window/LeopotamGroupLibrary/Build assets bundle...")]
@@ -68,12 +66,12 @@ namespace LeopotamGroup.EditorHelpers.UnityEditors {
 
             GUILayout.BeginHorizontal ();
             EditorGUILayout.LabelField ("Options:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
-            _settings.Options = (BuildAssetBundleOptions) EditorGUILayout.EnumPopup (DefaultOptions);
+            _settings.Options = (BuildAssetBundleOptions) EditorGUILayout.EnumPopup (_settings.Options);
             GUILayout.EndHorizontal ();
 
             GUILayout.BeginHorizontal ();
             EditorGUILayout.LabelField ("Platform:", EditorStyles.label, GUILayout.Width (EditorGUIUtility.labelWidth));
-            _settings.Target = (BuildTarget) EditorGUILayout.EnumPopup (DefaultTarget);
+            _settings.Target = (BuildTarget) EditorGUILayout.EnumPopup (_settings.Target);
             GUILayout.EndHorizontal ();
 
             GUILayout.EndVertical ();
