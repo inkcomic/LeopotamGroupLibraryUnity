@@ -114,7 +114,7 @@ namespace LeopotamGroup.Analytics {
 #endif
 
                     using (var req = UnityWebRequest.Get (url)) {
-                        req.SetRequestHeader("user-agent", "Mozilla/5.0");
+                        req.SetRequestHeader("user-agent", "");
                         yield return req.SendWebRequest ();
                     }
                     url = null;
