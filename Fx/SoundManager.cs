@@ -115,7 +115,17 @@ namespace LeopotamGroup.Fx {
                 fx.Play ();
             }
         }
-
+        public void PlayFxOneShot(AudioClip clip, float volumeScale = 1f, float pitch = 1f)
+        {
+            if (SoundVolume > 0f && clip != null)
+            {
+                var fx = _fxes[0];
+                //float random = Random.Range (0.95f , 1.05f);
+                //Debug.Log (random);
+                fx.pitch = pitch;
+                fx.PlayOneShot(clip, volumeScale);
+            }
+        }
         /// <summary>
         /// Stop playing FX at channel.
         /// </summary>
